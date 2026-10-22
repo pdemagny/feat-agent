@@ -74,7 +74,7 @@ The single source of truth for models and efforts. Agent files carry the
 | 7a Correctness, spec, standards | `feat-code-reviewer` | code-review (vendored) | sonnet · medium | opus · high | opus · xhigh |
 | 7b Security | `feat-code-reviewer` | security-and-hardening | sonnet · medium | opus · high | opus · xhigh |
 | 7c Performance | `feat-code-reviewer` | performance-optimization | sonnet · medium | sonnet · high | opus · high |
-| 7d Over-engineering | `feat-code-reviewer` | ponytail-review | sonnet · medium | sonnet · high | sonnet · high |
+| 7d Over-engineering | `feat-code-reviewer` | — | sonnet · medium | sonnet · high | sonnet · high |
 | 7e Readability | `feat-code-reviewer` | code-simplification | sonnet · medium | sonnet · high | sonnet · high |
 | 8 Ship | `feat-shipper` | — | haiku · medium | haiku · medium | haiku · medium |
 

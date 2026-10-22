@@ -94,7 +94,8 @@ dependency was checked for that, and handled one of three ways:
 | `speckit-implement` | stops to ask about unchecked checklists | **overridden**: the orchestrator asks at the phase 5 gate and passes the answer |
 | `speckit-analyze` | ends by asking whether to suggest remediation | **overridden** in `feat-tasker`: always yes for CRITICAL/HIGH |
 | all `speckit-*` | run mandatory hooks from `.specify/extensions.yml`, which may create branches or commit (git extension) | **overridden**: phase 0 lists hooks, the user decides, agents run only allowed ones and report skipped ones |
-| `security-and-hardening`, `ponytail-review`, `speckit-specify`/`plan`/`tasks` | none beyond hooks | used as is |
+| `ponytail-review` | Ponytail 5 turned it into a general quality review (logic, safety, load, tests, speed), overlapping lenses 7a–7c | **dropped**; the earlier over-engineering-only checklist (about 30 lines) is inlined in lens 7d, credited |
+| `security-and-hardening`, `speckit-specify`/`plan`/`tasks` | none beyond hooks | used as is |
 
 Rule for new dependencies: read the whole skill first, look for asking,
 committing, editing, branching, handing off and turn-ending instructions,

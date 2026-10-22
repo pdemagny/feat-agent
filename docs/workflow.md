@@ -28,7 +28,7 @@ is authoritative; this page mirrors it with explanations.
 | 4 | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer`, then `feat-planner` writes accepted findings | `security-and-hardening` (cost checklist in the agent) | findings D1… | **hard** (soft for small without real findings) |
 | 5 | Tasks | `feat-tasker` | `speckit-tasks`, `speckit-analyze` | `tasks.md`, analysis clean | hard on CRITICAL/HIGH or unchecked checklists; always for big |
 | 6 | Implement | `feat-implementer` ×1 per user story, in turn | `speckit-implement` | the code, tasks ticked, checks green | soft (hard per story for big; hard on a design problem) |
-| 7 | Code review | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks | Matt Pocock's `code-review`, `security-and-hardening`, `performance-optimization`, `ponytail-review`, `code-simplification` | findings B, S, P, C, R; picked fixes applied | **hard** |
+| 7 | Code review | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks | Matt Pocock's `code-review`, `security-and-hardening`, `performance-optimization`, `code-simplification` | findings B, S, P, C, R; picked fixes applied | **hard** |
 | 8 | Ship | `feat-shipper` | — | docs updated, commits, push, PR | none |
 
 **Hard gate**: Claude stops and waits for your answer. **Soft gate**: Claude
@@ -157,7 +157,10 @@ the reviewers with their lenses:
 - **7c Performance**: `performance-optimization`'s measure and identify
   steps on what was built, with the project's own benchmarks or timings
   where cheap, the rest marked `unmeasured`.
-- **7d Over-engineering**: `ponytail-review`, what to delete.
+- **7d Over-engineering**: what to delete (`delete`, `stdlib`, `native`,
+  `reuse`, `yagni`, `shrink`), with the lines it would save; the checklist
+  is in the agent, adapted from the pre-v5 `ponytail-review`
+  ([dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail), MIT).
 - **7e Readability**: `code-simplification`'s identify steps, on the code as
   it will be after the cuts.
 

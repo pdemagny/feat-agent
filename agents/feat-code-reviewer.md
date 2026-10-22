@@ -58,10 +58,31 @@ with the reasoning. No speculative micro-optimizations.
 
 ## 7d Over-engineering (`C`)
 
-Invoke `ponytail-review` on the diff: reinvented standard library, unneeded
-dependencies, speculative abstractions, dead flexibility, code the spec
-doesn't require. Don't cut anything the spec's requirements or acceptance
-criteria need.
+(Adapted from `ponytail-review` before Ponytail 5, dietrichgebert/ponytail,
+MIT.)
+
+Find what to delete. The diff's best outcome is getting shorter. Tag each
+finding:
+
+- `delete`: dead code, unused flexibility, a speculative feature, code the
+  spec doesn't require. Replacement: nothing.
+- `stdlib`: a hand-rolled thing the standard library ships. Name the
+  function.
+- `native`: a dependency or code doing what the platform or a tool the
+  project already uses does. Name the feature.
+- `reuse`: an equivalent helper or pattern already in this repo. Name the
+  path.
+- `yagni`: an abstraction with one implementation, config nobody sets, a
+  layer with one caller.
+- `shrink`: same logic, fewer lines. Show the shorter form.
+
+One concrete line per finding, e.g. `repo.go:88 — yagni: Store interface
+with one implementation → use the struct until a second one exists`, never
+"this might be more complex than necessary". Over-engineering only: bugs,
+security and performance belong to the other lenses. Don't cut anything the
+spec's requirements or acceptance criteria need, and never flag a smoke test
+or a self-check as bloat. End the section with `net: -<N> lines possible`,
+or `lean already` when there is nothing to cut.
 
 ## 7e Readability (`R`)
 
@@ -90,7 +111,8 @@ Accepted design findings built (7b): <D-id: yes | no>
 Performance (7c):
 - <bottleneck> — <file:line> → <fix> — measured: <command, baseline> | unmeasured (why) — verify with: <command> — guard: <test/benchmark or "none">
 Cuts (7d):
-- <file:line> — <what to cut> → <what replaces it, or "nothing">
+- <file:line> — <tag>: <what to cut> → <what replaces it, or "nothing">
+net: -<N> lines possible | lean already
 Readability (7e):
 - <file:line> — <change> — <why it reads better>
 Dismissed: <things a skill raised that are not real, with why>

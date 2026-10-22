@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- `ponytail-review` is no longer a dependency: Ponytail 5 made it a general
+  review overlapping the other lenses. Its earlier over-engineering
+  checklist is inlined in `feat-code-reviewer` lens 7d (MIT, credited).
+- `install.sh` keeps backups in `~/.claude/feat-agents-backups/`, out of
+  `skills/` and `agents/`.
 - Fewer tokens per run (spec 022 simulated: 10.2M on small, from 14.7M in
   0.1.0 and 28.9M with the old skill):
   - Phase 1 is a separate `/feat-brief` skill that writes

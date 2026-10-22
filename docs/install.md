@@ -52,7 +52,6 @@ for each skill below. They land in `~/.agents/skills/` and are linked into
 | `security-and-hardening` | addyosmani/agent-skills | `feat-sec-reviewer` (phase 4), `feat-code-reviewer` lens 7b |
 | `performance-optimization` | addyosmani/agent-skills | `feat-code-reviewer` lens 7c |
 | `code-simplification` | addyosmani/agent-skills | `feat-code-reviewer` lens 7e |
-| `ponytail-review` | [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) | `feat-code-reviewer` lens 7d |
 
 It also downloads one skill that is **not** installed as a skill:
 
