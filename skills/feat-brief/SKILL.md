@@ -5,9 +5,10 @@ description: >
   idea (interview-me), proposes its size, and saves a brief that /feat
   builds from; splits a huge initiative into a capability map instead. Use
   it whenever the user wants to build, add or implement a feature and has no
-  brief yet, or as /feat-brief "<idea>" or /feat-brief <map> <capability-id>.
+  brief yet, or as /feat-brief followed by the idea, or by a capability map
+  path and a capability id.
   Not for bugfixes or pure refactors.
-argument-hint: '"idea in one line" | <map path> <capability id>'
+argument-hint: '"idea in one line" | map-path capability-id'
 ---
 
 # /feat-brief: from an idea to a brief

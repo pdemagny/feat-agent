@@ -7,9 +7,9 @@ description: >
   and open a PR on its own branch/worktree. Each phase runs in a dedicated
   feat-* subagent whose model and effort follow the feature's size; this
   session only coordinates and holds the gates where the user decides. Use
-  it as /feat <brief path> or /feat resume, when a brief exists. Without a
+  it as /feat followed by a brief path, or /feat resume, when a brief exists. Without a
   brief, use /feat-brief first. Not for bugfixes or pure refactors.
-argument-hint: '<specs/briefs/x.md> | resume'
+argument-hint: 'specs/briefs/name.md | resume'
 ---
 
 # /feat: from a brief to a PR
