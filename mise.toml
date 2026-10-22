@@ -1,0 +1,80 @@
+# Tools and tasks for working on feat-agents: `mise install`, then `mise tasks`.
+# Versions are the ones the current release was tested with.
+
+[tools]
+claude = "2.1.308"              # runs /feat and its agents
+gh = "2.102.1"                  # phase 8 pushes and opens the PR
+"pypi:specify-cli" = "1.2.1"    # Spec Kit: `specify init` in each project
+apm = "0.34.0"                  # installs the package for every harness
+node = "lts"                    # npx, for `install.sh deps` (skills CLI)
+uv = "0.13.4"                   # backend for the pypi: tools
+shellcheck = "0.11.0"           # lints install.sh
+
+[tasks.lint]
+description = "shellcheck install.sh, compile a cost script (since moved out), validate the Claude Code plugin"
+run = [
+  "shellcheck install.sh",
+  "python3 -m py_compile a cost script (since moved out)",
+  "claude plugin validate .",
+]
+
+[tasks.check]
+description = "Report what's missing to run /feat (pass a project dir to check Spec Kit too)"
+run = "./install.sh check"
+
+[tasks."test:apm"]
+description = "Install this checkout with APM into a scratch dir for claude, codex and opencode, and count what landed"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+repo="$PWD"
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+cd "$tmp" && git init -q
+apm install "$repo" -t claude,codex,opencode >/dev/null
+for d in .claude/agents .codex/agents .opencode/agents .claude/skills; do
+  printf '%-18s %s\n' "$d" "$(ls "$d" | wc -l)"
+done
+'''
+
+[tasks."dev:install"]
+description = "Symlink the skills and agents into ~/.claude and add the third-party skills (instead of APM)"
+run = ["./install.sh", "./install.sh deps"]
+
+[tasks."dev:uninstall"]
+description = "Remove the symlinks dev:install created"
+run = "./install.sh uninstall"
+
+[tasks.cost]
+description = "a cost script (since moved out) find|measure|simulate ... (simulate: add --project DIR for its Spec Kit skills)"
+run = "python3 a cost script (since moved out)"
+
+[tasks.release]
+description = "Bump apm.yml and plugin.json, commit, tag v<version> and push (CHANGELOG must have the section)"
+depends = ["lint"]
+usage = 'arg "<version>" help="e.g. 0.2.1, without the v"'
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+v="${usage_version}"
+[ "$(git branch --show-current)" = main ] || { echo "release from main" >&2; exit 1; }
+[ -z "$(git status --porcelain)" ] || { echo "working tree not clean" >&2; exit 1; }
+grep -q "^## $v — " CHANGELOG.md || { echo "CHANGELOG.md has no '## $v — <date>' section" >&2; exit 1; }
+sed -i "s/^version: .*/version: $v/" apm.yml
+sed -i "s/\"version\": \".*\"/\"version\": \"$v\"/" .claude-plugin/plugin.json
+git add apm.yml .claude-plugin/plugin.json
+git commit -m "chore(release): $v"
+git tag -a "v$v" -m "v$v"
+git push && git push origin "v$v"
+'''
+
+[tasks.pin]
+description = "Pin your user-level APM install of feat-agents to a tag and reinstall"
+usage = 'arg "<tag>" help="e.g. v0.2.1"'
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+sed -i -E "s|^(\s*- pdemagny/feat-agents)(#.*)?$|\1#${usage_tag}|" "$HOME/.apm/apm.yml"
+grep -n 'pdemagny/feat-agents' "$HOME/.apm/apm.yml"
+cd "$HOME" && GITHUB_TOKEN="$(gh auth token)" apm install -g
+'''

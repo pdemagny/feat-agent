@@ -103,6 +103,7 @@ apm.yml                  APM package: metadata and the third-party skill depende
 .claude-plugin/          Claude Code plugin and marketplace manifests
 install.sh               developer install (symlinks), deps, check, uninstall
 a cost script (since moved out)            tokens and $ of a run, per phase and model, from transcripts
+mise.toml                pinned tools and tasks (lint, check, test:apm, cost, release, pin)
 docs/                    the documentation above
 ```
 

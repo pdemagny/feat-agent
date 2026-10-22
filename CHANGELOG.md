@@ -5,6 +5,10 @@
 - Sizes renamed: small / medium / large / huge (were small / normal / big /
   huge). `/feat` still reads "normal" and "big" in older briefs and state
   files.
+- `mise.toml`: pinned tools (claude, gh, specify-cli, apm, node, uv,
+  shellcheck) and tasks: `lint`, `check`, `test:apm`, `dev:install`,
+  `dev:uninstall`, `cost`, `release <version>`, `pin <tag>`.
+- a cost script (since moved out) for the project's Spec Kit skills.
 
 ## 0.2.0 — 2026-10-22
 

@@ -22,8 +22,12 @@ Claude Code. Why it isn't portable: [design.md](design.md#distribution-one-sourc
 | Claude Code (tested on 2.1.308) | runs `/feat` and its agents; older versions may ignore subagent `effort` or `skills` | <https://code.claude.com/docs/en/setup> |
 | git | branches, worktrees, diffs | your package manager |
 | GitHub CLI `gh`, logged in | phase 8 pushes and opens the PR | <https://cli.github.com>, then `gh auth login` |
-| Spec Kit CLI `specify` | phases 2–6 are Spec Kit skills | `uv tool install specify-cli` (or `mise use -g pypi:specify-cli`) |
+| Spec Kit CLI `specify` | phases 2–6 are Spec Kit skills | `uv tool install specify-cli` |
 | APM (`apm`) or Node.js (`npx`) | APM installs everything; `npx` installs the third-party skills for the other two ways | `uv tool install apm-cli`; <https://nodejs.org> |
+
+In a clone of this repo, `mise install` installs all of these (and
+`shellcheck`) at the versions the release was tested with; see
+[`mise.toml`](../mise.toml).
 
 The workflow uses Opus and Sonnet. Your plan must give access to both; if one
 isn't available, change the size table (see [usage.md](usage.md#tuning)).

@@ -23,10 +23,9 @@ When changing it:
   or edits artifacts; new work goes into an agent, not the coordinator.
 - Adding or removing an agent: list it in `.claude-plugin/plugin.json`
   (`agents` is an explicit list).
-- Bump `version` in both `apm.yml` and `.claude-plugin/plugin.json` on a
-  release: plugin users stay on the version they have until it changes.
-- Check packaging with `claude plugin validate .` and an `apm install
-  <repo path> -t claude,codex,opencode` into a scratch directory.
+- `version` in `apm.yml` and `.claude-plugin/plugin.json` must match;
+  `mise run release` bumps both (plugin users stay on the version they
+  have until it changes).
 - Shell: `shellcheck install.sh` must stay clean.
 - a cost script (since moved out) parses SKILL.md's size table (`| <N><a-e> <name> |
   \`feat-x\` | <loads> | model · effort | …`); keep that format or update the
@@ -34,3 +33,7 @@ When changing it:
   after changing models, agents or dependencies, and record notable results
   in the cost notes (since moved out). Keep `PRICES` current.
 - Record user-visible changes in CHANGELOG.md.
+- Tools and tasks are in `mise.toml`: `mise run lint` and `mise run
+  test:apm` before committing, `mise run release <version>` to release (it
+  needs the CHANGELOG section first). Bump the tool pins there when you test
+  on newer versions.
