@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Matt Pocock's `code-review` is no longer downloaded: its standards and
+  spec axes and smell baseline are inlined in `feat-code-reviewer` lens 7a
+  (MIT, credited), run as passes in the reviewer's own context instead of
+  two sub-agents. `install.sh` no longer vendors anything;
+  `~/.claude/feat-agents/` is gone. No feat agent spawns agents.
 - `ponytail-review` is no longer a dependency: Ponytail 5 made it a general
   review overlapping the other lenses. Its earlier over-engineering
   checklist is inlined in `feat-code-reviewer` lens 7d (MIT, credited).
@@ -19,8 +24,7 @@
     by `feat-implementer` in fix mode.
   - One implementer per user story at every size.
   - Phase 7 reviewers merged into one `feat-code-reviewer` with lenses;
-    small runs two of them (7a+7b, 7c+7d+7e) and lens 7a without
-    sub-agents. Removed `feat-bug-reviewer`, `feat-perf-reviewer`,
+    small runs two of them (7a+7b, 7c+7d+7e). Removed `feat-bug-reviewer`, `feat-perf-reviewer`,
     `feat-cut-reviewer`, `feat-simplifier`; `feat-sec-reviewer` is design
     only.
   - Medium effort on small for design security, implementation and code

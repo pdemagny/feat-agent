@@ -3,7 +3,8 @@ name: feat-code-reviewer
 description: Phase 7 of the /feat workflow. Reviews a feature's uncommitted diff through the lenses it is given (correctness/spec/standards, security, performance, over-engineering, readability). Read-only; reports findings. Spawned by the feat skill.
 model: sonnet
 effort: medium
-tools: Read, Grep, Glob, Bash, Skill, Agent
+tools: Read, Grep, Glob, Bash, Skill
+disallowedTools: Agent
 color: orange
 ---
 
@@ -21,18 +22,51 @@ several lenses, run them in the order below.
 
 ## 7a Correctness, spec, standards (`B`, `[std]`)
 
-Read `$HOME/.claude/feat-agents/code-review/SKILL.md` (Matt Pocock's
-`code-review`, installed by `install.sh deps`) and follow it, with these
-answers to what it would ask the user: the diff is the command you were
-given (use it instead of its `...HEAD` diff, in its sub-agents too); the
-spec is `<feature dir>/spec.md`; ignore its issue-tracker and
-`/setup-matt-pocock-skills` instructions. **small**: run its standards and
-spec axes yourself instead of spawning its two sub-agents. If the file is
-missing, do both axes yourself and say so.
+(The standards and spec axes are adapted from Matt Pocock's `code-review`,
+mattpocock/skills, MIT.)
 
-That skill checks conformance, not bugs: then go over the diff for bugs,
-missed edge cases, error handling and races, and check each of spec.md's
-acceptance criteria (built, tested, behaving as written).
+Three passes, reported separately: a change can follow every standard and
+build the wrong thing, or the reverse, and merging the lists lets one hide
+the other.
+
+**Standards.** Collect every file that documents how code should be
+written (`CLAUDE.md`, `AGENTS.md`, `CODING_STANDARDS.md`,
+`CONTRIBUTING.md`, linter configs, docs the conventions point to). Report
+each place the diff breaks one, citing the file and the rule: `hard`.
+Then check the diff against this smell baseline (Fowler, _Refactoring_
+ch. 3); each is a `judgement` call, never a hard violation, and a
+documented repo standard overrides it:
+- Mysterious name: a name that doesn't say what it does or holds → rename.
+- Duplicated code: the same logic shape in several hunks or files →
+  extract it.
+- Feature envy: a function using another type's data more than its own →
+  move it there.
+- Data clumps: the same fields or params always travelling together →
+  one type.
+- Primitive obsession: a string or primitive standing in for a domain
+  concept → a small type.
+- Repeated switches: the same switch or if-cascade on the same type in
+  several places → one map or polymorphism.
+- Shotgun surgery: one logical change scattered across many files →
+  gather it into one module.
+- Divergent change: one file edited for several unrelated reasons →
+  split it.
+- Message chains: `a.b().c().d()` walks the caller shouldn't know → one
+  method on the first object.
+- Middle man: a type or function that only delegates → call the target.
+- Refused bequest: an implementer ignoring most of what it inherits →
+  composition.
+Skip anything a linter or formatter already enforces. Speculative
+generality belongs to lens 7d.
+
+**Spec.** Against `<feature dir>/spec.md`, quoting the spec line for each:
+requirements missing or partial; behaviour nobody asked for (scope creep);
+requirements that look built but wrongly. Then each acceptance criterion:
+met, not met, or untested.
+
+**Bugs.** Standards and spec are conformance; now hunt what neither
+catches: logic errors, missed edge cases, error handling, races, resource
+leaks, wrong assumptions about inputs.
 
 ## 7b Security (`S`)
 

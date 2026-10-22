@@ -26,13 +26,6 @@ deps=(
 # Installed per project by `specify init --integration claude`.
 speckit_skills=(speckit-specify speckit-clarify speckit-plan speckit-tasks speckit-analyze speckit-implement)
 tools=(claude git gh specify)
-# Skills read by an agent from a private path instead of being installed as
-# skills, because their name would replace a built-in command (code-review).
-# As "<raw url> <dest under ~/.claude/feat-agents>". Bump the ref to update.
-vendored=(
-  "https://raw.githubusercontent.com/mattpocock/skills/5beb35b040e3de97e54fa9e386d7e42d15c295c2/skills/engineering/code-review/SKILL.md code-review/SKILL.md"
-)
-vendor_dir="$HOME/.claude/feat-agents"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -93,16 +86,9 @@ case "$cmd" in
 
   deps)
     command -v npx >/dev/null || { echo "npx not found: install Node.js first" >&2; exit 1; }
-    command -v curl >/dev/null || { echo "curl not found" >&2; exit 1; }
     for d in "${deps[@]}"; do
       read -r src skill <<<"$d"
       npx -y skills add "$src" --skill "$skill" --agent claude-code --global --yes
-    done
-    for v in "${vendored[@]}"; do
-      read -r url dest <<<"$v"
-      mkdir -p "$(dirname "$vendor_dir/$dest")"
-      curl -fsSL "$url" -o "$vendor_dir/$dest"
-      echo "fetched  $vendor_dir/$dest"
     done
     ;;
 
@@ -128,10 +114,6 @@ case "$cmd" in
       read -r _ skill <<<"$d"
       expect "skill $skill" "./install.sh deps" has_skill "$skill"
     done
-    for v in "${vendored[@]}"; do
-      read -r _ dest <<<"$v"
-      expect "vendored $dest" "./install.sh deps" test -f "$vendor_dir/$dest"
-    done
     if [ -n "$project" ]; then
       fix="specify init --here --integration claude"
       expect "spec kit in $project" "$fix" test -d "$project/.specify"
@@ -151,9 +133,5 @@ case "$cmd" in
         echo "kept     $dest (not a link into $repo; remove it by hand)"
       fi
     done
-    # Vendored skills are shared by every target: remove them only with the user-level install.
-    if [ "$target" = "$HOME/.claude" ] && [ -d "$vendor_dir" ]; then
-      rm -r "$vendor_dir"; echo "removed  $vendor_dir"
-    fi
     ;;
 esac

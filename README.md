@@ -97,7 +97,8 @@ Version 0.1.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli)
 ## License
 
 MIT, see [LICENSE](LICENSE). The capability-map rules in `skills/feat-brief`
-are adapted from addyosmani/agent-skills (MIT), and the over-engineering
-checklist in `agents/feat-code-reviewer.md` from dietrichgebert/ponytail's
-pre-v5 `ponytail-review` (MIT). Third-party skills installed
+are adapted from addyosmani/agent-skills (MIT), and two checklists in
+`agents/feat-code-reviewer.md` from MIT skills: standards and spec review
+from mattpocock/skills' `code-review`, over-engineering from
+dietrichgebert/ponytail's pre-v5 `ponytail-review`. Third-party skills installed
 by `install.sh deps` keep their own licenses.

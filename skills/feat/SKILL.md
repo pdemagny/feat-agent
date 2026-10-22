@@ -71,7 +71,7 @@ The single source of truth for models and efforts. Agent files carry the
 | 4b Cost design | `feat-cost-reviewer` | — | sonnet · medium | sonnet · high | opus · high |
 | 5 Tasks | `feat-tasker` | speckit-tasks, speckit-analyze | sonnet · medium | sonnet · high | sonnet · high |
 | 6 Implement | `feat-implementer` | speckit-implement | sonnet · medium | opus · high | opus · high |
-| 7a Correctness, spec, standards | `feat-code-reviewer` | code-review (vendored) | sonnet · medium | opus · high | opus · xhigh |
+| 7a Correctness, spec, standards | `feat-code-reviewer` | — | sonnet · medium | opus · high | opus · xhigh |
 | 7b Security | `feat-code-reviewer` | security-and-hardening | sonnet · medium | opus · high | opus · xhigh |
 | 7c Performance | `feat-code-reviewer` | performance-optimization | sonnet · medium | sonnet · high | opus · high |
 | 7d Over-engineering | `feat-code-reviewer` | — | sonnet · medium | sonnet · high | sonnet · high |

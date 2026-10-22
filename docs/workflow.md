@@ -28,7 +28,7 @@ is authoritative; this page mirrors it with explanations.
 | 4 | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer`, then `feat-planner` writes accepted findings | `security-and-hardening` (cost checklist in the agent) | findings D1… | **hard** (soft for small without real findings) |
 | 5 | Tasks | `feat-tasker` | `speckit-tasks`, `speckit-analyze` | `tasks.md`, analysis clean | hard on CRITICAL/HIGH or unchecked checklists; always for big |
 | 6 | Implement | `feat-implementer` ×1 per user story, in turn | `speckit-implement` | the code, tasks ticked, checks green | soft (hard per story for big; hard on a design problem) |
-| 7 | Code review | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks | Matt Pocock's `code-review`, `security-and-hardening`, `performance-optimization`, `code-simplification` | findings B, S, P, C, R; picked fixes applied | **hard** |
+| 7 | Code review | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks | `security-and-hardening`, `performance-optimization`, `code-simplification` | findings B, S, P, C, R; picked fixes applied | **hard** |
 | 8 | Ship | `feat-shipper` | — | docs updated, commits, push, PR | none |
 
 **Hard gate**: Claude stops and waits for your answer. **Soft gate**: Claude
@@ -54,9 +54,7 @@ Each cell: model · effort. Agent-file defaults are the **small** column.
 | 7e | Readability | `feat-code-reviewer` | sonnet · medium | sonnet · high | sonnet · high | — |
 | 8 | Ship | `feat-shipper` | haiku · medium | haiku · medium | haiku · medium | — |
 
-**Phase 7 reviewers.** small: two reviewers, lenses 7a+7b and 7c+7d+7e, and
-7a runs Matt Pocock's two review axes itself instead of spawning two
-agents. normal and big: one reviewer per lens, 7a–7d in parallel, then 7e
+**Phase 7 reviewers.** small: two reviewers, lenses 7a+7b and 7c+7d+7e. normal and big: one reviewer per lens, 7a–7d in parallel, then 7e
 with 7d's cuts. A group runs on the strongest model among its lenses.
 Applying the picked fixes uses the phase 6 row.
 
@@ -69,7 +67,7 @@ gets its own brief and size column.
 |---|---|---|---|---|
 | **When** | one package/project; no new service, permissions, network exposure or dependency | anything else that isn't big | several packages/projects, a new service, or > ~25 tasks | capabilities that could ship independently |
 | **Hard gates** | brief, 2, 7 (+4 on a real finding, +5 on CRITICAL/HIGH) | brief, 2, 4, 7 (+5 on CRITICAL/HIGH) | brief, 2, 3, 4, 5, each story in 6, 7 | the map |
-| **Code reviewers** | 2 | 5 (+2 sub-agents) | 5 (+2 sub-agents) | per capability |
+| **Code reviewers** | 2 | 5 | 5 | per capability |
 | **PRs** | 1 | 1 | 1 | 1 per capability |
 | **Extra review** | — | — | `/code-review ultra` suggested before merge (you launch it) | per capability |
 
@@ -148,10 +146,12 @@ a hard gate. **Big:** a gate after each story.
 The coordinator makes the uncommitted work reviewable (`git add -N` on new
 files, `git diff <merge-base>`; a `...HEAD` diff would be empty) and spawns
 the reviewers with their lenses:
-- **7a Correctness, spec, standards**: Matt Pocock's `code-review`
-  (standards: documented coding standards plus a baseline of Fowler smells;
-  spec: missing requirements, scope creep, wrong implementations), then a
-  pass for bugs and edge cases, which that skill doesn't hunt.
+- **7a Correctness, spec, standards**: three separate passes. Standards:
+  the project's documented rules (hard) and a Fowler smell baseline
+  (judgement calls). Spec: missing requirements, scope creep, wrong
+  implementations, acceptance criteria. Bugs: edge cases, error handling,
+  races. The first two are adapted from Matt Pocock's `code-review`
+  ([mattpocock/skills](https://github.com/mattpocock/skills), MIT).
 - **7b Security**: each accepted `[sec]` design finding is built, plus what
   the implementation introduced.
 - **7c Performance**: `performance-optimization`'s measure and identify
@@ -198,9 +198,7 @@ starts from it; the PR links to it. It's updated at each gate.
 | `feat-cost-reviewer` | 4 | sonnet · medium | Read, Grep, Glob | none (checklist in its prompt) | nothing |
 | `feat-tasker` | 5 | sonnet · medium | Read, Grep, Glob, Bash, Edit, Write, Skill | `speckit-tasks`, `speckit-analyze` | tasks.md, small artifact fixes |
 | `feat-implementer` | 6, 7 (fix mode) | sonnet · medium | all but Agent | `speckit-implement` | code, tasks.md |
-| `feat-code-reviewer` | 7 | sonnet · medium | Read, Grep, Glob, Bash, Skill, Agent | per lens, on demand | nothing |
+| `feat-code-reviewer` | 7 | sonnet · medium | Read, Grep, Glob, Bash, Skill | per lens, on demand | nothing |
 | `feat-shipper` | 8 | haiku · medium | Read, Grep, Glob, Bash, Edit, Write | — | docs, commits, PR |
 
-No agent but the shipper commits. Writing agents can't spawn further agents
-(`disallowedTools: Agent`); the code reviewer can, for lens 7a's two
-sub-agents on normal and big.
+No agent but the shipper commits, and no agent spawns further agents.

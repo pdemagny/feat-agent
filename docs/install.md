@@ -53,18 +53,10 @@ for each skill below. They land in `~/.agents/skills/` and are linked into
 | `performance-optimization` | addyosmani/agent-skills | `feat-code-reviewer` lens 7c |
 | `code-simplification` | addyosmani/agent-skills | `feat-code-reviewer` lens 7e |
 
-It also downloads one skill that is **not** installed as a skill:
-
-| Skill | Source | Saved to | Used by |
-|---|---|---|---|
-| `code-review` | [mattpocock/skills](https://github.com/mattpocock/skills) (`skills/engineering/code-review`, pinned commit) | `~/.claude/feat-agents/code-review/SKILL.md` | `feat-code-reviewer` lens 7a |
-
-Installed as a skill, its name would replace Claude Code's built-in
-`/code-review` (and `/code-review ultra`) in every project. Saved to a path
-outside `skills/`, only `feat-code-reviewer` reads it. To update it, bump the
-commit in `vendored` in `install.sh` and rerun `./install.sh deps`. You
-don't need to run its `/setup-matt-pocock-skills`: the agent passes the
-spec path and default branch itself.
+Two more checklists are built into `feat-code-reviewer` instead of being
+installed: the standards and spec review of lens 7a (from Matt Pocock's
+`code-review`) and the over-engineering review of lens 7d (from the pre-v5
+`ponytail-review`). Both MIT, credited in the agent and the README.
 
 ## 3. Set up Spec Kit in each project
 

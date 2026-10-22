@@ -64,13 +64,8 @@ Two other shapes were considered:
   others. The orchestrator ends its turn while they run and continues when
   they report.
 - **Subagents may spawn subagents** (up to three levels). Writing agents
-  disallow `Agent` to keep cost bounded; `feat-code-reviewer` has `Agent`
-  because Matt Pocock's `code-review` runs its standards and spec reviews in
-  two sub-agents (two levels below the main session) on normal and big.
-- **A personal or project skill replaces a built-in command of the same
-  name.** That's why Matt Pocock's `code-review` is saved outside
-  `~/.claude/skills/` and read by path, not installed: installed, it would
-  take over `/code-review` everywhere.
+  disallow `Agent` to keep cost bounded; no feat agent spawns further
+  agents.
 - **Read-only reviewers** get no Edit/Write; their Bash is for git and grep
   only, by instruction.
 - **`effort` in an inline skill's frontmatter** has no documented duration,
@@ -90,7 +85,7 @@ dependency was checked for that, and handled one of three ways:
 | `incremental-implementation` | commit after every slice, "no uncommitted changes remain" | **dropped**; `speckit-implement` already works task by task with checks, and the workflow commits only in phase 8 |
 | `interview-me` | its own restate and confirmation, then "offer downstream paths" (save to `docs/intent/`, hand off to `spec-driven-development`) and stop | **overridden** in `/feat-brief`: its restate is the brief, its confirmation is the gate, its step 6 is skipped |
 | `code-simplification` | apply changes, test, commit | **overridden** in lens 7e: steps 1–2 only, report; the reviewer has no Edit/Write |
-| Matt Pocock's `code-review` | asks the user for the fixed point and spec, issue tracker setup, `...HEAD` diff | **overridden** in lens 7a: answers given in advance, diff command supplied; on small, both axes run inline without sub-agents |
+| Matt Pocock's `code-review` | asks the user for the fixed point and spec, needs issue-tracker setup, diffs `...HEAD` (empty here), runs its two axes in sub-agents; installed as a skill it would replace the built-in `/code-review` | **dropped**; its standards and spec axes and its Fowler smell baseline (about 40 lines) are inlined in lens 7a, credited. The reviewer runs them as separate passes in its own context instead of two sub-agents. |
 | `speckit-implement` | stops to ask about unchecked checklists | **overridden**: the orchestrator asks at the phase 5 gate and passes the answer |
 | `speckit-analyze` | ends by asking whether to suggest remediation | **overridden** in `feat-tasker`: always yes for CRITICAL/HIGH |
 | all `speckit-*` | run mandatory hooks from `.specify/extensions.yml`, which may create branches or commit (git extension) | **overridden**: phase 0 lists hooks, the user decides, agents run only allowed ones and report skipped ones |
@@ -138,9 +133,6 @@ Measured and simulated numbers: the cost notes (since moved out).
 
 ## Things to verify on first runs
 
-- That `feat-code-reviewer` follows the vendored `code-review` without
-  stalling on its "ask the user" steps (fixed point, spec, issue tracker);
-  its prompt answers them in advance.
 - That `git diff <merge-base>` after `git add -N` shows every new file in
   your setup (some hooks or rtk-style wrappers may filter git output).
 - The `small` defaults: whether Sonnet at medium effort is enough for spec
