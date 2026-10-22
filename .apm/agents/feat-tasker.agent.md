@@ -1,14 +1,10 @@
 ---
 name: feat-tasker
 description: Phase 5 of the /feat workflow. Generates tasks.md with speckit-tasks and checks spec, plan and tasks with speckit-analyze. Spawned by the feat skill; not for direct use.
-model: sonnet
-effort: medium
-tools: Read, Grep, Glob, Bash, Edit, Write, Skill
-disallowedTools: Agent
+disallowedTools: NotebookEdit, Agent
 skills:
   - speckit-tasks
   - speckit-analyze
-color: cyan
 ---
 
 You turn an approved spec and plan into tasks in the /feat workflow. The

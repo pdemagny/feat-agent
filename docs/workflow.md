@@ -1,7 +1,7 @@
 # The workflow in detail
 
 What runs at each phase, on which model, for which size, and where it stops
-for you. The size table in [`skills/feat/SKILL.md`](../skills/feat/SKILL.md)
+for you. The size table in [`.apm/skills/feat/SKILL.md`](../.apm/skills/feat/SKILL.md)
 is authoritative; this page mirrors it with explanations.
 
 ## Roles
@@ -36,7 +36,7 @@ reports and continues; anything surprising turns it into a hard gate.
 
 ## Size × phase matrix
 
-Each cell: model · effort. Agent-file defaults are the **small** column.
+Each cell: model · effort, passed by `/feat` on every spawn.
 
 | # | Phase | Agent | small | normal | big | huge |
 |---|---|---|---|---|---|---|
@@ -192,15 +192,18 @@ starts from it; the PR links to it. It's updated at each gate.
 
 ## Agents
 
-| Agent | Phase(s) | Default model · effort | Tools | Loads | Writes |
+| Agent | Phase(s) | small size | Denied tools | Loads | Writes |
 |---|---|---|---|---|---|
-| `feat-specifier` | 2 | sonnet · medium | Read, Grep, Glob, Bash, Edit, Write, Skill | `speckit-specify` | spec.md |
-| `feat-planner` | 3, 4 (amend) | opus · high | Read, Grep, Glob, Bash, Edit, Write, Skill, WebFetch, WebSearch | `speckit-plan` | plan.md, design docs; accepted findings into spec.md |
-| `feat-sec-reviewer` | 4 | sonnet · medium | Read, Grep, Glob, Bash (read-only) | `security-and-hardening` | nothing |
-| `feat-cost-reviewer` | 4 | sonnet · medium | Read, Grep, Glob | none (checklist in its prompt) | nothing |
-| `feat-tasker` | 5 | sonnet · medium | Read, Grep, Glob, Bash, Edit, Write, Skill | `speckit-tasks`, `speckit-analyze` | tasks.md, small artifact fixes |
-| `feat-implementer` | 6, 7 (fix mode) | sonnet · medium | all but Agent | `speckit-implement` | code, tasks.md |
-| `feat-code-reviewer` | 7 | sonnet · medium | Read, Grep, Glob, Bash, Skill | per lens, on demand | nothing |
-| `feat-shipper` | 8 | haiku · medium | Read, Grep, Glob, Bash, Edit, Write | — | docs, commits, PR |
+| `feat-specifier` | 2 | sonnet · medium | NotebookEdit, Agent | `speckit-specify` | spec.md |
+| `feat-planner` | 3, 4 (amend) | opus · high | NotebookEdit, Agent | `speckit-plan` | plan.md, design docs; accepted findings into spec.md |
+| `feat-sec-reviewer` | 4 | sonnet · medium | Edit, Write, NotebookEdit, Agent | `security-and-hardening` | nothing |
+| `feat-cost-reviewer` | 4 | sonnet · medium | Bash, Edit, Write, NotebookEdit, Agent | none (checklist in its prompt) | nothing |
+| `feat-tasker` | 5 | sonnet · medium | NotebookEdit, Agent | `speckit-tasks`, `speckit-analyze` | tasks.md, small artifact fixes |
+| `feat-implementer` | 6, 7 (fix mode) | sonnet · medium | Agent | `speckit-implement` | code, tasks.md |
+| `feat-code-reviewer` | 7 | sonnet · medium | Edit, Write, NotebookEdit, Agent | per lens, on demand | nothing |
+| `feat-shipper` | 8 | haiku · medium | NotebookEdit, Agent | — | docs, commits, PR |
 
-No agent but the shipper commits, and no agent spawns further agents.
+Agent files carry no model or effort: `/feat` passes both on every spawn,
+from the size table. Tool limits are deny lists (`disallowedTools`) rather
+than allow lists, because OpenCode rejects Claude's `tools:` string; Codex
+drops them when APM converts the agents. No agent but the shipper commits, and no agent spawns further agents.

@@ -1,13 +1,9 @@
 ---
 name: feat-specifier
 description: Phase 2 of the /feat workflow. Writes spec.md from a confirmed feature brief with speckit-specify. Spawned by the feat skill; not for direct use.
-model: sonnet
-effort: medium
-tools: Read, Grep, Glob, Bash, Edit, Write, Skill
-disallowedTools: Agent
+disallowedTools: NotebookEdit, Agent
 skills:
   - speckit-specify
-color: blue
 ---
 
 You write the specification for one feature of the /feat workflow. The

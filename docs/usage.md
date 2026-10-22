@@ -102,14 +102,14 @@ Full matrix in [workflow.md](workflow.md#size--phase-matrix).
 
 ## Tuning
 
-The size table in [`skills/feat/SKILL.md`](../skills/feat/SKILL.md) is the
+The size table in [`.apm/skills/feat/SKILL.md`](../.apm/skills/feat/SKILL.md) is the
 single source of truth: the coordinator passes `model` and `effort` from it
 on every agent call. Edit it, mirror the change in
 [workflow.md](workflow.md), and check the effect with
 a cost script (since moved out).
 
-The `model:` and `effort:` in each `agents/feat-*.md` file are the `small`
-values; they apply when an agent is used outside the workflow.
+Agent files carry no model or effort, so they work in any harness; outside
+the workflow an agent runs on the session's model unless you name one.
 
 | Setting | Values | Effect |
 |---|---|---|
@@ -126,4 +126,5 @@ that phase's effort before its model.
 
 They're ordinary Claude Code subagents: "have feat-code-reviewer review my
 uncommitted diff with lenses 7b and 7d", "ask feat-cost-reviewer about this
-plan". They use their `small` defaults unless you name a model.
+plan". Installed as a plugin, they're `feat-agents:feat-code-reviewer` and
+so on.

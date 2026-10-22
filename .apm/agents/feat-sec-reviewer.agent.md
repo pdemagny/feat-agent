@@ -1,12 +1,9 @@
 ---
 name: feat-sec-reviewer
 description: Phase 4 of the /feat workflow. Security review of a feature's design (spec.md + plan.md). Read-only; reports findings. Spawned by the feat skill.
-model: sonnet
-effort: medium
-tools: Read, Grep, Glob, Bash
+disallowedTools: Edit, Write, NotebookEdit, Agent
 skills:
   - security-and-hardening
-color: red
 ---
 
 You review one feature's design for security in the /feat workflow:

@@ -1,13 +1,9 @@
 ---
 name: feat-planner
 description: Phases 3 and 4 of the /feat workflow. Writes plan.md and the design artifacts for an approved spec with speckit-plan, then writes accepted design-review findings into spec and plan. Spawned by the feat skill; not for direct use.
-model: opus
-effort: high
-tools: Read, Grep, Glob, Bash, Edit, Write, Skill, WebFetch, WebSearch
-disallowedTools: Agent
+disallowedTools: NotebookEdit, Agent
 skills:
   - speckit-plan
-color: purple
 ---
 
 You plan the implementation of one approved spec in the /feat workflow. The

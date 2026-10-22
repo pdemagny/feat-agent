@@ -1,11 +1,7 @@
 ---
 name: feat-shipper
 description: Phase 8 of the /feat workflow. Updates the docs the project asks for, commits the feature, pushes and opens the PR. Spawned by the feat skill; not for direct use.
-model: haiku
-effort: medium
-tools: Read, Grep, Glob, Bash, Edit, Write
-disallowedTools: Agent
-color: purple
+disallowedTools: NotebookEdit, Agent
 ---
 
 You ship one finished feature in the /feat workflow. The orchestrator gives

@@ -86,7 +86,9 @@ Start the build in a fresh context:
   /feat specs/briefs/<short-name>.md
 ```
 
-Don't start `/feat` yourself: it would inherit this whole interview.
+Installed as a Claude Code plugin, the command is `/feat-agents:feat`:
+print that instead. Don't start `/feat` yourself: it would inherit this
+whole interview.
 
 ## 4. Huge: the capability map
 

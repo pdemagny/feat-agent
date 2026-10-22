@@ -1,0 +1,32 @@
+{
+  "name": "feat-agents",
+  "version": "0.2.0",
+  "description": "From a feature idea to a reviewed PR: /feat-brief writes the brief, /feat runs Spec Kit phases in feat-* subagents sized by model and effort.",
+  "author": {
+    "name": "Pierre Demagny",
+    "url": "https://github.com/pdemagny"
+  },
+  "homepage": "https://github.com/pdemagny/feat-agents",
+  "repository": "https://github.com/pdemagny/feat-agents",
+  "license": "MIT",
+  "keywords": [
+    "spec-kit",
+    "workflow",
+    "subagents",
+    "code-review",
+    "feature"
+  ],
+  "skills": [
+    "./.apm/skills/"
+  ],
+  "agents": [
+    "./.apm/agents/feat-code-reviewer.agent.md",
+    "./.apm/agents/feat-cost-reviewer.agent.md",
+    "./.apm/agents/feat-implementer.agent.md",
+    "./.apm/agents/feat-planner.agent.md",
+    "./.apm/agents/feat-sec-reviewer.agent.md",
+    "./.apm/agents/feat-shipper.agent.md",
+    "./.apm/agents/feat-specifier.agent.md",
+    "./.apm/agents/feat-tasker.agent.md"
+  ]
+}

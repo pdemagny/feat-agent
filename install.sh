@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-# Install the /feat skill and its feat-* subagents into Claude Code.
+# Developer install of the feat skills and feat-* subagents into Claude Code:
+# symlinks into this repo, so edits apply at once. Users install with APM or
+# the Claude Code plugin instead (docs/install.md); `check` works for all three.
 #
-#   ./install.sh [install] [--copy] [--target DIR]   link (or copy) skill + agents
+#   ./install.sh [install] [--copy] [--target DIR]   link (or copy) skills + agents
 #   ./install.sh deps                                install the third-party skills
 #   ./install.sh check [PROJECT_DIR]                 report what is missing
 #   ./install.sh uninstall [--target DIR]            remove what install created
@@ -16,12 +18,9 @@ mode="link"
 cmd=install
 project=""
 
-# Third-party skills, as "<github source> <skill>".
-deps=(
-  "addyosmani/agent-skills interview-me"
-  "addyosmani/agent-skills security-and-hardening"
-  "addyosmani/agent-skills performance-optimization"
-)
+# Third-party skills, all from one repo. Keep in sync with apm.yml.
+deps_repo="addyosmani/agent-skills"
+deps=(interview-me security-and-hardening performance-optimization)
 # Installed per project by `specify init --integration claude`.
 speckit_skills=(speckit-specify speckit-clarify speckit-plan speckit-tasks speckit-analyze speckit-implement)
 tools=(claude git gh specify)
@@ -44,7 +43,9 @@ place() {
   if [ -L "$dest" ] && [ "$(readlink -f "$dest")" = "$(readlink -f "$src")" ]; then
     echo "ok       $dest"; return
   fi
-  if [ -e "$dest" ] || [ -L "$dest" ]; then
+  if [ -L "$dest" ] && [[ "$(readlink "$dest")" == "$repo"/* ]]; then
+    rm "$dest"   # ours, from an older layout of this repo
+  elif [ -e "$dest" ] || [ -L "$dest" ]; then
     local bak
     # Outside skills/ and agents/: Claude Code would load a backup there as a skill or agent.
     bak="$HOME/.claude/feat-agents-backups/$(basename "$dest").$(date +%Y%m%d%H%M%S)"
@@ -69,15 +70,20 @@ has_agent() {
     { [ -n "$project" ] && [ -f "$project/.claude/agents/$1" ]; }
 }
 
+# Installed as a Claude Code plugin: its skills and agents live in the plugin cache.
+has_plugin() {
+  claude plugin list 2>/dev/null | grep -q 'feat-agents@'
+}
+
 case "$cmd" in
   install)
     mkdir -p "$target/skills" "$target/agents"
-    for d in "$repo"/skills/*/; do
+    for d in "$repo"/.apm/skills/*/; do
       d="${d%/}"
       place "$d" "$target/skills/$(basename "$d")"
     done
-    for f in "$repo"/agents/*.md; do
-      place "$f" "$target/agents/$(basename "$f")"
+    for f in "$repo"/.apm/agents/*.agent.md; do
+      place "$f" "$target/agents/$(basename "$f" .agent.md).md"
     done
     echo
     echo "Next: ./install.sh deps (third-party skills), then ./install.sh check <project>"
@@ -85,10 +91,7 @@ case "$cmd" in
 
   deps)
     command -v npx >/dev/null || { echo "npx not found: install Node.js first" >&2; exit 1; }
-    for d in "${deps[@]}"; do
-      read -r src skill <<<"$d"
-      npx -y skills add "$src" --skill "$skill" --agent claude-code --global --yes
-    done
+    npx -y skills add "$deps_repo" --skill "${deps[@]}" --agent claude-code --global --yes
     ;;
 
   check)
@@ -101,17 +104,20 @@ case "$cmd" in
     }
     for t in "${tools[@]}"; do expect "tool $t" "install it" command -v "$t"; done
     expect "gh authenticated" "gh auth login" gh auth status
-    for d in "$repo"/skills/*/; do
-      s="$(basename "$d")"
-      expect "skill $s" "./install.sh" has_skill "$s"
-    done
-    for f in "$repo"/agents/*.md; do
-      a="$(basename "$f")"
-      expect "agent ${a%.md}" "./install.sh" has_agent "$a"
-    done
-    for d in "${deps[@]}"; do
-      read -r _ skill <<<"$d"
-      expect "skill $skill" "./install.sh deps" has_skill "$skill"
+    if has_plugin; then
+      echo "ok       plugin feat-agents (skills and agents)"
+    else
+      for d in "$repo"/.apm/skills/*/; do
+        s="$(basename "$d")"
+        expect "skill $s" "see docs/install.md" has_skill "$s"
+      done
+      for f in "$repo"/.apm/agents/*.agent.md; do
+        a="$(basename "$f" .agent.md)"
+        expect "agent $a" "see docs/install.md" has_agent "$a.md"
+      done
+    fi
+    for skill in "${deps[@]}"; do
+      expect "skill $skill" "apm install -g pdemagny/feat-agents, or ./install.sh deps" has_skill "$skill"
     done
     if [ -n "$project" ]; then
       fix="specify init --here --integration claude"
@@ -126,7 +132,7 @@ case "$cmd" in
   uninstall)
     for dest in "$target"/skills/feat "$target"/skills/feat-* "$target"/agents/feat-*.md; do
       [ -e "$dest" ] || [ -L "$dest" ] || continue
-      if [ -L "$dest" ] && [[ "$(readlink -f "$dest")" == "$repo"/* ]]; then
+      if [ -L "$dest" ] && [[ "$(readlink "$dest")" == "$repo"/* ]]; then
         rm "$dest"; echo "removed  $dest"
       else
         echo "kept     $dest (not a link into $repo; remove it by hand)"

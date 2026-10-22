@@ -119,6 +119,37 @@ keeping contexts small:
 
 Measured and simulated numbers: the cost notes (since moved out).
 
+## Distribution: one source, three installers
+
+Skills travel well between harnesses (the Agent Skills format); agents
+don't, and no packaging standard covers them yet (Agent Plugins 1.0 packages
+skills and MCP servers only). So the repo keeps one copy of everything in
+APM's layout and lets each installer read it:
+
+- **APM** (`apm.yml`, `.apm/`): one command for every harness, and the only
+  one that also installs the third-party skills. It converts agents for
+  Codex (TOML) and copies them for Claude Code and OpenCode; Gemini and
+  Antigravity have no custom agents. With an `apm.yml`, `apm install` finds
+  agents only as `.apm/agents/*.agent.md`, which is why the files live there.
+- **Claude Code plugin** (`.claude-plugin/`): native install and updates,
+  pointing at the same `.apm/` paths. Plugin components are namespaced, so
+  the skills accept both `feat-planner` and `feat-agents:feat-planner`. A
+  plugin can't depend on loose skills (only on other plugins), so the
+  third-party skills come from the skills CLI.
+- **`install.sh`**: symlinks for working on the workflow itself.
+
+Portable agent frontmatter: no `model` or `effort` (Claude model names are
+invalid in Codex; `/feat` passes both on every spawn anyway), no `color`
+(OpenCode wants hex or theme names, Claude wants colour names), and tool
+limits as `disallowedTools` instead of `tools` (OpenCode rejects Claude's
+comma-separated string). Codex drops `disallowedTools`, so read-only
+reviewers aren't enforced there.
+
+Only Claude Code runs `/feat` end to end: the skill relies on its Agent tool
+with per-call `model` and `effort`, and on `EnterWorktree`. Running every
+phase inline on harnesses without agents was considered and rejected: it
+brings back the single growing context this workflow exists to avoid.
+
 ## Behaviour of the workflow itself
 
 - **Nothing is committed before phase 8.** So phase 7 can't review `git diff
@@ -135,7 +166,7 @@ Measured and simulated numbers: the cost notes (since moved out).
 
 - That `git diff <merge-base>` after `git add -N` shows every new file in
   your setup (some hooks or rtk-style wrappers may filter git output).
-- The `small` defaults: whether Sonnet at medium effort is enough for spec
+- The `small` column: whether Sonnet at medium effort is enough for spec
   and tasks in your codebase.
 
 ## Ideas not taken (yet)

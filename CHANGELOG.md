@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+- Install with one command for any harness: `apm install -g
+  pdemagny/feat-agents` (APM) installs the skills, the agents (converted for
+  Codex, copied for OpenCode) and the three third-party skills, declared in
+  the new `apm.yml`. Claude Code users can install it as a plugin instead:
+  `/plugin install feat-agents --marketplace pdemagny/feat-agents`.
+- Skills and agents moved to `.apm/skills/` and `.apm/agents/*.agent.md`,
+  the layout both APM and the plugin read. `./install.sh` follows; rerun it
+  to update existing links.
+- Agent frontmatter is harness-neutral: no `model`, `effort` or `color`, and
+  `disallowedTools` instead of `tools`. `/feat` already passed model and
+  effort on every spawn.
+- `/feat` accepts plugin-namespaced agent names (`feat-agents:feat-planner`);
+  a cost script (since moved out) strips the prefix.
+- `./install.sh deps` installs the three skills in one `npx skills add`;
+  `./install.sh check` recognises a plugin install.
+- The repo's `CLAUDE.md` moved to `.claude/CLAUDE.md` (plugins don't load a
+  root `CLAUDE.md`, and the validator warns about it).
 - `code-simplification` is no longer a dependency: its behaviour-preserving
   rule, readability signals and over-simplification traps are inlined in
   `feat-code-reviewer` lens 7e (Addy Osmani, MIT, credited).

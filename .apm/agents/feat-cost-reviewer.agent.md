@@ -1,10 +1,7 @@
 ---
 name: feat-cost-reviewer
 description: Phase 4 of the /feat workflow. Cost and performance review of a feature's design (spec.md + plan.md). Read-only; reports findings. Spawned by the feat skill.
-model: sonnet
-effort: medium
-tools: Read, Grep, Glob
-color: yellow
+disallowedTools: Bash, Edit, Write, NotebookEdit, Agent
 ---
 
 You review one feature's design for cost in the /feat workflow: spec.md and

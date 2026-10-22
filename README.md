@@ -56,18 +56,27 @@ security, performance, over-engineering, readability. Full matrix in
 ## Quick start
 
 ```sh
-git clone <this repo> ~/Projects/feat-agents
-cd ~/Projects/feat-agents
-./install.sh            # link the skills and agents into ~/.claude
-./install.sh deps       # install the third-party skills they use
+uv tool install apm-cli
+apm install -g pdemagny/feat-agents -t claude   # skills, agents and their dependencies
 cd ~/your-project
-specify init --here --integration claude   # once per project, if not already
-~/Projects/feat-agents/install.sh check .  # everything should say ok
+specify init --here --integration claude       # once per project, if not already
 claude
 > /feat-brief "describe the feature in one line"
 > /clear
 > /feat specs/briefs/<name>.md
 ```
+
+Or, in Claude Code only, as a plugin (commands become `/feat-agents:feat`
+and `/feat-agents:feat-brief`):
+
+```
+/plugin install feat-agents --marketplace pdemagny/feat-agents
+```
+
+then add the third-party skills with `npx skills add`. APM also installs for
+Codex, OpenCode and the harnesses that read `~/.agents/skills`; only Claude
+Code runs `/feat` end to end. All three install ways, and checking an
+install: [docs/install.md](docs/install.md).
 
 ## Documentation
 
@@ -82,23 +91,26 @@ claude
 ## Layout
 
 ```
-skills/feat/SKILL.md   the orchestrator: phases, gates, size table (source of truth)
-agents/feat-*.md       one subagent per phase role; frontmatter defaults = small size
-install.sh             install, deps, check, uninstall
-a cost script (since moved out)          tokens and $ of a run, per phase and model, from Claude Code transcripts
-docs/                  the documentation above
+.apm/skills/feat/        the orchestrator: phases, gates, size table (source of truth)
+.apm/skills/feat-brief/  phase 1: interview, size, brief or capability map
+.apm/agents/*.agent.md   one subagent per phase role, harness-neutral frontmatter
+apm.yml                  APM package: metadata and the third-party skill dependencies
+.claude-plugin/          Claude Code plugin and marketplace manifests
+install.sh               developer install (symlinks), deps, check, uninstall
+a cost script (since moved out)            tokens and $ of a run, per phase and model, from transcripts
+docs/                    the documentation above
 ```
 
 ## Status
 
-Version 0.1.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli)
+Version 0.2.0 (unreleased). Tested with Claude Code 2.1.308 and Spec Kit (specify-cli)
 1.2.x. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-MIT, see [LICENSE](LICENSE). The capability-map rules in `skills/feat-brief`
+MIT, see [LICENSE](LICENSE). The capability-map rules in `.apm/skills/feat-brief`
 are adapted from addyosmani/agent-skills (MIT), and three checklists in
-`agents/feat-code-reviewer.md` from MIT skills: standards and spec review
+`.apm/agents/feat-code-reviewer.agent.md` from MIT skills: standards and spec review
 from mattpocock/skills' `code-review` (Matt Pocock), over-engineering from
 dietrichgebert/ponytail's pre-v5 `ponytail-review` (Dietrich Gebert),
 readability from addyosmani/agent-skills' `code-simplification` (Addy

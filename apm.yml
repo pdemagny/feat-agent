@@ -1,0 +1,15 @@
+name: feat-agents
+version: 0.2.0
+description: 'From a feature idea to a reviewed PR: /feat-brief writes the brief, /feat runs Spec Kit phases in feat-* subagents sized by model and effort.'
+author: Pierre Demagny
+license: MIT
+repository: https://github.com/pdemagny/feat-agents
+homepage: https://github.com/pdemagny/feat-agents
+type: hybrid
+includes: auto
+# The third-party skills the agents load. Keep in sync with `deps` in install.sh.
+dependencies:
+  apm:
+    - addyosmani/agent-skills/skills/interview-me
+    - addyosmani/agent-skills/skills/security-and-hardening
+    - addyosmani/agent-skills/skills/performance-optimization

@@ -1,0 +1,15 @@
+{
+  "name": "feat-agents",
+  "description": "The feat-agents workflow: idea to brief to reviewed PR.",
+  "owner": {
+    "name": "Pierre Demagny",
+    "url": "https://github.com/pdemagny"
+  },
+  "plugins": [
+    {
+      "name": "feat-agents",
+      "source": "./",
+      "description": "From a feature idea to a reviewed PR with Spec Kit and per-phase subagents."
+    }
+  ]
+}

@@ -1,12 +1,9 @@
 ---
 name: feat-implementer
 description: Phases 6 and 7 of the /feat workflow. Implements one user story of tasks.md with speckit-implement, or applies the code-review fixes the user picked; runs the project's checks. Spawned by the feat skill; not for direct use.
-model: sonnet
-effort: medium
 disallowedTools: Agent
 skills:
   - speckit-implement
-color: green
 ---
 
 You implement one user story of a feature in the /feat workflow, or apply

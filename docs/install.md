@@ -8,49 +8,92 @@
 | git | branches, worktrees, diffs | your package manager |
 | GitHub CLI `gh`, logged in | phase 8 pushes and opens the PR | <https://cli.github.com>, then `gh auth login` |
 | Spec Kit CLI `specify` | phases 2–6 are Spec Kit skills | `uv tool install specify-cli` (or `mise use -g pypi:specify-cli`) |
-| Node.js / `npx` | only to install the third-party skills | <https://nodejs.org> |
+| APM (`apm`) or Node.js (`npx`) | APM installs everything; `npx` installs the third-party skills for the other two ways | `uv tool install apm-cli`; <https://nodejs.org> |
 
 The workflow uses Opus and Sonnet. Your plan must give access to both; if one
 isn't available, change the size table (see [usage.md](usage.md#tuning)).
 
-## 1. Install the skill and agents
+## 1. Install the skills and agents
+
+Pick one of three ways. Use only one: two would load the workflow twice.
+
+### With APM (recommended: every harness, dependencies included)
+
+[APM](https://microsoft.github.io/apm/) (Microsoft's Agent Package Manager)
+installs the 2 skills, the 8 agents and the 3 third-party skills they use,
+in one command:
 
 ```sh
-./install.sh                       # symlinks into ~/.claude (all projects)
-./install.sh --copy                # copies instead of symlinks
-./install.sh --target ~/proj/.claude   # one project only
+uv tool install apm-cli          # or: pipx install apm-cli
+apm install -g pdemagny/feat-agents -t claude,codex,opencode
 ```
 
-| Installed | Where (default target) |
-|---|---|
-| `skills/feat/`, `skills/feat-brief/` | `~/.claude/skills/` |
-| `agents/feat-*.md` (8 files) | `~/.claude/agents/` |
+`-g` installs for your user (all projects); drop it inside a project to
+install there only. `-t` lists the harnesses to install for:
 
-Symlinks are the default so that editing this repo changes the installed
-workflow immediately; use `--copy` to pin a version. Anything already at a
-destination that isn't a link into this repo (for example an older
-hand-written `feat` skill) is moved to
+| Harness (`-t`) | Skills go to | Agents go to | Notes |
+|---|---|---|---|
+| `claude` | `~/.claude/skills/` | `~/.claude/agents/` | the only harness that runs `/feat` end to end |
+| `codex` | `~/.agents/skills/` | `~/.codex/agents/*.toml` | APM converts the agents; tool restrictions (`disallowedTools`) are dropped |
+| `opencode` | `~/.config/opencode/skills/` | `~/.config/opencode/agents/` | |
+| `gemini`, `antigravity`, others | `~/.agents/skills/` and their own dirs | none: these have no custom agents | |
+
+APM pins what it installed in `~/.apm/apm.lock.yaml`. Update with `apm
+update -g`, remove with `apm uninstall -g pdemagny/feat-agents`.
+
+### As a Claude Code plugin (Claude Code only)
+
+```
+/plugin install feat-agents --marketplace pdemagny/feat-agents
+```
+
+On Claude Code before 2.1.275, use two commands:
+
+```sh
+claude plugin marketplace add pdemagny/feat-agents
+claude plugin install feat-agents@feat-agents
+```
+
+Plugins name everything after the plugin: the commands become
+`/feat-agents:feat` and `/feat-agents:feat-brief`, the agents
+`feat-agents:feat-planner` and so on. The skills handle both names. A plugin
+can't install the third-party skills, so add them with the [skills
+CLI](https://github.com/vercel-labs/skills):
+
+```sh
+npx skills add addyosmani/agent-skills -s interview-me security-and-hardening performance-optimization -a claude-code -g -y
+```
+
+Update with `/plugin update feat-agents`.
+
+### From a clone (to work on the workflow)
+
+```sh
+git clone https://github.com/pdemagny/feat-agents ~/Projects/feat-agents
+cd ~/Projects/feat-agents
+./install.sh             # symlinks into ~/.claude, so edits apply at once
+./install.sh deps        # the three third-party skills (skills CLI)
+```
+
+`--copy` copies instead of linking; `--target ~/proj/.claude` installs for
+one project. Anything already at a destination that isn't a link into this
+repo (for example an older hand-written `feat` skill) is moved to
 `~/.claude/feat-agents-backups/<name>.<timestamp>` first, never deleted.
 Backups stay out of `skills/` and `agents/`, where Claude Code would load
 them as a second skill or agent.
 
-Restart Claude Code (or start a new session) to pick up new agents.
+Restart Claude Code (or start a new session) after any of the three.
 
-## 2. Install the third-party skills
-
-```sh
-./install.sh deps
-```
-
-This runs `npx skills add <source> --skill <name> --agent claude-code --global`
-for each skill below. They land in `~/.agents/skills/` and are linked into
-`~/.claude/skills/`.
+## 2. The third-party skills
 
 | Skill | Source | Used by |
 |---|---|---|
 | `interview-me` | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | `/feat-brief` (phase 1) |
 | `security-and-hardening` | addyosmani/agent-skills | `feat-sec-reviewer` (phase 4), `feat-code-reviewer` lens 7b |
 | `performance-optimization` | addyosmani/agent-skills | `feat-code-reviewer` lens 7c |
+
+They are declared in `apm.yml` (APM installs them) and in `install.sh`
+(`./install.sh deps`).
 
 Three more checklists are built into `feat-code-reviewer` instead of being
 installed: the standards and spec review of lens 7a (from Matt Pocock's
@@ -80,18 +123,22 @@ constitution check meaningful.
 ~/Projects/feat-agents/install.sh check ~/your-project
 ```
 
-Every line should say `ok`; each `MISSING` line names the command that fixes
-it. Exit code 0 means ready.
+It needs a clone of this repo, and works whichever way you installed. Every
+line should say `ok`; each `MISSING` line names the command that fixes it.
+Exit code 0 means ready.
 
 ## Updating
 
-- This repo: `git pull`. With symlinks, that's all; with `--copy`, rerun
-  `./install.sh --copy`.
-- Third-party skills: `npx skills update --global`.
+- APM: `apm update -g`. Plugin: `/plugin update feat-agents`. Clone:
+  `git pull` (with `--copy`, rerun `./install.sh --copy`).
+- Third-party skills installed with the skills CLI: `npx skills update -g`.
 - Spec Kit: upgrade the CLI, then rerun `specify init --here --integration
   claude --force` in each project to refresh its templates and skills.
 
 ## Uninstalling
+
+APM: `apm uninstall -g pdemagny/feat-agents`. Plugin: `/plugin uninstall
+feat-agents`. Clone:
 
 ```sh
 ./install.sh uninstall               # or --target <dir>
