@@ -66,7 +66,7 @@ The single source of truth for models and efforts: agent files carry none,
 so they stay portable across harnesses. `Loads` is what the agent reads
 for its job.
 
-| Phase | Agent | Loads | small | normal | big |
+| Phase | Agent | Loads | small | medium | large |
 |---|---|---|---|---|---|
 | 2 Specify | `feat-specifier` | speckit-specify | sonnet · medium | sonnet · high | opus · high |
 | 3 Plan | `feat-planner` | speckit-plan | opus · high | opus · high | opus · xhigh |
@@ -82,7 +82,7 @@ for its job.
 | 8 Ship | `feat-shipper` | — | haiku · medium | haiku · medium | haiku · medium |
 
 Phase 7 runs one `feat-code-reviewer` per group of lenses. **small**: two
-reviewers, lenses `7a+7b` and `7c+7d+7e`. **normal / big**: one per lens,
+reviewers, lenses `7a+7b` and `7c+7d+7e`. **medium / large**: one per lens,
 `7a`–`7d` in parallel, then `7e` with 7d's cuts. A group runs on the
 strongest model and effort among its rows. Applying the picked fixes uses
 the phase 6 row.
@@ -93,10 +93,10 @@ the phase 6 row.
 |---|-------|---------|------|
 | 0 | Setup | you | hard only if a Spec Kit hook would branch or commit |
 | 2 | Specify | `feat-specifier` | **hard**: spec.md |
-| 3 | Plan | `feat-planner` | soft; **hard** for big |
+| 3 | Plan | `feat-planner` | soft; **hard** for large |
 | 4 | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer` | **hard**; soft for small with no real finding |
-| 5 | Tasks | `feat-tasker` | **hard** on CRITICAL/HIGH findings or unchecked checklists, and always for big |
-| 6 | Implement | `feat-implementer`, one per user story | soft unless checks fail; **hard after each story** for big |
+| 5 | Tasks | `feat-tasker` | **hard** on CRITICAL/HIGH findings or unchecked checklists, and always for large |
+| 6 | Implement | `feat-implementer`, one per user story | soft unless checks fail; **hard after each story** for large |
 | 7 | Code review | `feat-code-reviewer` ×2 (small) or ×5 | **hard**: user picks the fixes |
 | 8 | Ship | `feat-shipper` | none: ends with the PR link |
 
@@ -133,7 +133,7 @@ the PR links to it.
 ```markdown
 # /feat state: <feature title>
 - Branch: <branch>   Worktree: <path or "none">
-- Size: small | normal | big
+- Size: small | medium | large
 - Current phase: <N> <name>
 - Conventions: <the few lines agents need>
 - Allowed Spec Kit hooks: <list or "none">
@@ -169,6 +169,8 @@ back late to a long session.
 1. `$ARGUMENTS` must be a brief file (or `resume`). If it is an idea instead,
    stop and point to `/feat-brief "<idea>"`. Read the brief; check it has
    size, short name, behaviour and acceptance. Huge isn't a size here.
+   Older briefs and state files say "normal" or "big": read them as medium
+   and large.
 2. Read the project's `CLAUDE.md` / `AGENTS.md` and project memory. They
    override this file where they disagree. Keep the few lines agents need
    (commit style, branch rules, where checks live, docs to update).
@@ -198,14 +200,14 @@ with open markers isn't approvable.
 
 ## 3. Plan
 
-Spawn `feat-planner`. **Soft gate** (hard for big): approach, what it
+Spawn `feat-planner`. **Soft gate** (hard for large): approach, what it
 touches, new dependencies or services with reasons, constitution check, and
 any decision the spec didn't call for (which makes the gate hard).
 
 ## 4. Design review
 
 Spawn `feat-sec-reviewer` and `feat-cost-reviewer` in parallel. Merge their
-findings into `D1…`, drop duplicates. **Hard gate** for normal and big (the
+findings into `D1…`, drop duplicates. **Hard gate** for medium and large (the
 user accepts or rejects each); for small with nothing above nice-to-have,
 report and continue. Accepted findings go to `feat-planner` (amend mode) to
 be written into spec.md as requirements and into plan.md.
@@ -217,8 +219,8 @@ stories' task IDs, open findings with proposed fixes, and unchecked
 checklist items. **Hard gate** on CRITICAL/HIGH findings (accepted fixes go
 back to the tasker, which reruns analyze), on unchecked checklists (ask
 whether to proceed: `speckit-implement` would otherwise stop to ask), and
-always for big. Otherwise soft. Over ~25 tasks on small or normal: propose
-big. Last cheap moment to change direction: raise any hesitation you
+always for large. Otherwise soft. Over ~25 tasks on small or medium: propose
+large. Last cheap moment to change direction: raise any hesitation you
 noticed.
 
 ## 6. Implement
@@ -229,7 +231,7 @@ first story, polish with the last). Not in parallel: nothing is committed
 before phase 8, so a separate worktree would miss the spec and earlier
 stories. Pass the checklist answer from phase 5.
 
-**Soft gate** after the last story (hard after each one for big): tasks
+**Soft gate** after the last story (hard after each one for large): tasks
 done, checks. Failing checks go back to the implementer once with the
 failures; if they still fail, or the fix needs a design change, hard gate.
 Never accept a weakened test or check.
@@ -247,7 +249,7 @@ findings. Reviewers verify their own findings and list what they dismissed.
 Merge into one list: `B…` bugs and spec mismatches, `S…` security, `P…`
 performance, `C…` cuts, `R…` readability and `[std]` standards findings
 (hard vs judgement call), one line each, bugs and security first. Drop
-performance findings on code a cut removes. For big, suggest the user also
+performance findings on code a cut removes. For large, suggest the user also
 runs `/code-review ultra` before merging.
 
 **Hard gate**: the user picks. Spawn `feat-implementer` in fix mode with the

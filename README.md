@@ -10,7 +10,7 @@ feature at a few gates; everything else runs on its own.
 
 `/feat` only coordinates: every phase runs in a dedicated `feat-*` subagent
 whose model and effort follow the feature's size (Sonnet at medium effort
-for most of a small feature, Opus at higher effort where a big one needs
+for most of a small feature, Opus at higher effort where a large one needs
 it). Keeping the coordinator's context small is what keeps the token count
 down on a plan with a usage limit. A huge idea is split into a capability
 map, one brief and PR per capability.
@@ -22,7 +22,7 @@ flowchart TD
     G1 -- huge --> MAP["Capability map<br/>feat-brief skill"]
     MAP --> GM{{"Gate: map"}}
     GM -- "one brief per capability" --> P1
-    G1 -- "small · normal · big" --> CLR["clear context, then run feat on the brief"]
+    G1 -- "small · medium · large" --> CLR["clear context, then run feat on the brief"]
     CLR --> P2["2 Specify<br/>feat-specifier"]
     P2 --> G2{{"Gate: spec.md"}}
     G2 --> P3["3 Plan<br/>feat-planner"]
@@ -49,7 +49,7 @@ flowchart TD
 Blue runs in your session, green in a subagent, orange hexagons are hard
 gates. Branches out of one box run in parallel. The phase 4 gate is soft for
 a small feature without real findings. Phases 3, 5 and each story of 6 also
-stop for a big feature. Phase 7's lenses: correctness/spec/standards,
+stop for a large feature. Phase 7's lenses: correctness/spec/standards,
 security, performance, over-engineering, readability. Full matrix in
 [docs/workflow.md](docs/workflow.md).
 

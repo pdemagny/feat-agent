@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Sizes renamed: small / medium / large / huge (were small / normal / big /
+  huge). `/feat` still reads "normal" and "big" in older briefs and state
+  files.
+
 ## 0.2.0 — 2026-10-22
 
 - Docs say what works where: `/feat` runs only in Claude Code (and now

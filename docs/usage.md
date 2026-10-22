@@ -71,7 +71,7 @@ are logged with your reason and never proposed again. You can also say:
 |---|---|
 | `back to N` | rerun phase N with what you now know |
 | `skip N` | skip phase N; the skip and your reason are logged |
-| `size big` (or small/normal) | change the size from now on; later phases use the new column |
+| `size large` (or small/medium) | change the size from now on; later phases use the new column |
 | `stop` | pause; the state file keeps everything |
 
 Silence or an ambiguous answer is not taken as approval.
@@ -97,8 +97,8 @@ Proposed by `/feat-brief`; you decide.
 | Size | When | What changes |
 |---|---|---|
 | small | one package, no new service, permissions, exposure or dependency | Sonnet at medium effort for most phases, two code reviewers, fewest gates |
-| normal | anything else that isn't big | Opus for planning, design security, implementation, correctness and security review; five code reviewers |
-| big | several packages/projects, a new service, or > ~25 tasks | higher effort on planning and reviews; a gate after each story |
+| medium | anything else that isn't large | Opus for planning, design security, implementation, correctness and security review; five code reviewers |
+| large | several packages/projects, a new service, or > ~25 tasks | higher effort on planning and reviews; a gate after each story |
 | huge | capabilities that could ship on their own | a capability map; one brief, `/feat` run and PR per capability |
 
 Full matrix in [workflow.md](workflow.md#size--phase-matrix).

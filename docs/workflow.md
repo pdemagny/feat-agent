@@ -24,10 +24,10 @@ is authoritative; this page mirrors it with explanations.
 | 1 | Brief | `/feat-brief` (your session) | `interview-me` | `specs/briefs/<name>.md`, or a capability map | **hard** (confirm the brief) |
 | 0 | Setup | coordinator | — | conventions, hooks checked | hard only if a Spec Kit hook would branch or commit |
 | 2 | Specify | `feat-specifier` | `speckit-specify` | branch/worktree, `spec.md`, `feat-state.md` | **hard** |
-| 3 | Plan | `feat-planner` | `speckit-plan` | `plan.md` and design docs | soft (hard for big) |
+| 3 | Plan | `feat-planner` | `speckit-plan` | `plan.md` and design docs | soft (hard for large) |
 | 4 | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer`, then `feat-planner` writes accepted findings | `security-and-hardening` (cost checklist in the agent) | findings D1… | **hard** (soft for small without real findings) |
-| 5 | Tasks | `feat-tasker` | `speckit-tasks`, `speckit-analyze` | `tasks.md`, analysis clean | hard on CRITICAL/HIGH or unchecked checklists; always for big |
-| 6 | Implement | `feat-implementer` ×1 per user story, in turn | `speckit-implement` | the code, tasks ticked, checks green | soft (hard per story for big; hard on a design problem) |
+| 5 | Tasks | `feat-tasker` | `speckit-tasks`, `speckit-analyze` | `tasks.md`, analysis clean | hard on CRITICAL/HIGH or unchecked checklists; always for large |
+| 6 | Implement | `feat-implementer` ×1 per user story, in turn | `speckit-implement` | the code, tasks ticked, checks green | soft (hard per story for large; hard on a design problem) |
 | 7 | Code review | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks | `security-and-hardening`, `performance-optimization` | findings B, S, P, C, R; picked fixes applied | **hard** |
 | 8 | Ship | `feat-shipper` | — | docs updated, commits, push, PR | none |
 
@@ -38,7 +38,7 @@ reports and continues; anything surprising turns it into a hard gate.
 
 Each cell: model · effort, passed by `/feat` on every spawn.
 
-| # | Phase | Agent | small | normal | big | huge |
+| # | Phase | Agent | small | medium | large | huge |
 |---|---|---|---|---|---|---|
 | 1 | Brief | your session | session | session | session | session, plus capability map |
 | 2 | Specify | `feat-specifier` | sonnet · medium | sonnet · high | opus · high | — |
@@ -54,7 +54,7 @@ Each cell: model · effort, passed by `/feat` on every spawn.
 | 7e | Readability | `feat-code-reviewer` | sonnet · medium | sonnet · high | sonnet · high | — |
 | 8 | Ship | `feat-shipper` | haiku · medium | haiku · medium | haiku · medium | — |
 
-**Phase 7 reviewers.** small: two reviewers, lenses 7a+7b and 7c+7d+7e. normal and big: one reviewer per lens, 7a–7d in parallel, then 7e
+**Phase 7 reviewers.** small: two reviewers, lenses 7a+7b and 7c+7d+7e. medium and large: one reviewer per lens, 7a–7d in parallel, then 7e
 with 7d's cuts. A group runs on the strongest model among its lenses.
 Applying the picked fixes uses the phase 6 row.
 
@@ -63,9 +63,9 @@ gets its own brief and size column.
 
 ### How the sizes differ beyond model and effort
 
-| | small | normal | big | huge |
+| | small | medium | large | huge |
 |---|---|---|---|---|
-| **When** | one package/project; no new service, permissions, network exposure or dependency | anything else that isn't big | several packages/projects, a new service, or > ~25 tasks | capabilities that could ship independently |
+| **When** | one package/project; no new service, permissions, network exposure or dependency | anything else that isn't large | several packages/projects, a new service, or > ~25 tasks | capabilities that could ship independently |
 | **Hard gates** | brief, 2, 7 (+4 on a real finding, +5 on CRITICAL/HIGH) | brief, 2, 4, 7 (+5 on CRITICAL/HIGH) | brief, 2, 3, 4, 5, each story in 6, 7 | the map |
 | **Code reviewers** | 2 | 5 | 5 | per capability |
 | **PRs** | 1 | 1 | 1 | 1 per capability |
@@ -140,7 +140,7 @@ One implementer per user story, one after the other (setup tasks with the
 first, polish with the last). Each runs `speckit-implement` over its tasks,
 reads only what they need, runs build, tests and linters, never weakens a
 check, never commits. Failing checks go back once; a needed design change is
-a hard gate. **Big:** a gate after each story.
+a hard gate. **Large:** a gate after each story.
 
 ### 7 Code review (`feat-code-reviewer`)
 The coordinator makes the uncommitted work reviewable (`git add -N` on new

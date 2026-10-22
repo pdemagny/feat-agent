@@ -179,7 +179,7 @@ brings back the single growing context this workflow exists to avoid.
   design findings were built.
 - **A smaller base context for subagents** (fewer tools, no project memory):
   every agent start writes ~36k tokens before working. Left for later.
-- **`autoCompactWindow` on implementers** for very long task lists. Big
+- **`autoCompactWindow` on implementers** for very long task lists. Large
   features split by story instead.
 
 Cost of these choices, measured and simulated: the cost notes (since moved out).

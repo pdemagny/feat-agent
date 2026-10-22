@@ -46,8 +46,8 @@ Propose one, with a one-line reason:
 | Size | Rule of thumb |
 |---|---|
 | **small** | one package or project, no new external service, no new permissions or network exposure, no new dependency |
-| **normal** | anything else that is not big |
-| **big** | spans several packages/projects, or adds a service, or will likely produce more than ~25 tasks |
+| **medium** | anything else that is not large |
+| **large** | spans several packages/projects, or adds a service, or will likely produce more than ~25 tasks |
 | **huge** | bundles capabilities that could ship and be verified independently: write a capability map (step 4) instead of a brief |
 
 ## 3. The brief
@@ -56,7 +56,7 @@ Write it to `specs/briefs/<short-name>.md`:
 
 ```markdown
 # Brief: <feature, one line>
-- Size: small | normal | big — <one-line reason>
+- Size: small | medium | large — <one-line reason>
 - Short name: <2–4 word kebab-case, e.g. edit-stack-config>
 - Map: <map path and capability id, if it came from one>
 
@@ -112,8 +112,8 @@ review in a minute:
 
 | Id | Responsibility | Size | Depends on |
 |---|---|---|---|
-| identity | Accounts, sessions, SSO | normal | — |
-| billing | Plans, invoices, payments | big | identity |
+| identity | Accounts, sessions, SSO | medium | — |
+| billing | Plans, invoices, payments | large | identity |
 | notifications | Email and webhook fan-out | small | identity |
 
 Build order: identity → billing, notifications
