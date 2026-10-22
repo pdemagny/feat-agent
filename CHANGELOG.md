@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 — 2026-10-22
 
 - Sizes renamed: small / medium / large / huge (were small / normal / big /
   huge). `/feat` still reads "normal" and "big" in older briefs and state
