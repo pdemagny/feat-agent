@@ -162,6 +162,10 @@ back late to a long session.
 
 ## 0. Setup
 
+0. This workflow needs Claude Code: subagents spawned by name with a
+   `model` and `effort` per call, and `EnterWorktree`. If you can't do
+   that here, stop: say `/feat` runs only in Claude Code, and that the
+   brief can be built there. Don't run the phases inline instead.
 1. `$ARGUMENTS` must be a brief file (or `resume`). If it is an idea instead,
    stop and point to `/feat-brief "<idea>"`. Read the brief; check it has
    size, short name, behaviour and acceptance. Huge isn't a size here.

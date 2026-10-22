@@ -1,5 +1,8 @@
 # Using the workflow
 
+`/feat` runs in Claude Code only; `/feat-brief` works in any harness with
+skills ([what works where](install.md#what-works-where)).
+
 Two commands, in two contexts:
 
 ```

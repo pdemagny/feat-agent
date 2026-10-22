@@ -73,9 +73,14 @@ and `/feat-agents:feat-brief`):
 /plugin install feat-agents --marketplace pdemagny/feat-agents
 ```
 
-then add the third-party skills with `npx skills add`. APM also installs for
-Codex, OpenCode and the harnesses that read `~/.agents/skills`; only Claude
-Code runs `/feat` end to end. All three install ways, and checking an
+then add the third-party skills with `npx skills add`.
+
+**Claude Code only, for the build.** `/feat` relies on Claude Code's
+subagents with a model and effort per call, so it runs nowhere else. APM
+can also install for Codex, OpenCode and the harnesses that read
+`~/.agents/skills`; there you get `/feat-brief` and the agents on their
+own, not the build. What works where:
+[docs/install.md](docs/install.md#what-works-where). All three install ways, and checking an
 install: [docs/install.md](docs/install.md).
 
 ## Documentation
@@ -103,7 +108,7 @@ docs/                    the documentation above
 
 ## Status
 
-Version 0.2.0 (unreleased). Tested with Claude Code 2.1.308 and Spec Kit (specify-cli)
+Version 0.2.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli)
 1.2.x. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License

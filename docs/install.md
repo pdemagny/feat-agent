@@ -1,10 +1,25 @@
 # Installing feat-agents
 
+## What works where
+
+| | Claude Code | Codex, OpenCode | Gemini CLI, Antigravity, other harnesses that read `~/.agents/skills` |
+|---|---|---|---|
+| `/feat` (the build, phases 2–8) | **yes** | no | no |
+| `/feat-brief` (interview and brief) | yes | should work, untested | should work, untested |
+| `feat-*` agents used on their own | yes | yes (Codex ignores their tool limits) | no: no custom agents |
+| a cost script (since moved out) | yes | no: reads Claude Code transcripts | no |
+
+`/feat` needs Claude Code's agent tool with a model and effort per call,
+and `EnterWorktree`; it stops with a message elsewhere. Installing for
+another harness gives you the brief step and the agents there, not the
+build. A brief written in another harness can be built with `/feat` in
+Claude Code. Why it isn't portable: [design.md](design.md#distribution-one-source-three-installers).
+
 ## Prerequisites
 
 | Tool | Why | Install |
 |---|---|---|
-| Claude Code (tested on 2.1.308) | runs the skill and agents; older versions may ignore subagent `effort` or `skills` | <https://code.claude.com/docs/en/setup> |
+| Claude Code (tested on 2.1.308) | runs `/feat` and its agents; older versions may ignore subagent `effort` or `skills` | <https://code.claude.com/docs/en/setup> |
 | git | branches, worktrees, diffs | your package manager |
 | GitHub CLI `gh`, logged in | phase 8 pushes and opens the PR | <https://cli.github.com>, then `gh auth login` |
 | Spec Kit CLI `specify` | phases 2–6 are Spec Kit skills | `uv tool install specify-cli` (or `mise use -g pypi:specify-cli`) |
@@ -104,15 +119,19 @@ README.
 
 ## 3. Set up Spec Kit in each project
 
-Once per project that will use `/feat`:
+Once per project that will use `/feat`, with the Claude integration
+(`/feat` runs only in Claude Code):
 
 ```sh
 cd ~/your-project
 specify init --here --integration claude
 ```
 
-This adds `.specify/` and the `speckit-*` skills in `.claude/skills/`. The
-workflow uses `speckit-specify`, `speckit-clarify`, `speckit-plan`,
+This adds `.specify/` and the `speckit-*` skills in `.claude/skills/`.
+Spec Kit also has integrations for other harnesses (`--integration codex`,
+`gemini`, and more); they let you run the `speckit-*` commands there by
+hand, but `/feat` won't drive them. `/feat-brief` doesn't need Spec Kit.
+The workflow uses `speckit-specify`, `speckit-clarify`, `speckit-plan`,
 `speckit-tasks`, `speckit-analyze` and `speckit-implement`. Writing a
 constitution (`/speckit-constitution`) is optional but makes phase 3's
 constitution check meaningful.

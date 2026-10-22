@@ -7,9 +7,10 @@ repository: https://github.com/pdemagny/feat-agents
 homepage: https://github.com/pdemagny/feat-agents
 type: hybrid
 includes: auto
-# The third-party skills the agents load. Keep in sync with `deps` in install.sh.
+# The third-party skills the agents load, pinned to an upstream tag.
+# Keep in sync with `deps` in install.sh.
 dependencies:
   apm:
-    - addyosmani/agent-skills/skills/interview-me
-    - addyosmani/agent-skills/skills/security-and-hardening
-    - addyosmani/agent-skills/skills/performance-optimization
+    - addyosmani/agent-skills/skills/interview-me#0.6.13
+    - addyosmani/agent-skills/skills/security-and-hardening#0.6.13
+    - addyosmani/agent-skills/skills/performance-optimization#0.6.13

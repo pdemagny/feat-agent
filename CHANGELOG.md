@@ -1,7 +1,12 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 — 2026-10-22
 
+- Docs say what works where: `/feat` runs only in Claude Code (and now
+  stops with a message elsewhere); `/feat-brief` and the agents on their
+  own can be installed for Codex, OpenCode and other harnesses.
+- The third-party skills are pinned to addyosmani/agent-skills `0.6.13` in
+  `apm.yml`.
 - Install with one command for any harness: `apm install -g
   pdemagny/feat-agents` (APM) installs the skills, the agents (converted for
   Codex, copied for OpenCode) and the three third-party skills, declared in
