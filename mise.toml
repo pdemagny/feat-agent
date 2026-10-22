@@ -50,7 +50,7 @@ description = "a cost script (since moved out) find|measure|simulate ... (simula
 run = "python3 a cost script (since moved out)"
 
 [tasks.release]
-description = "Bump apm.yml and plugin.json, commit, tag v<version> and push (CHANGELOG must have the section)"
+description = "Bump apm.yml, plugin.json and the README version, commit, tag v<version> and push (CHANGELOG must have the section)"
 depends = ["lint"]
 usage = 'arg "<version>" help="e.g. 0.2.1, without the v"'
 run = '''
@@ -62,7 +62,8 @@ v="${usage_version}"
 grep -q "^## $v — " CHANGELOG.md || { echo "CHANGELOG.md has no '## $v — <date>' section" >&2; exit 1; }
 sed -i "s/^version: .*/version: $v/" apm.yml
 sed -i "s/\"version\": \".*\"/\"version\": \"$v\"/" .claude-plugin/plugin.json
-git add apm.yml .claude-plugin/plugin.json
+sed -i -E "s/^Version [0-9]+\.[0-9]+\.[0-9]+\./Version $v./" README.md
+git add apm.yml .claude-plugin/plugin.json README.md
 git commit -m "chore(release): $v"
 git tag -a "v$v" -m "v$v"
 git push && git push origin "v$v"
