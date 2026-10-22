@@ -23,14 +23,16 @@ isn't available, change the size table (see [usage.md](usage.md#tuning)).
 
 | Installed | Where (default target) |
 |---|---|
-| `skills/feat/` | `~/.claude/skills/feat` |
-| `agents/feat-*.md` (10 files) | `~/.claude/agents/` |
+| `skills/feat/`, `skills/feat-brief/` | `~/.claude/skills/` |
+| `agents/feat-*.md` (8 files) | `~/.claude/agents/` |
 
 Symlinks are the default so that editing this repo changes the installed
 workflow immediately; use `--copy` to pin a version. Anything already at a
 destination that isn't a link into this repo (for example an older
-hand-written `feat` skill) is moved to `<name>.bak.<timestamp>` first, never
-deleted.
+hand-written `feat` skill) is moved to
+`~/.claude/feat-agents-backups/<name>.<timestamp>` first, never deleted.
+Backups stay out of `skills/` and `agents/`, where Claude Code would load
+them as a second skill or agent.
 
 Restart Claude Code (or start a new session) to pick up new agents.
 

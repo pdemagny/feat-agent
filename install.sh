@@ -55,7 +55,9 @@ place() {
   fi
   if [ -e "$dest" ] || [ -L "$dest" ]; then
     local bak
-    bak="$dest.bak.$(date +%Y%m%d%H%M%S)"
+    # Outside skills/ and agents/: Claude Code would load a backup there as a skill or agent.
+    bak="$HOME/.claude/feat-agents-backups/$(basename "$dest").$(date +%Y%m%d%H%M%S)"
+    mkdir -p "$(dirname "$bak")"
     mv "$dest" "$bak"
     echo "backup   $dest -> $bak"
   fi
