@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- `code-simplification` is no longer a dependency: its behaviour-preserving
+  rule, readability signals and over-simplification traps are inlined in
+  `feat-code-reviewer` lens 7e (Addy Osmani, MIT, credited).
 - Matt Pocock's `code-review` is no longer downloaded: its standards and
   spec axes and smell baseline are inlined in `feat-code-reviewer` lens 7a
   (MIT, credited), run as passes in the reviewer's own context instead of

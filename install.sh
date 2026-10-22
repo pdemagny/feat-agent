@@ -21,7 +21,6 @@ deps=(
   "addyosmani/agent-skills interview-me"
   "addyosmani/agent-skills security-and-hardening"
   "addyosmani/agent-skills performance-optimization"
-  "addyosmani/agent-skills code-simplification"
 )
 # Installed per project by `specify init --integration claude`.
 speckit_skills=(speckit-specify speckit-clarify speckit-plan speckit-tasks speckit-analyze speckit-implement)

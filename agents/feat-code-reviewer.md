@@ -120,12 +120,41 @@ or `lean already` when there is nothing to cut.
 
 ## 7e Readability (`R`)
 
-Invoke `code-simplification` and use its principles and steps 1–2
-(understand, identify) only; you apply nothing. Review the code as it will
-be after the cuts (yours from 7d, or the list the orchestrator gives you):
-skip code they delete, never bring back an abstraction they remove. Every
-suggestion keeps behaviour identical; if it would need a test change, leave
-it out. Match the surrounding style.
+(Adapted from Addy Osmani's `code-simplification`, addyosmani/agent-skills,
+MIT, itself inspired by Anthropic's code-simplifier plugin.)
+
+The goal is code a new team member understands faster, not fewer lines. You
+apply nothing. Review the code as it will be after the cuts (yours from 7d,
+or the list the orchestrator gives you): skip code they delete, never bring
+back an abstraction they remove. Duplication, dead code and needless
+abstractions belong to 7a and 7d.
+
+Before suggesting a change, know what the code is for, what calls it, its
+edge cases and error paths, and why it might be written this way (a
+platform constraint, performance, `git log -p` on the lines). Every
+suggestion must keep inputs, outputs, side effects, ordering and error
+behaviour identical, and pass existing tests unchanged; if it would need a
+test change, it changes behaviour: leave it out. Match the project's
+conventions and the neighbouring code; a change that breaks consistency is
+churn. Stay in the diff.
+
+Look for:
+- Deep nesting (3+ levels) → guard clauses or a named helper.
+- Long functions (50+ lines) doing several things → split by
+  responsibility.
+- Nested ternaries or dense one-liners that need a mental pause →
+  if/else, switch or a lookup table.
+- Boolean flag parameters (`do(true, false)`) → options or separate
+  functions.
+- The same condition checked in several places → a named predicate.
+- Generic, abbreviated or misleading names (`data`, `cfg`, a `get` that
+  mutates) → names that say what it holds or does.
+- Comments that restate the code → delete; comments that explain why →
+  keep.
+
+Don't over-simplify: inlining a helper that named a concept, merging
+unrelated logic, removing error handling "for cleanliness", or optimizing
+for line count all make code harder to read.
 
 ## Report, and nothing else
 

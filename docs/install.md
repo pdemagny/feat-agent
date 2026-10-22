@@ -51,12 +51,13 @@ for each skill below. They land in `~/.agents/skills/` and are linked into
 | `interview-me` | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | `/feat-brief` (phase 1) |
 | `security-and-hardening` | addyosmani/agent-skills | `feat-sec-reviewer` (phase 4), `feat-code-reviewer` lens 7b |
 | `performance-optimization` | addyosmani/agent-skills | `feat-code-reviewer` lens 7c |
-| `code-simplification` | addyosmani/agent-skills | `feat-code-reviewer` lens 7e |
 
-Two more checklists are built into `feat-code-reviewer` instead of being
+Three more checklists are built into `feat-code-reviewer` instead of being
 installed: the standards and spec review of lens 7a (from Matt Pocock's
-`code-review`) and the over-engineering review of lens 7d (from the pre-v5
-`ponytail-review`). Both MIT, credited in the agent and the README.
+`code-review`), the over-engineering review of lens 7d (from the pre-v5
+`ponytail-review`) and the readability review of lens 7e (from Addy
+Osmani's `code-simplification`). All MIT, credited in the agent and the
+README.
 
 ## 3. Set up Spec Kit in each project
 
