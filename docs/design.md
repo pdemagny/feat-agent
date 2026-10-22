@@ -1,0 +1,161 @@
+# Design notes
+
+Why the workflow is built as one orchestrating skill plus phase subagents,
+and the Claude Code behaviour it relies on. Checked against the Claude Code
+docs ([skills](https://code.claude.com/docs/en/skills),
+[subagents](https://code.claude.com/docs/en/sub-agents)) as of v2.1.308.
+
+## The goal
+
+Different phases need different capability: an interview and a plan reward
+the strongest model, ticking off a well-specified task list or scanning a
+diff for dead code doesn't. Running everything on the session model wastes
+money on the easy phases or quality on the hard ones.
+
+## Ways Claude Code lets you choose a model
+
+| Mechanism | Scope | Fit |
+|---|---|---|
+| `model:` in an inline skill's frontmatter | the rest of the **current turn**; your next message goes back to the session model | No: every hard gate ends a turn, so it would be lost at the first gate |
+| `model:` on the `speckit-*` skills | same, and those files are regenerated on every Spec Kit upgrade | No |
+| `context: fork` + `model:` in a skill | runs the whole skill in a subagent | Only for steps that never ask you anything |
+| `model:` / `effort:` in a subagent file | that subagent, for its whole run | **Yes** |
+| `model` / `effort` on the Agent tool call | that one spawn; overrides the file | **Yes**: lets one agent serve every size |
+
+So: the gated workflow stays in the main session, and every phase that
+doesn't need you is a subagent spawned with the model and effort from the
+size table.
+
+## Why the orchestrator model is the session model
+
+The skill can't change the main session's model beyond one turn (above).
+Start the session on the model you want orchestrating (Opus recommended);
+all gate handling runs on it, and `/feat-brief`'s interview on the session
+you run it in.
+
+## Why not make /feat itself an agent
+
+Two other shapes were considered:
+
+1. **The whole workflow as one subagent** (`context: fork` or a `feat`
+   agent). Rejected: subagents can't use `AskUserQuestion` and can't hold a
+   conversation, and five of the eight phases need your judgment.
+2. **`claude --agent feat`**: the agent becomes the main session, so its
+   model sticks across turns. Rejected as the default: a custom agent's
+   prompt replaces Claude Code's default system prompt entirely, and it
+   can't be started automatically from an ordinary session when you ask for
+   a feature. It remains possible if you want one dedicated session per
+   feature.
+
+## Behaviour this relies on
+
+- **Subagents start with no conversation history.** Hence the state file
+  and artifacts as the single source of truth, and prompts that pass paths,
+  size, conventions and rejected findings explicitly.
+- **Subagents start in the main session's working directory.** The
+  orchestrator enters the feature worktree before spawning any.
+- **`skills:` preloads a skill's full content** into the subagent at
+  startup; the subagent can still invoke other skills through the Skill tool
+  if it has it.
+- **`AskUserQuestion` is removed from every subagent.** Anything that needs
+  you comes back to the orchestrator as an open question.
+- **Subagents spawned from the main session run in the background by
+  default**, keeping Read, Grep, Glob, Bash, Edit, Write, Skill and a few
+  others. The orchestrator ends its turn while they run and continues when
+  they report.
+- **Subagents may spawn subagents** (up to three levels). Writing agents
+  disallow `Agent` to keep cost bounded; `feat-code-reviewer` has `Agent`
+  because Matt Pocock's `code-review` runs its standards and spec reviews in
+  two sub-agents (two levels below the main session) on normal and big.
+- **A personal or project skill replaces a built-in command of the same
+  name.** That's why Matt Pocock's `code-review` is saved outside
+  `~/.claude/skills/` and read by path, not installed: installed, it would
+  take over `/code-review` everywhere.
+- **Read-only reviewers** get no Edit/Write; their Bash is for git and grep
+  only, by instruction.
+- **`effort` in an inline skill's frontmatter** has no documented duration,
+  so effort is set only on subagents.
+
+## Third-party skills inside a harness
+
+A skill is written to run on its own: it asks the user, commits, applies its
+fixes, ends its turn, hands off to the next skill. Loaded inside this
+workflow, every one of those instructions competes with the harness. Each
+dependency was checked for that, and handled one of three ways:
+
+| Skill | Conflicting instructions | Handling |
+|---|---|---|
+| `spec-driven-development` | its own Specify → Plan → Tasks → Implement pipeline, `SPEC-*.md` at the project root | **dropped**; the capability-map part (about 30 lines) is inlined in `SKILL.md`, credited |
+| `performance-optimization` | measure-first web workflow (Lighthouse, Core Web Vitals), fix, commit after each fix | **moved to phase 7** (lens 7c of `feat-code-reviewer`), where there is code to measure: the reviewer does its measure and identify steps; `feat-implementer` in fix mode does fix, re-measure and keep-or-revert; the attempt log goes in the state file; commits stay in phase 8. Phase 4's cost review keeps its own checklist. |
+| `incremental-implementation` | commit after every slice, "no uncommitted changes remain" | **dropped**; `speckit-implement` already works task by task with checks, and the workflow commits only in phase 8 |
+| `interview-me` | its own restate and confirmation, then "offer downstream paths" (save to `docs/intent/`, hand off to `spec-driven-development`) and stop | **overridden** in `/feat-brief`: its restate is the brief, its confirmation is the gate, its step 6 is skipped |
+| `code-simplification` | apply changes, test, commit | **overridden** in lens 7e: steps 1–2 only, report; the reviewer has no Edit/Write |
+| Matt Pocock's `code-review` | asks the user for the fixed point and spec, issue tracker setup, `...HEAD` diff | **overridden** in lens 7a: answers given in advance, diff command supplied; on small, both axes run inline without sub-agents |
+| `speckit-implement` | stops to ask about unchecked checklists | **overridden**: the orchestrator asks at the phase 5 gate and passes the answer |
+| `speckit-analyze` | ends by asking whether to suggest remediation | **overridden** in `feat-tasker`: always yes for CRITICAL/HIGH |
+| all `speckit-*` | run mandatory hooks from `.specify/extensions.yml`, which may create branches or commit (git extension) | **overridden**: phase 0 lists hooks, the user decides, agents run only allowed ones and report skipped ones |
+| `security-and-hardening`, `ponytail-review`, `speckit-specify`/`plan`/`tasks` | none beyond hooks | used as is |
+
+Rule for new dependencies: read the whole skill first, look for asking,
+committing, editing, branching, handing off and turn-ending instructions,
+and either override them explicitly in the agent prompt or inline only the
+part you need.
+
+## Token use: why the workflow is shaped this way
+
+On a subscription with a usage limit, tokens processed matter more than
+dollars. Every call re-reads its whole context, so the shape follows from
+keeping contexts small:
+
+- **The brief is its own command.** The interview is the most
+  back-and-forth part; in the same session, every later call of the run
+  would re-read it. No skill or hook can clear the context, so the workflow
+  splits where you are typing anyway: `/feat-brief`, `/clear`, `/feat`.
+- **A thin coordinator.** `/feat` never reads code, runs checks or edits
+  artifacts; it reads reports and keeps the state file. Gate changes go back
+  to the agent owning the artifact, review findings are verified by the
+  reviewers, picked fixes are applied by `feat-implementer`, shipping is
+  done by `feat-shipper`.
+- **One implementer per story**, so no implementer carries the previous
+  stories' reads.
+- **Fewer, cheaper agents where the feature is small**: two code reviewers
+  instead of five, medium effort.
+
+Measured and simulated numbers: the cost notes (since moved out).
+
+## Behaviour of the workflow itself
+
+- **Nothing is committed before phase 8.** So phase 7 can't review `git diff
+  <default>...HEAD` (it would be empty): the orchestrator marks new files
+  with `git add -N` and gives every reviewer `git diff <merge-base>`, which
+  compares the working tree with the branch point.
+- **Stories are implemented one after the other**, not in parallel
+  worktrees: a fresh worktree would start from committed history and miss the
+  uncommitted spec, tasks and earlier stories.
+- **EnterWorktree names its own branch.** The orchestrator renames it to
+  `<NNN>-<short-name>` so it matches the spec directory.
+
+## Things to verify on first runs
+
+- That `feat-code-reviewer` follows the vendored `code-review` without
+  stalling on its "ask the user" steps (fixed point, spec, issue tracker);
+  its prompt answers them in advance.
+- That `git diff <merge-base>` after `git add -N` shows every new file in
+  your setup (some hooks or rtk-style wrappers may filter git output).
+- The `small` defaults: whether Sonnet at medium effort is enough for spec
+  and tasks in your codebase.
+
+## Ideas not taken (yet)
+
+- **Haiku beyond shipping.** Tasks and analyze look mechanical but catch
+  cross-artifact inconsistencies; shipping (commits, PR body from the state
+  file) is the only phase on Haiku.
+- **A separate agent around the built-in `security-review` for phase 7.**
+  Lens 7b uses the same skill as phase 4, so it can check that accepted
+  design findings were built.
+- **A smaller base context for subagents** (fewer tools, no project memory):
+  every agent start writes ~36k tokens before working. Left for later.
+- **`autoCompactWindow` on implementers** for very long task lists. Big
+  features split by story instead.
+
+Cost of these choices, measured and simulated: the cost notes (since moved out).
