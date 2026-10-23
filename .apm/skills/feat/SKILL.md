@@ -219,9 +219,11 @@ stories' task IDs, open findings with proposed fixes, and unchecked
 checklist items. **Hard gate** on CRITICAL/HIGH findings (accepted fixes go
 back to the tasker, which reruns analyze), on unchecked checklists (ask
 whether to proceed: `speckit-implement` would otherwise stop to ask), and
-always for large. Otherwise soft. Over ~25 tasks on small or medium: propose
-large. Last cheap moment to change direction: raise any hesitation you
-noticed.
+always for large. Otherwise soft. Check the size against the task count
+(small up to ~25, medium ~26–50, large over ~50): propose the size that
+fits, smaller as well as bigger; a new service, permissions, exposure or
+dependency keeps it at least medium. Last cheap moment to change
+direction: raise any hesitation you noticed.
 
 ## 6. Implement
 

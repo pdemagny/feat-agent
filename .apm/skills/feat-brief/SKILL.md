@@ -41,14 +41,23 @@ short; most decisions were made when the map was approved.
 
 ## 2. Size
 
-Propose one, with a one-line reason:
+Estimate how many tasks `speckit-tasks` will produce, then propose the
+size from that number, with a one-line reason that states the estimate:
 
-| Size | Rule of thumb |
+| Size | Expected tasks |
 |---|---|
-| **small** | one package or project, no new external service, no new permissions or network exposure, no new dependency |
-| **medium** | anything else that is not large |
-| **large** | spans several packages/projects, or adds a service, or will likely produce more than ~25 tasks |
+| **small** | up to ~25 |
+| **medium** | ~26–50 |
+| **large** | more than ~50 |
 | **huge** | bundles capabilities that could ship and be verified independently: write a capability map (step 4) instead of a brief |
+
+- Size on the amount of work, not its spread: touching several packages or
+  many files doesn't make a feature bigger by itself.
+- A new external service, new permissions, new network exposure or a new
+  dependency raises small to medium. Nothing else raises a size.
+- Docs-only or text-only changes are small.
+- Between two sizes, pick the smaller: phase 5 of `/feat` checks the size
+  against the real task count.
 
 ## 3. The brief
 
@@ -56,7 +65,7 @@ Write it to `specs/briefs/<short-name>.md`:
 
 ```markdown
 # Brief: <feature, one line>
-- Size: small | medium | large — <one-line reason>
+- Size: small | medium | large — <~N tasks expected, one-line reason>
 - Short name: <2–4 word kebab-case, e.g. edit-stack-config>
 - Map: <map path and capability id, if it came from one>
 

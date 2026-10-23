@@ -65,7 +65,7 @@ gets its own brief and size column.
 
 | | small | medium | large | huge |
 |---|---|---|---|---|
-| **When** | one package/project; no new service, permissions, network exposure or dependency | anything else that isn't large | several packages/projects, a new service, or > ~25 tasks | capabilities that could ship independently |
+| **When** | up to ~25 tasks; no new service, permissions, network exposure or dependency; docs-only work | ~26–50 tasks, or a small one adding any of those | more than ~50 tasks | capabilities that could ship independently |
 | **Hard gates** | brief, 2, 7 (+4 on a real finding, +5 on CRITICAL/HIGH) | brief, 2, 4, 7 (+5 on CRITICAL/HIGH) | brief, 2, 3, 4, 5, each story in 6, 7 | the map |
 | **Code reviewers** | 2 | 5 | 5 | per capability |
 | **PRs** | 1 | 1 | 1 | 1 per capability |

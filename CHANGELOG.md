@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Sizes follow the expected task count: small up to ~25, medium ~26–50,
+  large over ~50. Spreading over several packages no longer makes a
+  feature large, and medium is no longer the fallback. A new service,
+  permissions, exposure or dependency raises small to medium; docs-only
+  work is small. Phase 5 proposes a smaller size as well as a bigger one.
+
 ## 0.3.0 — 2026-10-22
 
 - Sizes renamed: small / medium / large / huge (were small / normal / big /
