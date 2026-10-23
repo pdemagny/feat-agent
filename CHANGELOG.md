@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.1 — 2026-10-23
 
 - Sizes follow the expected task count: small up to ~25, medium ~26–50,
   large over ~50. Spreading over several packages no longer makes a
