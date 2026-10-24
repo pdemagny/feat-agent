@@ -9,7 +9,7 @@ description: >
   session only coordinates and holds the gates where the user decides. Use
   it as /feat followed by a brief path, or /feat resume, when a brief exists. Without a
   brief, use /feat-brief first. Not for bugfixes or pure refactors.
-argument-hint: 'specs/briefs/name.md | resume'
+argument-hint: "specs/briefs/name.md | resume"
 ---
 
 # /feat: from a brief to a PR
@@ -29,6 +29,7 @@ outcome; otherwise report and keep going.
 ## You are a thin orchestrator
 
 Every call you make re-reads your whole context, for the whole run. So:
+
 - **Never read source code, run checks, or edit anything but
   `feat-state.md`.** Agents do the reading, writing, testing and verifying;
   you get their reports.
@@ -42,6 +43,7 @@ Every call you make re-reads your whole context, for the whole run. So:
   findings; tasker: tasks.md; implementer: code).
 
 Subagents don't see this conversation. Give each one, in its prompt:
+
 - absolute paths: the worktree, the feature dir, `feat-state.md`;
 - the size, the phase, and what to do (its mode, the task IDs it owns, the
   findings to apply);
@@ -66,20 +68,20 @@ The single source of truth for models and efforts: agent files carry none,
 so they stay portable across harnesses. `Loads` is what the agent reads
 for its job.
 
-| Phase | Agent | Loads | small | medium | large |
-|---|---|---|---|---|---|
-| 2 Specify | `feat-specifier` | speckit-specify | sonnet · medium | sonnet · high | opus · high |
-| 3 Plan | `feat-planner` | speckit-plan | opus · high | opus · high | opus · xhigh |
-| 4a Security design | `feat-sec-reviewer` | security-and-hardening | sonnet · medium | opus · high | opus · xhigh |
-| 4b Cost design | `feat-cost-reviewer` | — | sonnet · medium | sonnet · high | opus · high |
-| 5 Tasks | `feat-tasker` | speckit-tasks, speckit-analyze | sonnet · medium | sonnet · high | sonnet · high |
-| 6 Implement | `feat-implementer` | speckit-implement | sonnet · medium | opus · high | opus · high |
-| 7a Correctness, spec, standards | `feat-code-reviewer` | — | sonnet · medium | opus · high | opus · xhigh |
-| 7b Security | `feat-code-reviewer` | security-and-hardening | sonnet · medium | opus · high | opus · xhigh |
-| 7c Performance | `feat-code-reviewer` | performance-optimization | sonnet · medium | sonnet · high | opus · high |
-| 7d Over-engineering | `feat-code-reviewer` | — | sonnet · medium | sonnet · high | sonnet · high |
-| 7e Readability | `feat-code-reviewer` | — | sonnet · medium | sonnet · high | sonnet · high |
-| 8 Ship | `feat-shipper` | — | haiku · medium | haiku · medium | haiku · medium |
+| Phase                           | Agent                | Loads                          | small           | medium          | large           |
+| ------------------------------- | -------------------- | ------------------------------ | --------------- | --------------- | --------------- |
+| 2 Specify                       | `feat-specifier`     | speckit-specify                | sonnet · medium | sonnet · medium | opus · high     |
+| 3 Plan                          | `feat-planner`       | speckit-plan                   | opus · high     | opus · high     | opus · xhigh    |
+| 4a Security design              | `feat-sec-reviewer`  | security-and-hardening         | sonnet · medium | opus · medium   | opus · high     |
+| 4b Cost design                  | `feat-cost-reviewer` | —                              | sonnet · medium | sonnet · medium | opus · medium   |
+| 5 Tasks                         | `feat-tasker`        | speckit-tasks, speckit-analyze | sonnet · medium | sonnet · medium | opus · high     |
+| 6 Implement                     | `feat-implementer`   | speckit-implement              | sonnet · medium | opus · medium   | opus · high     |
+| 7a Correctness, spec, standards | `feat-code-reviewer` | —                              | sonnet · medium | opus · medium   | opus · medium   |
+| 7b Security                     | `feat-code-reviewer` | security-and-hardening         | sonnet · medium | opus · medium   | opus · high     |
+| 7c Performance                  | `feat-code-reviewer` | performance-optimization       | sonnet · medium | sonnet · medium | opus · medium   |
+| 7d Over-engineering             | `feat-code-reviewer` | —                              | sonnet · medium | sonnet · medium | sonnet · medium |
+| 7e Readability                  | `feat-code-reviewer` | —                              | sonnet · medium | sonnet · medium | sonnet · medium |
+| 8 Ship                          | `feat-shipper`       | —                              | haiku · medium  | haiku · medium  | haiku · medium  |
 
 Phase 7 runs one `feat-code-reviewer` per group of lenses. **small**: two
 reviewers, lenses `7a+7b` and `7c+7d+7e`. **medium / large**: one per lens,
@@ -89,16 +91,16 @@ the phase 6 row.
 
 ## Phases and gates
 
-| # | Phase | Runs in | Gate |
-|---|-------|---------|------|
-| 0 | Setup | you | hard only if a Spec Kit hook would branch or commit |
-| 2 | Specify | `feat-specifier` | **hard**: spec.md |
-| 3 | Plan | `feat-planner` | soft; **hard** for large |
-| 4 | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer` | **hard**; soft for small with no real finding |
-| 5 | Tasks | `feat-tasker` | **hard** on CRITICAL/HIGH findings or unchecked checklists, and always for large |
-| 6 | Implement | `feat-implementer`, one per user story | soft unless checks fail; **hard after each story** for large |
-| 7 | Code review | `feat-code-reviewer` ×2 (small) or ×5 | **hard**: user picks the fixes |
-| 8 | Ship | `feat-shipper` | none: ends with the PR link |
+| #   | Phase         | Runs in                                    | Gate                                                                             |
+| --- | ------------- | ------------------------------------------ | -------------------------------------------------------------------------------- |
+| 0   | Setup         | you                                        | hard only if a Spec Kit hook would branch or commit                              |
+| 2   | Specify       | `feat-specifier`                           | **hard**: spec.md                                                                |
+| 3   | Plan          | `feat-planner`                             | soft; **hard** for large                                                         |
+| 4   | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer` | **hard**; soft for small with no real finding                                    |
+| 5   | Tasks         | `feat-tasker`                              | **hard** on CRITICAL/HIGH findings or unchecked checklists, and always for large |
+| 6   | Implement     | `feat-implementer`, one per user story     | soft unless checks fail; **hard after each story** for large                     |
+| 7   | Code review   | `feat-code-reviewer` ×2 (small) or ×5      | **hard**: user picks the fixes                                                   |
+| 8   | Ship          | `feat-shipper`                             | none: ends with the PR link                                                      |
 
 Phase 1 (the interview and the brief) is `/feat-brief`, in its own context.
 
@@ -132,7 +134,8 @@ the PR links to it.
 
 ```markdown
 # /feat state: <feature title>
-- Branch: <branch>   Worktree: <path or "none">
+
+- Branch: <branch> Worktree: <path or "none">
 - Size: small | medium | large
 - Current phase: <N> <name>
 - Conventions: <the few lines agents need>
@@ -140,9 +143,11 @@ the PR links to it.
 - Map: <map path and id, if any>
 
 ## Brief
+
 <copied from the brief file>
 
 ## Log
+
 - [x] 2 Specify — approved; FR-005 reworded (user)
 - [x] 4 Design review — accepted D1; rejected D2 (user: "behind the VPN")
 - [x] 7 Code review — P1 kept: 410ms → 120ms (`go test -bench Load`); P2 reverted: within noise
@@ -175,7 +180,7 @@ back late to a long session.
    override this file where they disagree. Keep the few lines agents need
    (commit style, branch rules, where checks live, docs to update).
 3. Check `.specify/` exists (else stop: `specify init --here --integration
-   claude`) and the `feat-*` agents are installed (plain or
+claude`) and the `feat-*` agents are installed (plain or
    `feat-agents:`-prefixed).
 4. Read `.specify/extensions.yml`. Hooks that create branches or commit (the
    git extension's) clash with this workflow owning git: if any are enabled,

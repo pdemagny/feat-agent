@@ -67,12 +67,12 @@ tasks. The feature is built on branch `<NNN>-<name>`, in a worktree under
 Answer in plain words ("accept D1, reject D2: behind the VPN"). Rejections
 are logged with your reason and never proposed again. You can also say:
 
-| Say | Effect |
-|---|---|
-| `back to N` | rerun phase N with what you now know |
-| `skip N` | skip phase N; the skip and your reason are logged |
+| Say                            | Effect                                                       |
+| ------------------------------ | ------------------------------------------------------------ |
+| `back to N`                    | rerun phase N with what you now know                         |
+| `skip N`                       | skip phase N; the skip and your reason are logged            |
 | `size large` (or small/medium) | change the size from now on; later phases use the new column |
-| `stop` | pause; the state file keeps everything |
+| `stop`                         | pause; the state file keeps everything                       |
 
 Silence or an ambiguous answer is not taken as approval.
 
@@ -94,12 +94,12 @@ recaps, and shows the gate you were at.
 
 Proposed by `/feat-brief`; you decide.
 
-| Size | When | What changes |
-|---|---|---|
-| small | up to ~25 tasks, no new service, permissions, exposure or dependency; docs-only work | Sonnet at medium effort for most phases, two code reviewers, fewest gates |
-| medium | ~26–50 tasks, or a small one adding a service, permissions, exposure or dependency | Opus for planning, design security, implementation, correctness and security review; five code reviewers |
-| large | more than ~50 tasks | higher effort on planning and reviews; a gate after each story |
-| huge | capabilities that could ship on their own | a capability map; one brief, `/feat` run and PR per capability |
+| Size   | When                                                                                 | What changes                                                                                             |
+| ------ | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| small  | up to ~25 tasks, no new service, permissions, exposure or dependency; docs-only work | Sonnet at medium effort for most phases, two code reviewers, fewest gates                                |
+| medium | ~26–50 tasks, or a small one adding a service, permissions, exposure or dependency   | Opus for planning, design security, implementation, correctness and security review; five code reviewers |
+| large  | more than ~50 tasks                                                                  | higher effort on planning and reviews; a gate after each story                                           |
+| huge   | capabilities that could ship on their own                                            | a capability map; one brief, `/feat` run and PR per capability                                           |
 
 Full matrix in [workflow.md](workflow.md#size--phase-matrix).
 
@@ -114,12 +114,12 @@ a cost script (since moved out).
 Agent files carry no model or effort, so they work in any harness; outside
 the workflow an agent runs on the session's model unless you name one.
 
-| Setting | Values | Effect |
-|---|---|---|
-| model | `haiku`, `sonnet`, `opus`, `fable`, or a full model ID | capability vs. usage; Opus also has its own plan limit |
-| effort | `low`, `medium`, `high`, `xhigh`, `max` | thinking per step and number of tool calls on the same model |
-| reviewer groups | phase 7 note under the size table | fewer reviewers = fewer cold starts |
-| gates | the Phases and gates table | more stops where mistakes cost more |
+| Setting         | Values                                                 | Effect                                                       |
+| --------------- | ------------------------------------------------------ | ------------------------------------------------------------ |
+| model           | `haiku`, `sonnet`, `opus`, `fable`, or a full model ID | capability vs. usage; Opus also has its own plan limit       |
+| effort          | `low`, `medium`, `high`, `xhigh`, `max`                | thinking per step and number of tool calls on the same model |
+| reviewer groups | phase 7 note under the size table                      | fewer reviewers = fewer cold starts                          |
+| gates           | the Phases and gates table                             | more stops where mistakes cost more                          |
 
 Suggested approach: run two or three real features, measure them with
 a cost script (since moved out), note the phase where results were weakest, and raise

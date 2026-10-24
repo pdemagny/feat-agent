@@ -2,12 +2,12 @@
 
 ## What works where
 
-| | Claude Code | Codex, OpenCode | Gemini CLI, Antigravity, other harnesses that read `~/.agents/skills` |
-|---|---|---|---|
-| `/feat` (the build, phases 2–8) | **yes** | no | no |
-| `/feat-brief` (interview and brief) | yes | should work, untested | should work, untested |
-| `feat-*` agents used on their own | yes | yes (Codex ignores their tool limits) | no: no custom agents |
-| a cost script (since moved out) | yes | no: reads Claude Code transcripts | no |
+|                                     | Claude Code | Codex, OpenCode                       | Gemini CLI, Antigravity, other harnesses that read `~/.agents/skills` |
+| ----------------------------------- | ----------- | ------------------------------------- | --------------------------------------------------------------------- |
+| `/feat` (the build, phases 2–8)     | **yes**     | no                                    | no                                                                    |
+| `/feat-brief` (interview and brief) | yes         | should work, untested                 | should work, untested                                                 |
+| `feat-*` agents used on their own   | yes         | yes (Codex ignores their tool limits) | no: no custom agents                                                  |
+| a cost script (since moved out)                     | yes         | no: reads Claude Code transcripts     | no                                                                    |
 
 `/feat` needs Claude Code's agent tool with a model and effort per call,
 and `EnterWorktree`; it stops with a message elsewhere. Installing for
@@ -17,13 +17,13 @@ Claude Code. Why it isn't portable: [design.md](design.md#distribution-one-sourc
 
 ## Prerequisites
 
-| Tool | Why | Install |
-|---|---|---|
-| Claude Code (tested on 2.1.308) | runs `/feat` and its agents; older versions may ignore subagent `effort` or `skills` | <https://code.claude.com/docs/en/setup> |
-| git | branches, worktrees, diffs | your package manager |
-| GitHub CLI `gh`, logged in | phase 8 pushes and opens the PR | <https://cli.github.com>, then `gh auth login` |
-| Spec Kit CLI `specify` | phases 2–6 are Spec Kit skills | `uv tool install specify-cli` |
-| APM (`apm`) or Node.js (`npx`) | APM installs everything; `npx` installs the third-party skills for the other two ways | `uv tool install apm-cli`; <https://nodejs.org> |
+| Tool                            | Why                                                                                   | Install                                         |
+| ------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Claude Code (tested on 2.1.308) | runs `/feat` and its agents; older versions may ignore subagent `effort` or `skills`  | <https://code.claude.com/docs/en/setup>         |
+| git                             | branches, worktrees, diffs                                                            | your package manager                            |
+| GitHub CLI `gh`, logged in      | phase 8 pushes and opens the PR                                                       | <https://cli.github.com>, then `gh auth login`  |
+| Spec Kit CLI `specify`          | phases 2–6 are Spec Kit skills                                                        | `uv tool install specify-cli`                   |
+| APM (`apm`) or Node.js (`npx`)  | APM installs everything; `npx` installs the third-party skills for the other two ways | `uv tool install apm-cli`; <https://nodejs.org> |
 
 In a clone of this repo, `mise install` installs all of these (and
 `shellcheck`) at the versions the release was tested with; see
@@ -50,12 +50,12 @@ apm install -g pdemagny/feat-agents -t claude,codex,opencode
 `-g` installs for your user (all projects); drop it inside a project to
 install there only. `-t` lists the harnesses to install for:
 
-| Harness (`-t`) | Skills go to | Agents go to | Notes |
-|---|---|---|---|
-| `claude` | `~/.claude/skills/` | `~/.claude/agents/` | the only harness that runs `/feat` end to end |
-| `codex` | `~/.agents/skills/` | `~/.codex/agents/*.toml` | APM converts the agents; tool restrictions (`disallowedTools`) are dropped |
-| `opencode` | `~/.config/opencode/skills/` | `~/.config/opencode/agents/` | |
-| `gemini`, `antigravity`, others | `~/.agents/skills/` and their own dirs | none: these have no custom agents | |
+| Harness (`-t`)                  | Skills go to                           | Agents go to                      | Notes                                                                      |
+| ------------------------------- | -------------------------------------- | --------------------------------- | -------------------------------------------------------------------------- |
+| `claude`                        | `~/.claude/skills/`                    | `~/.claude/agents/`               | the only harness that runs `/feat` end to end                              |
+| `codex`                         | `~/.agents/skills/`                    | `~/.codex/agents/*.toml`          | APM converts the agents; tool restrictions (`disallowedTools`) are dropped |
+| `opencode`                      | `~/.config/opencode/skills/`           | `~/.config/opencode/agents/`      |                                                                            |
+| `gemini`, `antigravity`, others | `~/.agents/skills/` and their own dirs | none: these have no custom agents |                                                                            |
 
 APM pins what it installed in `~/.apm/apm.lock.yaml`. Update with `apm
 update -g`, remove with `apm uninstall -g pdemagny/feat-agents`.
@@ -105,11 +105,11 @@ Restart Claude Code (or start a new session) after any of the three.
 
 ## 2. The third-party skills
 
-| Skill | Source | Used by |
-|---|---|---|
-| `interview-me` | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | `/feat-brief` (phase 1) |
-| `security-and-hardening` | addyosmani/agent-skills | `feat-sec-reviewer` (phase 4), `feat-code-reviewer` lens 7b |
-| `performance-optimization` | addyosmani/agent-skills | `feat-code-reviewer` lens 7c |
+| Skill                      | Source                                                                | Used by                                                     |
+| -------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `interview-me`             | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | `/feat-brief` (phase 1)                                     |
+| `security-and-hardening`   | addyosmani/agent-skills                                               | `feat-sec-reviewer` (phase 4), `feat-code-reviewer` lens 7b |
+| `performance-optimization` | addyosmani/agent-skills                                               | `feat-code-reviewer` lens 7c                                |
 
 They are declared in `apm.yml` (APM installs them) and in `install.sh`
 (`./install.sh deps`).
