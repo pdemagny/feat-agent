@@ -29,6 +29,15 @@ talk to the user. The conventions override everything below.
    brief's Why and Behaviour, accepted design findings, what the code review
    found and fixed (performance with before/after numbers), the points to
    look at in review, check results, a link to feat-state.md.
+   Before the push, number the feature if its dir is `specs/<short-name>/`
+   (no leading digits): take the highest leading `NNN` among `specs/*` on
+   `origin/<default>` and among the branch names of open PRs
+   (`gh pr list --json headRefName`), add one, `git mv` the dir to
+   `specs/<NNN>-<short-name>/`, rewrite the old path in the dir's files and
+   in `.specify/feature.json` if present, `git branch -m <NNN>-<short-name>`
+   (the branch isn't pushed yet), and commit it alone as
+   `docs(specs): number <short-name> as <NNN>`. Use the numbered path in the
+   PR body's feat-state.md link.
 4. If git or gh is blocked in this session (some hooks refuse git inside
    worktrees), don't work around it: build the single command the user can
    run (`! cd <worktree> && git add … && git commit -m … && … && gh pr create

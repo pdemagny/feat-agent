@@ -128,8 +128,9 @@ Link artifacts instead of pasting them; quote only what needs a decision.
 
 ## State file
 
-`specs/<NNN-short-name>/feat-state.md`, created in phase 2, updated at every
-gate (not at the end). Every agent reads it; `/feat resume` starts from it;
+`specs/<short-name>/feat-state.md` (unnumbered until phase 8, where the
+shipper renames it to `specs/<NNN>-<short-name>/`), created in phase 2,
+updated at every gate (not at the end). Every agent reads it; `/feat resume` starts from it;
 the PR links to it.
 
 ```markdown
@@ -189,8 +190,11 @@ claude`) and the `feat-*` agents are installed (plain or
 
 ## 2. Specify
 
-1. Create branch `<NNN>-<short-name>` (NNN: next free number in `specs/`),
-   preferably in a worktree (EnterWorktree). EnterWorktree picks its own
+1. Create branch `<short-name>` and tell the specifier the feature dir is
+   `specs/<short-name>/`: no `NNN` yet, because a worktree can't see the
+   numbers other in-flight features take. The shipper numbers it in phase 8,
+   on top of the fetched `origin/<default>`. Prefer a worktree
+   (EnterWorktree). EnterWorktree picks its own
    branch name: check `git branch --show-current` and `git branch -m` it if
    needed. Enter it before spawning anything: agents start in your
    directory.
