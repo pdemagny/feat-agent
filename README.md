@@ -109,7 +109,7 @@ docs/                    the documentation above
 
 ## Status
 
-Version 0.3.1. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli)
+Version 0.3.3. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli)
 1.2.x. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
