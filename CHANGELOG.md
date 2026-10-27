@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.3 — 2026-10-27
+
+- The spec dir is numbered in phase 8, not phase 2. Features started in
+  parallel worktrees can't see each other's numbers and picked the same
+  `NNN`. The branch and `specs/<short-name>/` stay unnumbered; the shipper
+  takes the next free number from `origin/<default>` and the open PRs,
+  renames the dir and the branch, and commits that on its own before the
+  push.
+
+## 0.3.2 — 2026-10-24
+
+- Efforts lowered for medium and large features.
+
 ## 0.3.1 — 2026-10-23
 
 - Sizes follow the expected task count: small up to ~25, medium ~26–50,
