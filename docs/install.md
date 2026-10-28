@@ -1,19 +1,7 @@
 # Installing feat-agents
 
-## What works where
-
-|                                     | Claude Code | Codex, OpenCode                       | Gemini CLI, Antigravity, other harnesses that read `~/.agents/skills` |
-| ----------------------------------- | ----------- | ------------------------------------- | --------------------------------------------------------------------- |
-| `/feat` (the build, phases 2–8)     | **yes**     | no                                    | no                                                                    |
-| `/feat-brief` (interview and brief) | yes         | should work, untested                 | should work, untested                                                 |
-| `feat-*` agents used on their own   | yes         | yes (Codex ignores their tool limits) | no: no custom agents                                                  |
-| a cost script (since moved out)                     | yes         | no: reads Claude Code transcripts     | no                                                                    |
-
-`/feat` needs Claude Code's agent tool with a model and effort per call,
-and `EnterWorktree`; it stops with a message elsewhere. Installing for
-another harness gives you the brief step and the agents there, not the
-build. A brief written in another harness can be built with `/feat` in
-Claude Code. Why it isn't portable: [design.md](design.md#distribution-one-source-three-installers).
+Claude Code only. Three ways to install; the design behind them:
+[design.md](design.md#distribution-one-source-three-installers).
 
 ## Prerequisites
 
@@ -36,7 +24,7 @@ isn't available, change the size table (see [usage.md](usage.md#tuning)).
 
 Pick one of three ways. Use only one: two would load the workflow twice.
 
-### With APM (recommended: every harness, dependencies included)
+### With APM (recommended: dependencies included)
 
 [APM](https://microsoft.github.io/apm/) (Microsoft's Agent Package Manager)
 installs the 2 skills, the 8 agents and the 3 third-party skills they use,
@@ -44,23 +32,13 @@ in one command:
 
 ```sh
 uv tool install apm-cli          # or: pipx install apm-cli
-apm install -g pdemagny/feat-agents -t claude,codex,opencode
+apm install -g pdemagny/feat-agents -t claude
 ```
 
-`-g` installs for your user (all projects); drop it inside a project to
-install there only. `-t` lists the harnesses to install for:
+`-g` installs for your user (all projects) into `~/.claude/`; drop it
+inside a project to install there only.
 
-| Harness (`-t`)                  | Skills go to                           | Agents go to                      | Notes                                                                      |
-| ------------------------------- | -------------------------------------- | --------------------------------- | -------------------------------------------------------------------------- |
-| `claude`                        | `~/.claude/skills/`                    | `~/.claude/agents/`               | the only harness that runs `/feat` end to end                              |
-| `codex`                         | `~/.agents/skills/`                    | `~/.codex/agents/*.toml`          | APM converts the agents; tool restrictions (`disallowedTools`) are dropped |
-| `opencode`                      | `~/.config/opencode/skills/`           | `~/.config/opencode/agents/`      |                                                                            |
-| `gemini`, `antigravity`, others | `~/.agents/skills/` and their own dirs | none: these have no custom agents |                                                                            |
-
-APM pins what it installed in `~/.apm/apm.lock.yaml`. Update with `apm
-update -g`, remove with `apm uninstall -g pdemagny/feat-agents`.
-
-### As a Claude Code plugin (Claude Code only)
+### As a Claude Code plugin
 
 ```
 /plugin install feat-agents --marketplace pdemagny/feat-agents
@@ -123,19 +101,15 @@ README.
 
 ## 3. Set up Spec Kit in each project
 
-Once per project that will use `/feat`, with the Claude integration
-(`/feat` runs only in Claude Code):
+Once per project that will use `/feat`, with the Claude integration:
 
 ```sh
 cd ~/your-project
 specify init --here --integration claude
 ```
 
-This adds `.specify/` and the `speckit-*` skills in `.claude/skills/`.
-Spec Kit also has integrations for other harnesses (`--integration codex`,
-`gemini`, and more); they let you run the `speckit-*` commands there by
-hand, but `/feat` won't drive them. `/feat-brief` doesn't need Spec Kit.
-The workflow uses `speckit-specify`, `speckit-clarify`, `speckit-plan`,
+This adds `.specify/` and the `speckit-*` skills in `.claude/skills/`
+(`/feat-brief` doesn't need them). The workflow uses `speckit-specify`, `speckit-clarify`, `speckit-plan`,
 `speckit-tasks`, `speckit-analyze` and `speckit-implement`. Writing a
 constitution (`/speckit-constitution`) is optional but makes phase 3's
 constitution check meaningful.

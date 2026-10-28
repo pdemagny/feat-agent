@@ -206,5 +206,4 @@ starts from it; the PR links to it. It's updated at each gate.
 
 Agent files carry no model or effort: `/feat` passes both on every spawn,
 from the size table. Tool limits are deny lists (`disallowedTools`) rather
-than allow lists, because OpenCode rejects Claude's `tools:` string; Codex
-drops them when APM converts the agents. No agent but the shipper commits, and no agent spawns further agents.
+than allow lists, so a new tool is available to an agent unless denied. No agent but the shipper commits, and no agent spawns further agents.

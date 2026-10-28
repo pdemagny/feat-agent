@@ -23,7 +23,7 @@ description = "Report what's missing to run /feat (pass a project dir to check S
 run = "./install.sh check"
 
 [tasks."test:apm"]
-description = "Install this checkout with APM into a scratch dir for claude, codex and opencode, and count what landed"
+description = "Install this checkout with APM into a scratch dir for claude, and count what landed"
 run = '''
 #!/usr/bin/env bash
 set -euo pipefail
@@ -31,8 +31,8 @@ repo="$PWD"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 cd "$tmp" && git init -q
-apm install "$repo" -t claude,codex,opencode >/dev/null
-for d in .claude/agents .codex/agents .opencode/agents .claude/skills; do
+apm install "$repo" -t claude >/dev/null
+for d in .claude/agents .claude/skills; do
   printf '%-18s %s\n' "$d" "$(ls "$d" | wc -l)"
 done
 '''

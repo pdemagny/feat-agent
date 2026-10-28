@@ -2,7 +2,7 @@
 
 Two skills (`.apm/skills/feat-brief/SKILL.md` writes the brief,
 `.apm/skills/feat/SKILL.md` coordinates the build) and the phase subagents
-(`.apm/agents/*.agent.md`), distributed three ways from one source: an APM
+(`.apm/agents/*.agent.md`), distributed three ways from one source, for Claude Code only: an APM
 package (`apm.yml`), a Claude Code plugin (`.claude-plugin/`), and
 `install.sh` for development. See README.md and docs/install.md.
 
@@ -10,9 +10,8 @@ When changing it:
 - The size table in `.apm/skills/feat/SKILL.md` is the source of truth for model
   and effort, and its `Loads` column lists what each row's agent reads.
   Mirror every change in `docs/workflow.md` (matrix and agents table).
-  Agent frontmatter carries no `model`, `effort`, `tools` or `color`: they
-  break other harnesses (APM warns when installing for OpenCode); use
-  `disallowedTools`. Phase 7 reviewer
+  Agent frontmatter carries no `model`, `effort`, `tools` or `color`
+  (`/feat` passes model and effort per spawn); use `disallowedTools`. Phase 7 reviewer
   groups live under the table and in `REVIEW_GROUPS` in a cost script (since moved out).
 - Adding or removing a third-party skill: update `dependencies` in
   `apm.yml`, `deps` in `install.sh`, the `npx skills add` line in

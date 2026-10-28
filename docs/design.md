@@ -71,11 +71,11 @@ Two other shapes were considered:
 - **`effort` in an inline skill's frontmatter** has no documented duration,
   so effort is set only on subagents.
 
-## Third-party skills inside a harness
+## Third-party skills inside the workflow
 
 A skill is written to run on its own: it asks the user, commits, applies its
 fixes, ends its turn, hands off to the next skill. Loaded inside this
-workflow, every one of those instructions competes with the harness. Each
+workflow, every one of those instructions competes with the orchestrator. Each
 dependency was checked for that, and handled one of three ways:
 
 | Skill                                                      | Conflicting instructions                                                                                                                                                                                | Handling                                                                                                                                                                                                                                                                                                                          |
@@ -121,16 +121,13 @@ Measured and simulated numbers: the cost notes (since moved out).
 
 ## Distribution: one source, three installers
 
-Skills travel well between harnesses (the Agent Skills format); agents
-don't, and no packaging standard covers them yet (Agent Plugins 1.0 packages
-skills and MCP servers only). So the repo keeps one copy of everything in
-APM's layout and lets each installer read it:
+The repo keeps one copy of everything in APM's layout and lets each
+installer read it:
 
-- **APM** (`apm.yml`, `.apm/`): one command for every harness, and the only
-  one that also installs the third-party skills. It converts agents for
-  Codex (TOML) and copies them for Claude Code and OpenCode; Gemini and
-  Antigravity have no custom agents. With an `apm.yml`, `apm install` finds
-  agents only as `.apm/agents/*.agent.md`, which is why the files live there.
+- **APM** (`apm.yml`, `.apm/`): installs the skills and agents into
+  `~/.claude`, and the only one that also installs the third-party skills.
+  With an `apm.yml`, `apm install` finds agents only as
+  `.apm/agents/*.agent.md`, which is why the files live there.
 - **Claude Code plugin** (`.claude-plugin/`): native install and updates,
   pointing at the same `.apm/` paths. Plugin components are namespaced, so
   the skills accept both `feat-planner` and `feat-agents:feat-planner`. A
@@ -138,17 +135,16 @@ APM's layout and lets each installer read it:
   third-party skills come from the skills CLI.
 - **`install.sh`**: symlinks for working on the workflow itself.
 
-Portable agent frontmatter: no `model` or `effort` (Claude model names are
-invalid in Codex; `/feat` passes both on every spawn anyway), no `color`
-(OpenCode wants hex or theme names, Claude wants colour names), and tool
-limits as `disallowedTools` instead of `tools` (OpenCode rejects Claude's
-comma-separated string). Codex drops `disallowedTools`, so read-only
-reviewers aren't enforced there.
+Agent frontmatter has no `model` or `effort` (`/feat` passes both on every
+spawn from the size table) and limits tools with `disallowedTools`.
 
-Only Claude Code runs `/feat` end to end: the skill relies on its Agent tool
-with per-call `model` and `effort`, and on `EnterWorktree`. Running every
-phase inline on harnesses without agents was considered and rejected: it
-brings back the single growing context this workflow exists to avoid.
+Only Claude Code is supported: the skill relies on its Agent tool with
+per-call `model` and `effort`, and on `EnterWorktree`. Other harnesses
+(Codex, OpenCode, Gemini) were supported through APM and dropped: they got
+`/feat-brief` and loose agents but not the build, and the partial install
+confused more than it helped. Running every phase inline on harnesses
+without agents was considered and rejected: it brings back the single
+growing context this workflow exists to avoid.
 
 ## Behaviour of the workflow itself
 

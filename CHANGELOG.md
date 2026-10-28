@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Claude Code is the only supported harness. The install docs, README and
+  `mise run test:apm` no longer cover Codex, OpenCode, Gemini or
+  Antigravity: `/feat` never ran there, so they only got a partial install.
+  APM stays as the Claude installer because it also installs the
+  third-party skills.
 - The shipper commits less: numbering happens before the first commit (no
   `number … as NNN` commit), and docs go in the feat commit instead of
   trailing `docs` commits. Usually two commits: specs, then feat.

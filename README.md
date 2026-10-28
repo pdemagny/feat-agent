@@ -57,7 +57,7 @@ security, performance, over-engineering, readability. Full matrix in
 
 ```sh
 uv tool install apm-cli
-apm install -g pdemagny/feat-agents -t claude   # skills, agents and their dependencies
+apm install -g pdemagny/feat-agents -t claude  # skills, agents and their dependencies
 cd ~/your-project
 specify init --here --integration claude       # once per project, if not already
 claude
@@ -66,28 +66,16 @@ claude
 > /feat specs/briefs/<name>.md
 ```
 
-Or, in Claude Code only, as a plugin (commands become `/feat-agents:feat`
-and `/feat-agents:feat-brief`):
-
-```
-/plugin install feat-agents --marketplace pdemagny/feat-agents
-```
-
-then add the third-party skills with `npx skills add`.
-
-**Claude Code only, for the build.** `/feat` relies on Claude Code's
-subagents with a model and effort per call, so it runs nowhere else. APM
-can also install for Codex, OpenCode and the harnesses that read
-`~/.agents/skills`; there you get `/feat-brief` and the agents on their
-own, not the build. What works where:
-[docs/install.md](docs/install.md#what-works-where). All three install ways, and checking an
-install: [docs/install.md](docs/install.md).
+Claude Code only: `/feat` relies on its subagents with a model and effort
+per call, and on `EnterWorktree`. Besides APM there are two other ways to
+install (a Claude Code plugin, or `install.sh` from a clone), and a check
+for any of them: [docs/install.md](docs/install.md).
 
 ## Documentation
 
 | Doc | What's in it |
 |---|---|
-| [docs/install.md](docs/install.md) | Prerequisites, every dependency and where it comes from, install options, uninstall |
+| [docs/install.md](docs/install.md) | Prerequisites, the three ways to install, dependencies, update, uninstall |
 | [docs/usage.md](docs/usage.md) | Brief, build, answering gates, resuming, changing size, tuning models and effort |
 | [docs/workflow.md](docs/workflow.md) | Every phase, gate and agent: the size × phase matrix, what runs when and how |
 | [docs/design.md](docs/design.md) | Why it is built this way: Claude Code mechanics, rejected alternatives |
@@ -98,7 +86,7 @@ install: [docs/install.md](docs/install.md).
 ```
 .apm/skills/feat/        the orchestrator: phases, gates, size table (source of truth)
 .apm/skills/feat-brief/  phase 1: interview, size, brief or capability map
-.apm/agents/*.agent.md   one subagent per phase role, harness-neutral frontmatter
+.apm/agents/*.agent.md   one subagent per phase role
 apm.yml                  APM package: metadata and the third-party skill dependencies
 .claude-plugin/          Claude Code plugin and marketplace manifests
 install.sh               developer install (symlinks), deps, check, uninstall

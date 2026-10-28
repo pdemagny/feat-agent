@@ -1,7 +1,6 @@
 # Using the workflow
 
-`/feat` runs in Claude Code only; `/feat-brief` works in any harness with
-skills ([what works where](install.md#what-works-where)).
+Both commands run in Claude Code.
 
 Two commands, in two contexts:
 
@@ -111,8 +110,8 @@ on every agent call. Edit it, mirror the change in
 [workflow.md](workflow.md), and check the effect with
 a cost script (since moved out).
 
-Agent files carry no model or effort, so they work in any harness; outside
-the workflow an agent runs on the session's model unless you name one.
+Agent files carry no model or effort; outside the workflow an agent runs
+on the session's model unless you name one.
 
 | Setting         | Values                                                 | Effect                                                       |
 | --------------- | ------------------------------------------------------ | ------------------------------------------------------------ |

@@ -64,8 +64,8 @@ say which are pending and continue when they report.
 
 ## Size table
 
-The single source of truth for models and efforts: agent files carry none,
-so they stay portable across harnesses. `Loads` is what the agent reads
+The single source of truth for models and efforts: agent files carry none.
+`Loads` is what the agent reads
 for its job.
 
 | Phase                           | Agent                | Loads                          | small           | medium          | large           |
