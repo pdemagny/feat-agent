@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- The shipper commits less: numbering happens before the first commit (no
+  `number … as NNN` commit), and docs go in the feat commit instead of
+  trailing `docs` commits. Usually two commits: specs, then feat.
+
 ## 0.3.3 — 2026-10-27
 
 - The spec dir is numbered in phase 8, not phase 2. Features started in

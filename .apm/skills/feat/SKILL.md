@@ -273,7 +273,7 @@ report, performance numbers included.
 
 Spawn `feat-shipper` with the state file, the conventions, the worktree and
 the default branch. It updates the docs the conventions call for, commits
-(default: `docs(specs)`, `feat(scope)`, `perf(scope)`, `refactor(scope)`),
+(default: `docs(specs)` then `feat(scope)` with its docs; `perf` and `refactor` only when separable),
 pushes and opens the PR, or returns a single `!` command when git is
 blocked in the session: give that line to the user as is. Mark the state
 file done. Never merge.

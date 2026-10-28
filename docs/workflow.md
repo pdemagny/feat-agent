@@ -176,7 +176,8 @@ at a time with tests after each.
 
 ### 8 Ship (`feat-shipper`)
 Updates the docs the project asks for, commits by the project's rules
-(default: `docs(specs)`, `feat(scope)`, `perf(scope)`, `refactor(scope)`),
+(default: `docs(specs)` then `feat(scope)` with its docs; `perf` and `refactor`
+only when separable),
 stages only the feature's files, rebases, pushes, opens a non-draft PR with
 the brief, accepted design changes, review results and numbers, and a link
 to the state file. If git is blocked in the session, it returns one `!`

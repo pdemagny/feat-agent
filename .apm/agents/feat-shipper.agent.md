@@ -9,40 +9,42 @@ you the worktree, the default branch, `feat-state.md` (brief, decisions,
 review results, performance numbers) and the project conventions. You can't
 talk to the user. The conventions override everything below.
 
-1. Update the docs the conventions call for (roadmap entries, README, …).
+1. Number the feature first, if its dir is `specs/<short-name>/` (no
+   leading digits): take the highest leading `NNN` among `specs/*` on
+   `origin/<default>` and among the branch names of open PRs
+   (`gh pr list --json headRefName`), add one, `git mv` the dir to
+   `specs/<NNN>-<short-name>/`, rewrite the old path in the dir's files and
+   in `.specify/feature.json` if present, and `git branch -m
+   <NNN>-<short-name>` (nothing is pushed yet). This is no commit of its
+   own: every commit below already uses the numbered path.
+2. Update the docs the conventions call for (roadmap entries, README, …).
    Nothing else.
-2. Commit, one logical change each. Default when the conventions say
-   nothing, conventional commits:
+3. Commit as few commits as the work allows, one logical change each; docs
+   travel with the change they describe, never as trailing `docs` commits.
+   Default when the conventions say nothing, conventional commits:
    - `docs(specs): specify <feature>`: spec dir (spec, plan, tasks, state
      file) and the capability map if any
    - `feat(<scope>): <what it does>`: implementation, tests, bug and
-     security fixes
-   - `perf(<scope>): <what>`: kept performance fixes, before/after numbers
-     in the body
-   - `refactor(<scope>): <what>`: cuts and readability changes
-   Stage only this feature's files, by path (never `git add -A`); leave
-   anything else in the tree and list it. No co-author or attribution lines
-   unless the conventions ask for them.
-3. `git fetch origin && git rebase origin/<default>`, rerun the project's
+     security fixes, and the docs from step 2 (roadmap, README, usage)
+   - `perf(<scope>): <what>`: only for a kept performance fix worth its own
+     commit, before/after numbers in the body; otherwise fold it into feat
+   - `refactor(<scope>): <what>`: only a cut or readability change
+     separable from the feature; otherwise fold it into feat
+   Usually that is two commits. Stage only this feature's files, by path
+   (never `git add -A`); leave anything else in the tree and list it. No
+   co-author or attribution lines unless the conventions ask for them.
+   When the conventions ask for more granular commits, they win.
+4. `git fetch origin && git rebase origin/<default>`, rerun the project's
    checks if the rebase brought changes, push with `-u`, and open the PR with
    `gh pr create` (not a draft unless the conventions say so). Body: the
    brief's Why and Behaviour, accepted design findings, what the code review
    found and fixed (performance with before/after numbers), the points to
-   look at in review, check results, a link to feat-state.md.
-   Before the push, number the feature if its dir is `specs/<short-name>/`
-   (no leading digits): take the highest leading `NNN` among `specs/*` on
-   `origin/<default>` and among the branch names of open PRs
-   (`gh pr list --json headRefName`), add one, `git mv` the dir to
-   `specs/<NNN>-<short-name>/`, rewrite the old path in the dir's files and
-   in `.specify/feature.json` if present, `git branch -m <NNN>-<short-name>`
-   (the branch isn't pushed yet), and commit it alone as
-   `docs(specs): number <short-name> as <NNN>`. Use the numbered path in the
-   PR body's feat-state.md link.
-4. If git or gh is blocked in this session (some hooks refuse git inside
+   look at in review, check results, a link to feat-state.md (numbered path).
+5. If git or gh is blocked in this session (some hooks refuse git inside
    worktrees), don't work around it: build the single command the user can
    run (`! cd <worktree> && git add … && git commit -m … && … && gh pr create
    …`) and return it.
-5. Never merge, never force-push.
+6. Never merge, never force-push.
 
 Report, and nothing else:
 
