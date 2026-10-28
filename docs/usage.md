@@ -95,9 +95,9 @@ Proposed by `/feat-brief`; you decide.
 
 | Size   | When                                                                                 | What changes                                                                                             |
 | ------ | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| small  | up to ~25 tasks, no new service, permissions, exposure or dependency; docs-only work | Sonnet at medium effort for most phases, two code reviewers, fewest gates                                |
-| medium | ~26–50 tasks, or a small one adding a service, permissions, exposure or dependency   | Opus for planning, design security, implementation, correctness and security review; five code reviewers |
-| large  | more than ~50 tasks                                                                  | higher effort on planning and reviews; a gate after each story                                           |
+| small  | up to ~30 tasks, no new service, permissions, exposure or dependency; docs-only work | Sonnet at medium effort for most phases, two code reviewers, fewest gates                                |
+| medium | ~31–60 tasks, or a small one adding a service, permissions, exposure or dependency   | Opus for planning, design security, implementation, correctness and security review; five code reviewers |
+| large  | more than ~60 tasks                                                                  | higher effort on planning and reviews; a gate after each story                                           |
 | huge   | capabilities that could ship on their own                                            | a capability map; one brief, `/feat` run and PR per capability                                           |
 
 Full matrix in [workflow.md](workflow.md#size--phase-matrix).

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Size thresholds follow the task count: small up to ~30, medium ~31–60, large
+  over ~60 (were 25 / 50).
 - Claude Code is the only supported harness. The install docs, README and
   `mise run test:apm` no longer cover Codex, OpenCode, Gemini or
   Antigravity: `/feat` never ran there, so they only got a partial install.

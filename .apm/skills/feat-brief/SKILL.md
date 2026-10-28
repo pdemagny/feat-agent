@@ -46,9 +46,9 @@ size from that number, with a one-line reason that states the estimate:
 
 | Size | Expected tasks |
 |---|---|
-| **small** | up to ~25 |
-| **medium** | ~26–50 |
-| **large** | more than ~50 |
+| **small** | up to ~30 |
+| **medium** | ~31–60 |
+| **large** | more than ~60 |
 | **huge** | bundles capabilities that could ship and be verified independently: write a capability map (step 4) instead of a brief |
 
 - Size on the amount of work, not its spread: touching several packages or
