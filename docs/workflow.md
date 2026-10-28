@@ -23,10 +23,10 @@ is authoritative; this page mirrors it with explanations.
 | --- | ------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------ | --------------------------------------------- | --------------------------------------------------------------- |
 | 1   | Brief         | `/feat-brief` (your session)                                                             | `interview-me`                                         | `specs/briefs/<name>.md`, or a capability map | **hard** (confirm the brief)                                    |
 | 0   | Setup         | coordinator                                                                              | —                                                      | conventions, hooks checked                    | hard only if a Spec Kit hook would branch or commit             |
-| 2   | Specify       | `feat-specifier`                                                                         | `speckit-specify`                                      | branch/worktree, `spec.md`, `feat-state.md`   | **hard**                                                        |
-| 3   | Plan          | `feat-planner`                                                                           | `speckit-plan`                                         | `plan.md` and design docs                     | soft (hard for large)                                           |
-| 4   | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer`, then `feat-planner` writes accepted findings | `security-and-hardening` (cost checklist in the agent) | findings D1…                                  | **hard** (soft for small without real findings)                 |
-| 5   | Tasks         | `feat-tasker`                                                                            | `speckit-tasks`, `speckit-analyze`                     | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH or unchecked checklists; always for large |
+| 2   | Specify       | `feat-specifier`                                                                         | `speckit-specify`                                      | branch/worktree, `spec.md`, `feat-state.md`   | **hard** (the only place questions are asked)  |
+| 3   | Plan          | `feat-planner`                                                                           | `speckit-plan`                                         | `plan.md` and design docs                     | none (hard for large)  |
+| 4   | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer`, then `feat-planner` writes accepted findings | `security-and-hardening` (cost checklist in the agent) | findings D1…                                  | one gate with 3: hard only on a real finding, a user-call assumption, a blocker or a size increase (always hard for large) |
+| 5   | Tasks         | `feat-tasker`                                                                            | `speckit-tasks`, `speckit-analyze`                     | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, a size increase or an unanswered checklist item; always for large |
 | 6   | Implement     | `feat-implementer` ×1 per user story, in turn                                            | `speckit-implement`                                    | the code, tasks ticked, checks green          | soft (hard per story for large; hard on a design problem)       |
 | 7   | Code review   | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks             | `security-and-hardening`, `performance-optimization`   | findings B, S, P, C, R; picked fixes applied  | **hard**                                                        |
 | 8   | Ship          | `feat-shipper`                                                                           | —                                                      | docs updated, commits, push, PR               | none                                                            |
@@ -111,29 +111,47 @@ put to you before anything runs.
 The coordinator creates branch `<NNN>-<short-name>` (worktree when possible,
 renamed if EnterWorktree picked another name) and enters it, so every agent
 starts there. The specifier runs `speckit-specify` from the brief and
-reports stories, requirements and open `[NEEDS CLARIFICATION]` markers with
-recommended answers. The coordinator moves the brief into `feat-state.md`
-and gates; your answers and edits go back to the specifier.
+reports stories, requirements, open `[NEEDS CLARIFICATION]` markers with
+recommended answers, assumptions and unchecked checklist items. The
+coordinator moves the brief into `feat-state.md` and gates. This is the only
+place questions are asked, the checklist question included; your answers and
+edits go back to the same specifier, continued with `SendMessage` so it
+keeps what it read.
 
 ### 3 Plan (`feat-planner`)
-Runs `speckit-plan`, kept to what the spec requires; reports approach, what
-it touches, new dependencies or services with reasons, constitution check,
-and every decision the spec didn't call for, which becomes a question.
+Runs `speckit-plan`, kept to what the spec requires; it never asks you
+anything. It reports approach, what it touches, new dependencies or
+services with reasons, constitution check, a size trigger (new service,
+permissions, exposure or dependency), and the decisions the spec didn't
+call for as assumptions with a recommendation and whether they need your
+call. Only a blocker stops the run. Small and medium go straight to phase 4;
+large stops here.
 
 ### 4 Design review (`feat-sec-reviewer` ∥ `feat-cost-reviewer`)
 Both read spec and plan. Security translates the web-app checklist to the
 project (exposure, identities, secrets, defaults, input, supply chain,
 blast radius); cost looks for oversized resources, repeated work, unbounded
 loops, extra calls, slow feedback loops, unused code, and may propose
-dropping a requirement. You accept or reject each `D…`; the planner writes
-the accepted ones into spec.md (as requirements) and plan.md.
+dropping a requirement. Each `D…` gets a recommendation. Large: you accept or
+reject each. Small and medium: one gate for phases 3 and 4 ("Plan and design
+review"), hard only on a finding above nice-to-have, an assumption that needs
+your call, a constitution violation, a blocker or a size increase; otherwise
+the recommendations are applied, and "ok" accepts them all. The planner (the
+same one, continued) writes the accepted ones into spec.md (as
+requirements) and plan.md.
 
 ### 5 Tasks (`feat-tasker`)
 Runs `speckit-tasks` then `speckit-analyze`, fixes MEDIUM/LOW findings that
 don't change meaning, and reports CRITICAL/HIGH with proposed fixes, task
-IDs per story, the MVP slice, and unchecked checklist items (which
-`speckit-implement` would stop on, so you decide now). Last cheap moment to
-change direction.
+IDs per story, the MVP slice, and unchecked checklist items. The gate is
+hard only on CRITICAL/HIGH findings, a size increase, or checklist items
+your phase 2 answer doesn't cover (`speckit-implement` would stop on them).
+Last cheap moment to change direction.
+
+**Size changes** are checked at the plan (size trigger) and here (task
+count). An increase is always a hard gate: it names the old and new size and
+what changes. A decrease is applied, logged with its reason and mentioned at
+the next gate; `size <s>` reverses it.
 
 ### 6 Implement (`feat-implementer` per story)
 One implementer per user story, one after the other (setup tasks with the

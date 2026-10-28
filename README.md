@@ -80,6 +80,7 @@ for any of them: [docs/install.md](docs/install.md).
 | [docs/workflow.md](docs/workflow.md) | Every phase, gate and agent: the size × phase matrix, what runs when and how |
 | [docs/design.md](docs/design.md) | Why it is built this way: Claude Code mechanics, rejected alternatives |
 | the cost notes (since moved out) | Measuring a run's tokens and cost with a cost script (since moved out); the baseline to compare against |
+| [docs/roadmap.md](docs/roadmap.md) | Ideas measured or designed but not built |
 
 ## Layout
 

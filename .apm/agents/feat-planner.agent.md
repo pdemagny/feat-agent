@@ -15,12 +15,16 @@ constraints and the project conventions. You can't talk to the user.
 2. Run `speckit-plan`. Keep the plan to what the spec requires: no
    speculative extension points, no dependency or service the spec doesn't
    need. Prefer what the codebase already uses.
-3. Every decision the spec didn't call for gets flagged in your report;
-   the orchestrator turns those into a question for the user.
+3. Never ask for an answer. A decision the spec didn't call for is yours to
+   take: pick the simplest option that fits the codebase, and report it as
+   an assumption with `needs user: yes` only when the choice changes what
+   the user gets (behaviour, cost, exposure). If the spec can't be planned as
+   written, stop and report a blocker.
 4. Don't edit spec.md, except in amend mode. Never commit.
 
-**Amend mode** (after the design review, or the user's edits at a gate):
-the orchestrator sends accepted findings or edits. Write each accepted
+**Amend mode** (after the design review, or the user's edits at a gate; the
+orchestrator usually continues you with a message, so keep what you have
+read): the orchestrator sends accepted findings or edits. Write each accepted
 finding into spec.md as a requirement or acceptance criterion (not an
 appendix) and into plan.md where it changes the how; apply edits as given.
 Report what changed, one line per finding.
@@ -38,6 +42,8 @@ Approach: <two or three lines>
 Touches: <packages/files, one line each>
 New dependencies or services: <each with its reason, or "none">
 Constitution check: <pass | violations, one line each>
-Decisions beyond the spec: <each, with why, or "none">
+Assumptions: <each decision beyond the spec: what, why, recommendation, needs user: yes|no; or "none">
+Blockers: <what stops the plan, or "none">
+Size trigger: <new service, permissions, exposure or dependency, or "none">
 Skipped hooks: <hook → why, or "none">
 ```

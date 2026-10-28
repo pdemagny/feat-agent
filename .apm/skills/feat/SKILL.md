@@ -40,7 +40,11 @@ Every call you make re-reads your whole context, for the whole run. So:
   narration. Spawn an agent and update the state file in the same turn.
 - Changes the user asks for at a gate go back to the agent that owns the
   artifact (specifier: spec.md; planner: plan.md and accepted design
-  findings; tasker: tasks.md; implementer: code).
+  findings; tasker: tasks.md; implementer: code). For the specifier, planner
+  and tasker, continue the agent you spawned with `SendMessage` (note the
+  agent id each spawn returns in the state file's `Agents` line): it keeps
+  its context instead of rereading everything. If it can't be continued
+  (new session after `/feat resume`, an error), spawn it again in amend mode.
 
 Subagents don't see this conversation. Give each one, in its prompt:
 
@@ -94,10 +98,10 @@ the phase 6 row.
 | #   | Phase         | Runs in                                    | Gate                                                                             |
 | --- | ------------- | ------------------------------------------ | -------------------------------------------------------------------------------- |
 | 0   | Setup         | you                                        | hard only if a Spec Kit hook would branch or commit                              |
-| 2   | Specify       | `feat-specifier`                           | **hard**: spec.md                                                                |
-| 3   | Plan          | `feat-planner`                             | soft; **hard** for large                                                         |
-| 4   | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer` | **hard**; soft for small with no real finding                                    |
-| 5   | Tasks         | `feat-tasker`                              | **hard** on CRITICAL/HIGH findings or unchecked checklists, and always for large |
+| 2   | Specify       | `feat-specifier`                           | **hard**: spec.md, the only place questions are asked                            |
+| 3   | Plan          | `feat-planner`                             | none for small and medium (merged with 4); **hard** for large                    |
+| 4   | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer` | small and medium: one gate for 3+4, hard only on a real finding, a user-call assumption, a blocker or a size increase; large: **hard** |
+| 5   | Tasks         | `feat-tasker`                              | **hard** on CRITICAL/HIGH findings, a size increase or an unanswered checklist item, and always for large; else soft |
 | 6   | Implement     | `feat-implementer`, one per user story     | soft unless checks fail; **hard after each story** for large                     |
 | 7   | Code review   | `feat-code-reviewer` ×2 (small) or ×5      | **hard**: user picks the fixes                                                   |
 | 8   | Ship          | `feat-shipper`                             | none: ends with the PR link                                                      |
@@ -109,6 +113,13 @@ in the same turn. Silence or an ambiguous reply is not approval; ask.
 **Soft gate**: a short summary, then continue. Anything surprising (a scope
 change, a decision the spec didn't call for, a check that can't pass without
 a design change) makes it hard.
+
+**Size changes.** A size increase is always a hard gate, whichever phase
+finds it (the planner's size trigger, the task count in phase 5): name the
+old and new size, why, and what changes in the later phases, and wait for a
+yes; a no keeps the size. A decrease is soft: apply it, log it with the
+reason, mention it in the next gate summary. If two triggers fire, the
+earlier phase is asked first.
 
 At any gate the user may say "back to N", "skip N" (logged with the
 reason), "size <s>" (logged; later phases use the new column), or "stop"
@@ -138,6 +149,7 @@ the PR links to it.
 
 - Branch: <branch> Worktree: <path or "none">
 - Size: small | medium | large
+- Agents: <specifier|planner|tasker> <agent id>, … (for SendMessage)
 - Current phase: <N> <name>
 - Conventions: <the few lines agents need>
 - Allowed Spec Kit hooks: <list or "none">
@@ -203,36 +215,56 @@ claude`) and the `feat-*` agents are installed (plain or
 3. Create the state file (move the brief into it; delete
    `specs/briefs/<short-name>.md`).
 
-**Hard gate**: stories and requirements in a few lines, plus the open
-markers. Answers and edits go back to the specifier (amend mode). A spec
-with open markers isn't approvable.
+**Hard gate**: stories and requirements in a few lines, the open markers
+each with its recommended answer, the specifier's assumptions, and the
+unchecked items of `checklists/` (`speckit-implement` stops on them: ask now
+whether to proceed, and log the answer). This is the only place questions
+are asked, so later phases don't need to stop to ask. Answers and edits go
+back to the specifier (amend mode). A spec with open markers isn't
+approvable.
 
 ## 3. Plan
 
-Spawn `feat-planner`. **Soft gate** (hard for large): approach, what it
-touches, new dependencies or services with reasons, constitution check, and
-any decision the spec didn't call for (which makes the gate hard).
+Spawn `feat-planner`. It never asks the user anything: a decision the spec
+didn't call for comes back as an assumption with a recommendation and
+`needs user: yes|no`, and only a blocker (the spec can't be planned as
+written) stops the run. It also reports a size trigger (new service,
+permissions, exposure or dependency); on a small feature, that is a size
+increase to ask about.
+
+Small and medium: no gate, go straight to phase 4. **Hard gate for large**:
+approach, what it touches, new dependencies or services with reasons,
+constitution check, assumptions.
 
 ## 4. Design review
 
 Spawn `feat-sec-reviewer` and `feat-cost-reviewer` in parallel. Merge their
-findings into `D1…`, drop duplicates. **Hard gate** for medium and large (the
-user accepts or rejects each); for small with nothing above nice-to-have,
-report and continue. Accepted findings go to `feat-planner` (amend mode) to
-be written into spec.md as requirements and into plan.md.
+findings into `D1…`, drop duplicates, give each a recommendation.
+
+**Large**: hard gate, the user accepts or rejects each finding. **Small and
+medium**: one gate for phases 3 and 4, headed "Plan and design review":
+approach, what it touches, assumptions, any size increase (asked first),
+the findings with their recommendations. It is hard if there is a finding
+above nice-to-have, an assumption with `needs user: yes`, a constitution
+violation, a blocker or a size increase; otherwise soft, and the
+recommendations are applied. "ok" accepts all recommendations.
+
+Accepted findings go to `feat-planner` (continue it with `SendMessage`,
+amend mode) to be written into spec.md as requirements and into plan.md.
 
 ## 5. Tasks
 
 Spawn `feat-tasker`. It returns task counts per story, the MVP slice, the
 stories' task IDs, open findings with proposed fixes, and unchecked
 checklist items. **Hard gate** on CRITICAL/HIGH findings (accepted fixes go
-back to the tasker, which reruns analyze), on unchecked checklists (ask
-whether to proceed: `speckit-implement` would otherwise stop to ask), and
-always for large. Otherwise soft. Check the size against the task count
-(small up to ~30, medium ~31–60, large over ~60): propose the size that
-fits, smaller as well as bigger; a new service, permissions, exposure or
-dependency keeps it at least medium. Last cheap moment to change
-direction: raise any hesitation you noticed.
+back to the tasker, which reruns analyze), on a size increase, on unchecked
+checklist items the phase 2 answer doesn't cover (`speckit-implement` would
+otherwise stop to ask), and always for large. Otherwise soft. Check the size against the task count
+(small up to ~30, medium ~31–60, large over ~60); a new service,
+permissions, exposure or dependency keeps it at least medium. A larger fit
+is a size increase (hard gate, see Size changes); a smaller one is applied
+and logged. Last cheap moment to change direction: raise any hesitation you
+noticed.
 
 ## 6. Implement
 

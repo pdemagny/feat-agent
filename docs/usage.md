@@ -54,7 +54,7 @@ tasks. The feature is built on branch `<NNN>-<name>`, in a worktree under
 ## Answering a gate
 
 ```
-## Phase 4: Design review — needs your call
+## Phase 3–4: Plan and design review — needs your call
 **What I did:** feat-sec-reviewer (opus · high) and feat-cost-reviewer (sonnet · high) on spec + plan
 **What you should know:** …
 **Your call:**
@@ -62,6 +62,10 @@ tasks. The feature is built on branch `<NNN>-<name>`, in a worktree under
 2. D2 [cost] … — I recommend rejecting: …
 **Next:** phase 5 Tasks
 ```
+
+On small and medium features, plan and design review share one gate, and
+"ok" accepts every recommendation. A size increase is always asked on its
+own; a decrease is applied and logged.
 
 Answer in plain words ("accept D1, reject D2: behind the VPN"). Rejections
 are logged with your reason and never proposed again. You can also say:

@@ -38,5 +38,6 @@ Stories: <one line per user story, with priority>
 Requirements: <count>; notable ones in one line each
 Open markers: <each [NEEDS CLARIFICATION] left, with the question to ask and your recommended answer>
 Assumptions: <anything you decided that the brief did not say>
+Unchecked checklist items: <checklists/ file: item, or "none">
 Skipped hooks: <hook → why, or "none">
 ```

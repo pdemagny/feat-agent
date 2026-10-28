@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- Fewer stops on small and medium features: questions are asked only at
+  the spec gate (the planner reports assumptions instead of asking), and
+  plan and design review share one gate that is hard only on a real
+  finding, an assumption needing your call, a blocker or a size increase.
+  The tasks gate is soft unless analyze finds CRITICAL/HIGH issues, the
+  size grows or a checklist item is unanswered. Large keeps its gates.
+- A size increase is always a hard gate, in any phase; a decrease is
+  applied and logged.
+- The specifier, planner and tasker are continued with `SendMessage` for
+  amendments instead of being spawned cold again (their agent ids go in the
+  state file).
 - Size thresholds follow the task count: small up to ~30, medium ~31–60, large
   over ~60 (were 25 / 50).
 - Claude Code is the only supported harness. The install docs, README and
