@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.0 — 2026-10-28
 
 - Fewer stops on small and medium features: questions are asked only at
   the spec gate (the planner reports assumptions instead of asking), and
