@@ -86,7 +86,7 @@ Restart Claude Code (or start a new session) after any of the three.
 | Skill                      | Source                                                                | Used by                                                     |
 | -------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------- |
 | `interview-me`             | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | `/feat-brief` (phase 1)                                     |
-| `security-and-hardening`   | addyosmani/agent-skills                                               | `feat-sec-reviewer` (phase 4), `feat-code-reviewer` lens 7b |
+| `security-and-hardening`   | addyosmani/agent-skills                                               | `feat-design-reviewer` lens 4a, `feat-code-reviewer` lens 7b |
 | `performance-optimization` | addyosmani/agent-skills                                               | `feat-code-reviewer` lens 7c                                |
 
 They are declared in `apm.yml` (APM installs them) and in `install.sh`

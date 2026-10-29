@@ -55,7 +55,7 @@ tasks. The feature is built on branch `<NNN>-<name>`, in a worktree under
 
 ```
 ## Phase 3–4: Plan and design review — needs your call
-**What I did:** feat-sec-reviewer (opus · high), feat-cost-reviewer (opus · medium) and feat-design-reviewer (opus · medium) on spec + plan
+**What I did:** feat-design-reviewer ×3 on spec + plan: 4a (opus · high), 4b and 4c (opus · medium)
 **How a fresh reader understood it:** … (check it against what you meant)
 **What you should know:** …
 **Your call:**
@@ -133,6 +133,6 @@ that phase's effort before its model.
 ## Using the agents on their own
 
 They're ordinary Claude Code subagents: "have feat-code-reviewer review my
-uncommitted diff with lenses 7b and 7d", "ask feat-cost-reviewer about this
-plan". Installed as a plugin, they're `feat-agents:feat-code-reviewer` and
+uncommitted diff with lenses 7b and 7d", "have feat-design-reviewer review
+this plan with lens 4b". Installed as a plugin, they're `feat-agents:feat-code-reviewer` and
 so on.

@@ -115,8 +115,8 @@ keeping contexts small:
   done by `feat-shipper`.
 - **One implementer per story**, so no implementer carries the previous
   stories' reads.
-- **Fewer, cheaper agents where the feature is small**: two code reviewers
-  instead of five, medium effort.
+- **Fewer, cheaper agents where the feature is small**: one design reviewer
+  instead of three, two code reviewers instead of five, medium effort.
 
 Measured and simulated numbers: the cost notes (since moved out).
 

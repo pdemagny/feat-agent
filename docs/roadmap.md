@@ -28,10 +28,6 @@ fire where it matters.
 
 ## Smaller ideas
 
-- **One design reviewer for small features** instead of security, cost and
-  clarity-and-fit separately. Each review takes under 3 minutes, so the gain
-  is two cold starts and some cost, not wall-clock time. Keep 4c's fresh
-  reader apart from whatever reads the planner's report.
 - **Why does the shipper take 7–12 minutes?** It is mostly git, a rebase and
   check reruns, and in one run it was spawned twice. Read that transcript
   first, then decide.

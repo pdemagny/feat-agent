@@ -11,8 +11,8 @@ When changing it:
   and effort, and its `Loads` column lists what each row's agent reads.
   Mirror every change in `docs/workflow.md` (matrix and agents table).
   Agent frontmatter carries no `model`, `effort`, `tools` or `color`
-  (`/feat` passes model and effort per spawn); use `disallowedTools`. Phase 7 reviewer
-  groups live under the table and in `REVIEW_GROUPS` in a cost script (since moved out).
+  (`/feat` passes model and effort per spawn); use `disallowedTools`. Phase 4 and 7
+  reviewer groups live under the table and in `REVIEW_GROUPS` in a cost script (since moved out).
 - Adding or removing a third-party skill: update `dependencies` in
   `apm.yml`, `deps` in `install.sh`, the `npx skills add` line in
   `docs/install.md` and its table, and the agent's `skills:` (or the lens in

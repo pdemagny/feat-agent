@@ -81,8 +81,8 @@ for its job.
 | ------------------------------- | ---------------------- | ------------------------------ | --------------- | --------------- | --------------- |
 | 2 Specify                       | `feat-specifier`       | speckit-specify                | sonnet · medium | sonnet · medium | opus · high     |
 | 3 Plan                          | `feat-planner`         | speckit-plan                   | opus · high     | opus · high     | opus · xhigh    |
-| 4a Security design              | `feat-sec-reviewer`    | security-and-hardening         | sonnet · medium | opus · medium   | opus · high     |
-| 4b Cost design                  | `feat-cost-reviewer`   | —                              | sonnet · medium | sonnet · medium | opus · medium   |
+| 4a Security design              | `feat-design-reviewer` | security-and-hardening         | sonnet · medium | opus · medium   | opus · high     |
+| 4b Cost design                  | `feat-design-reviewer` | —                              | sonnet · medium | sonnet · medium | opus · medium   |
 | 4c Clarity and fit              | `feat-design-reviewer` | —                              | sonnet · medium | sonnet · high   | opus · medium   |
 | 5 Tasks                         | `feat-tasker`          | speckit-tasks, speckit-analyze | sonnet · medium | sonnet · medium | opus · high     |
 | 6 Implement                     | `feat-implementer`     | speckit-implement              | sonnet · medium | opus · medium   | opus · high     |
@@ -93,6 +93,9 @@ for its job.
 | 7e Readability                  | `feat-code-reviewer`   | —                              | sonnet · medium | sonnet · medium | sonnet · medium |
 | 8 Ship                          | `feat-shipper`         | —                              | haiku · medium  | haiku · medium  | haiku · medium  |
 
+Phase 4 runs one `feat-design-reviewer` per group of lenses. **small**: one
+reviewer, lenses `4a+4b+4c`. **medium / large**: one per lens, in parallel.
+
 Phase 7 runs one `feat-code-reviewer` per group of lenses. **small**: two
 reviewers, lenses `7a+7b` and `7c+7d+7e`. **medium / large**: one per lens,
 `7a`–`7d` in parallel, then `7e` with 7d's cuts. A group runs on the
@@ -101,16 +104,16 @@ the phase 6 row.
 
 ## Phases and gates
 
-| # | Phase         | Runs in                                                             | Gate                                                                                                                                   |
-| - | ------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| 0 | Setup         | you                                                                 | hard only if a Spec Kit hook would branch or commit                                                                                    |
-| 2 | Specify       | `feat-specifier`                                                    | **hard**: spec.md, the only place questions are asked                                                                                  |
-| 3 | Plan          | `feat-planner`                                                      | none for small and medium (merged with 4); **hard** for large                                                                          |
-| 4 | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer` ∥ `feat-design-reviewer` | small and medium: one gate for 3+4, hard only on a real finding, a user-call assumption, a blocker or a size increase; large: **hard** |
-| 5 | Tasks         | `feat-tasker`                                                       | **hard** on CRITICAL/HIGH findings, a size increase or an unanswered checklist item, and always for large; else soft                   |
-| 6 | Implement     | `feat-implementer`, one per user story                              | soft unless checks fail; **hard after each story** for large                                                                           |
-| 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5                               | **hard**: user picks the fixes                                                                                                         |
-| 8 | Ship          | `feat-shipper`                                                      | none: ends with the PR link                                                                                                            |
+| # | Phase         | Runs in                                 | Gate                                                                                                                                   |
+| - | ------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 0 | Setup         | you                                     | hard only if a Spec Kit hook would branch or commit                                                                                    |
+| 2 | Specify       | `feat-specifier`                        | **hard**: spec.md, the only place questions are asked                                                                                  |
+| 3 | Plan          | `feat-planner`                          | none for small and medium (merged with 4); **hard** for large                                                                          |
+| 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3 | small and medium: one gate for 3+4, hard only on a real finding, a user-call assumption, a blocker or a size increase; large: **hard** |
+| 5 | Tasks         | `feat-tasker`                           | **hard** on CRITICAL/HIGH findings, a size increase or an unanswered checklist item, and always for large; else soft                   |
+| 6 | Implement     | `feat-implementer`, one per user story  | soft unless checks fail; **hard after each story** for large                                                                           |
+| 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5   | **hard**: user picks the fixes                                                                                                         |
+| 8 | Ship          | `feat-shipper`                          | none: ends with the PR link                                                                                                            |
 
 Phase 1 (the interview and the brief) is `/feat-brief`, in its own context.
 
@@ -244,13 +247,12 @@ constitution check, assumptions.
 
 ## 4. Design review
 
-Spawn `feat-sec-reviewer`, `feat-cost-reviewer` and `feat-design-reviewer`
-in parallel. Give them the paths only, never the planner's report: the
-design reviewer is a fresh reader on purpose. Merge their findings into
-`D1…`, drop duplicates, give each a recommendation.
+Spawn `feat-design-reviewer` per the size table's groups, each with its
+lenses. Give it the paths only, never the planner's report: lens 4c is a
+fresh reader on purpose. Merge the findings into `D1…`, drop duplicates,
+give each a recommendation.
 
-Every gate of this phase starts with the design reviewer's paraphrase, as
-it reported it: the user checks it against what they meant. If it
+Every gate of this phase starts with the 4c paraphrase, as reported: the user checks it against what they meant. If it
 contradicts the brief, the gate is hard.
 
 **Large**: hard gate, the user accepts or rejects each finding. **Small and

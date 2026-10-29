@@ -25,6 +25,13 @@
   references to things that don't exist, helpers the codebase already has,
   speculative abstractions, and decisions left to the implementer. Adapted
   from google/elephant-goldfish-model's review (Apache-2.0).
+- Phase 4 is one agent with lenses, like phase 7: `feat-design-reviewer`
+  runs 4a security, 4b cost and 4c clarity and fit. A small feature gets one
+  reviewer with all three lenses (one cold start instead of three; spec 022
+  simulated: phase 4 $0.34 from $0.52, the run $7.93 from $8.10); medium
+  and large keep one per lens in
+  parallel. `feat-sec-reviewer` and `feat-cost-reviewer` are removed: after
+  `./install.sh`, delete their dangling links in `~/.claude/agents/`.
 - docs/workflow.md listed the large-size phase 5 row as sonnet · high; it
   is opus · high, as in the skill.
 

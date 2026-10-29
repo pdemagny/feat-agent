@@ -21,11 +21,9 @@
   ],
   "agents": [
     "./.apm/agents/feat-code-reviewer.agent.md",
-    "./.apm/agents/feat-cost-reviewer.agent.md",
     "./.apm/agents/feat-design-reviewer.agent.md",
     "./.apm/agents/feat-implementer.agent.md",
     "./.apm/agents/feat-planner.agent.md",
-    "./.apm/agents/feat-sec-reviewer.agent.md",
     "./.apm/agents/feat-shipper.agent.md",
     "./.apm/agents/feat-specifier.agent.md",
     "./.apm/agents/feat-tasker.agent.md"

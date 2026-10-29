@@ -19,17 +19,17 @@ is authoritative; this page mirrors it with explanations.
 
 ## Phases at a glance
 
-| # | Phase         | Runs in                                                                                                           | Skills used                                                         | Produces                                      | Gate                                                                                                                       |
-| - | ------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| 1 | Brief         | `/feat-brief` (your session)                                                                                      | `interview-me`                                                      | `specs/briefs/<name>.md`, or a capability map | **hard** (confirm the brief)                                                                                               |
-| 0 | Setup         | coordinator                                                                                                       | —                                                                   | conventions, hooks checked                    | hard only if a Spec Kit hook would branch or commit                                                                        |
-| 2 | Specify       | `feat-specifier`                                                                                                  | `speckit-specify`                                                   | branch/worktree, `spec.md`, `feat-state.md`   | **hard** (the only place questions are asked)                                                                              |
-| 3 | Plan          | `feat-planner`                                                                                                    | `speckit-plan`                                                      | `plan.md` and design docs                     | none (hard for large)                                                                                                      |
-| 4 | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer` ∥ `feat-design-reviewer`, then `feat-planner` writes accepted findings | `security-and-hardening` (cost and design checklists in the agents) | a paraphrase, findings D1…                    | one gate with 3: hard only on a real finding, a user-call assumption, a blocker or a size increase (always hard for large) |
-| 5 | Tasks         | `feat-tasker`                                                                                                     | `speckit-tasks`, `speckit-analyze`                                  | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, a size increase or an unanswered checklist item; always for large                                   |
-| 6 | Implement     | `feat-implementer` ×1 per user story, in turn                                                                     | `speckit-implement`                                                 | the code, tasks ticked, checks green          | soft (hard per story for large; hard on a design problem)                                                                  |
-| 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks                                      | `security-and-hardening`, `performance-optimization`                | findings B, S, P, C, R; picked fixes applied  | **hard**                                                                                                                   |
-| 8 | Ship          | `feat-shipper`                                                                                                    | —                                                                   | docs updated, commits, push, PR               | none                                                                                                                       |
+| # | Phase         | Runs in                                                                               | Skills used                                                        | Produces                                      | Gate                                                                                                                       |
+| - | ------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| 1 | Brief         | `/feat-brief` (your session)                                                          | `interview-me`                                                     | `specs/briefs/<name>.md`, or a capability map | **hard** (confirm the brief)                                                                                               |
+| 0 | Setup         | coordinator                                                                           | —                                                                  | conventions, hooks checked                    | hard only if a Spec Kit hook would branch or commit                                                                        |
+| 2 | Specify       | `feat-specifier`                                                                      | `speckit-specify`                                                  | branch/worktree, `spec.md`, `feat-state.md`   | **hard** (the only place questions are asked)                                                                              |
+| 3 | Plan          | `feat-planner`                                                                        | `speckit-plan`                                                     | `plan.md` and design docs                     | none (hard for large)                                                                                                      |
+| 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3, then `feat-planner` writes accepted findings | `security-and-hardening` (cost and design checklists in the agent) | a paraphrase, findings D1…                    | one gate with 3: hard only on a real finding, a user-call assumption, a blocker or a size increase (always hard for large) |
+| 5 | Tasks         | `feat-tasker`                                                                         | `speckit-tasks`, `speckit-analyze`                                 | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, a size increase or an unanswered checklist item; always for large                                   |
+| 6 | Implement     | `feat-implementer` ×1 per user story, in turn                                         | `speckit-implement`                                                | the code, tasks ticked, checks green          | soft (hard per story for large; hard on a design problem)                                                                  |
+| 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks          | `security-and-hardening`, `performance-optimization`               | findings B, S, P, C, R; picked fixes applied  | **hard**                                                                                                                   |
+| 8 | Ship          | `feat-shipper`                                                                        | —                                                                  | docs updated, commits, push, PR               | none                                                                                                                       |
 
 **Hard gate**: Claude stops and waits for your answer. **Soft gate**: Claude
 reports and continues; anything surprising turns it into a hard gate.
@@ -43,8 +43,8 @@ Each cell: model · effort, passed by `/feat` on every spawn.
 | 1  | Brief                        | your session           | session         | session         | session         | session, plus capability map |
 | 2  | Specify                      | `feat-specifier`       | sonnet · medium | sonnet · medium | opus · high     | —                            |
 | 3  | Plan                         | `feat-planner`         | opus · high     | opus · high     | opus · xhigh    | —                            |
-| 4a | Security design ∥            | `feat-sec-reviewer`    | sonnet · medium | opus · medium   | opus · high     | —                            |
-| 4b | Cost design ∥                | `feat-cost-reviewer`   | sonnet · medium | sonnet · medium | opus · medium   | —                            |
+| 4a | Security design ∥            | `feat-design-reviewer` | sonnet · medium | opus · medium   | opus · high     | —                            |
+| 4b | Cost design ∥                | `feat-design-reviewer` | sonnet · medium | sonnet · medium | opus · medium   | —                            |
 | 4c | Clarity and fit ∥            | `feat-design-reviewer` | sonnet · medium | sonnet · high   | opus · medium   | —                            |
 | 5  | Tasks + analyze              | `feat-tasker`          | sonnet · medium | sonnet · medium | opus · high     | —                            |
 | 6  | Implement (×1 per story)     | `feat-implementer`     | sonnet · medium | opus · medium   | opus · high     | —                            |
@@ -55,6 +55,9 @@ Each cell: model · effort, passed by `/feat` on every spawn.
 | 7e | Readability                  | `feat-code-reviewer`   | sonnet · medium | sonnet · medium | sonnet · medium | —                            |
 | 8  | Ship                         | `feat-shipper`         | haiku · medium  | haiku · medium  | haiku · medium  | —                            |
 
+**Phase 4 reviewers.** small: one reviewer, lenses 4a+4b+4c. medium and
+large: one reviewer per lens, in parallel.
+
 **Phase 7 reviewers.** small: two reviewers, lenses 7a+7b and 7c+7d+7e. medium and large: one reviewer per lens, 7a–7d in parallel, then 7e
 with 7d's cuts. A group runs on the strongest model among its lenses.
 Applying the picked fixes uses the phase 6 row.
@@ -64,13 +67,14 @@ gets its own brief and size column.
 
 ### How the sizes differ beyond model and effort
 
-|                    | small                                                                                        | medium                                           | large                                                       | huge                                       |
-| ------------------ | -------------------------------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------ |
-| **When**           | up to ~30 tasks; no new service, permissions, network exposure or dependency; docs-only work | ~31–60 tasks, or a small one adding any of those | more than ~60 tasks                                         | capabilities that could ship independently |
-| **Hard gates**     | brief, 2, 7 (+4 on a real finding, +5 on CRITICAL/HIGH)                                      | brief, 2, 4, 7 (+5 on CRITICAL/HIGH)             | brief, 2, 3, 4, 5, each story in 6, 7                       | the map                                    |
-| **Code reviewers** | 2                                                                                            | 5                                                | 5                                                           | per capability                             |
-| **PRs**            | 1                                                                                            | 1                                                | 1                                                           | 1 per capability                           |
-| **Extra review**   | —                                                                                            | —                                                | `/code-review ultra` suggested before merge (you launch it) | per capability                             |
+|                      | small                                                                                        | medium                                           | large                                                       | huge                                       |
+| -------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------ |
+| **When**             | up to ~30 tasks; no new service, permissions, network exposure or dependency; docs-only work | ~31–60 tasks, or a small one adding any of those | more than ~60 tasks                                         | capabilities that could ship independently |
+| **Hard gates**       | brief, 2, 7 (+4 on a real finding, +5 on CRITICAL/HIGH)                                      | brief, 2, 4, 7 (+5 on CRITICAL/HIGH)             | brief, 2, 3, 4, 5, each story in 6, 7                       | the map                                    |
+| **Design reviewers** | 1                                                                                            | 3                                                | 3                                                           | per capability                             |
+| **Code reviewers**   | 2                                                                                            | 5                                                | 5                                                           | per capability                             |
+| **PRs**              | 1                                                                                            | 1                                                | 1                                                           | 1 per capability                           |
+| **Extra review**     | —                                                                                            | —                                                | `/code-review ultra` suggested before merge (you launch it) | per capability                             |
 
 ### Why these choices
 
@@ -81,8 +85,10 @@ gets its own brief and size column.
 - **One implementer per story at every size.** Each starts fresh instead of
   carrying the earlier stories' reads; stories run one after the other
   because nothing is committed before phase 8.
-- **Two reviewers for small.** Each agent start costs ~36k tokens before any
-  work; a small diff doesn't need five separate contexts.
+- **One design reviewer and two code reviewers for small.** Each agent
+  start costs ~36k tokens before any work; a small design doesn't need
+  three separate contexts, nor a small diff five. Lens 4c stays a fresh
+  reader either way: no design reviewer gets the planner's report.
 - **Ship on Haiku.** Commits, push and a PR body from the state file need
   little reasoning; it used to run at the coordinator's full context.
 - **Huge is a scoping problem.** One spec with a dozen capabilities gives a
@@ -129,14 +135,15 @@ call for as assumptions with a recommendation and whether they need your
 call. Only a blocker stops the run. Small and medium go straight to phase 4;
 large stops here.
 
-### 4 Design review (`feat-sec-reviewer` ∥ `feat-cost-reviewer` ∥ `feat-design-reviewer`)
-All three read spec and plan. Security translates the web-app checklist to the
+### 4 Design review (`feat-design-reviewer`)
+One reviewer with all three lenses on small, one per lens in parallel on
+medium and large. Each reads spec and plan with the paths only, never the
+planner's report. **4a Security** translates the web-app checklist to the
 project (exposure, identities, secrets, defaults, input, supply chain,
-blast radius); cost looks for oversized resources, repeated work, unbounded
+blast radius); **4b Cost** looks for oversized resources, repeated work, unbounded
 loops, extra calls, slow feedback loops, unused code, and may propose
-dropping a requirement. The design reviewer reads them as someone new to
-the project, with the paths only, never the planner's report, and makes
-four passes:
+dropping a requirement. **4c Clarity and fit** reads them as someone new to
+the project, runs first when lenses share a reviewer, and makes four passes:
 - **clarity**: it first paraphrases what the feature does and how the
   system works today, as the documents say; a part it can't paraphrase is a
   finding, and so are undefined project terms and unstated prerequisites;
@@ -151,7 +158,7 @@ four passes:
 Its passes are adapted from the comprehension, codebase-details, zoom-out
 and implementation-readiness reviewers of the
 [Elephant-Goldfish Model](https://github.com/google/elephant-goldfish-model)
-(Apache-2.0). Its paraphrase opens the gate, so you can check it against
+(Apache-2.0). The paraphrase opens the gate, so you can check it against
 what you meant; one that contradicts the brief makes the gate hard.
 
 Each `D…` gets a recommendation. Large: you accept or
@@ -239,9 +246,7 @@ starts from it; the PR links to it. It's updated at each gate.
 | ---------------------- | --------------- | --------------- | -------------------------------------- | ---------------------------------- | ---------------------------------------------------- |
 | `feat-specifier`       | 2               | sonnet · medium | NotebookEdit, Agent                    | `speckit-specify`                  | spec.md                                              |
 | `feat-planner`         | 3, 4 (amend)    | opus · high     | NotebookEdit, Agent                    | `speckit-plan`                     | plan.md, design docs; accepted findings into spec.md |
-| `feat-sec-reviewer`    | 4               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | `security-and-hardening`           | nothing                                              |
-| `feat-cost-reviewer`   | 4               | sonnet · medium | Bash, Edit, Write, NotebookEdit, Agent | none (checklist in its prompt)     | nothing                                              |
-| `feat-design-reviewer` | 4               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | none (checklist in its prompt)     | nothing                                              |
+| `feat-design-reviewer` | 4               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | per lens, on demand                | nothing                                              |
 | `feat-tasker`          | 5               | sonnet · medium | NotebookEdit, Agent                    | `speckit-tasks`, `speckit-analyze` | tasks.md, small artifact fixes                       |
 | `feat-implementer`     | 6, 7 (fix mode) | sonnet · medium | Agent                                  | `speckit-implement`                | code, tasks.md                                       |
 | `feat-code-reviewer`   | 7               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | per lens, on demand                | nothing                                              |
