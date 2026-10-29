@@ -16,8 +16,15 @@ Two commands, in two contexts:
 
 Claude reads the code the idea touches, then asks you questions one at a
 time (`interview-me`), each with its guess attached. It proposes a size and
-writes the brief to `specs/briefs/<short-name>.md`: why, behaviour, out of
-scope, acceptance, constraints, size, short name. You confirm or edit it.
+writes the brief to `specs/briefs/<short-name>.md`: why, how it's handled
+today, behaviour, out of scope, alternatives rejected, acceptance,
+constraints, size, short name. Expect pushback: before writing a decision
+down, Claude gives its strongest counter-argument.
+
+A fresh agent (`feat-brief-reviewer`) then reads the brief without the
+interview, as the build will. You confirm the brief together with its
+paraphrase of the feature, its own size estimate and its findings `F1…`,
+each with a recommendation; "ok" accepts them all.
 
 Claude may also start it on its own when you ask it to build a feature.
 It's not for bugfixes (use Spec Kit's bug commands) or pure refactors. You

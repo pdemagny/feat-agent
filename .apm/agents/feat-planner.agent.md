@@ -14,7 +14,8 @@ constraints and the project conventions. You can't talk to the user.
    deciding anything.
 2. Run `speckit-plan`. Keep the plan to what the spec requires: no
    speculative extension points, no dependency or service the spec doesn't
-   need. Prefer what the codebase already uses.
+   need. Prefer what the codebase already uses. Don't bring back an option
+   the brief's "Alternatives rejected" (in feat-state.md) ruled out.
 3. Never ask for an answer. A decision the spec didn't call for is yours to
    take: pick the simplest option that fits the codebase, and report it as
    an assumption with `needs user: yes` only when the choice changes what

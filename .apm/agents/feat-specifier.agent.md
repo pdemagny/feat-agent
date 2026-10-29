@@ -14,8 +14,9 @@ orchestrator holds the gates.
 1. Run `speckit-specify` with the full brief, short name included, so the
    spec directory matches the branch the orchestrator created. Don't create
    or switch branches.
-2. Stay inside the brief. Its "Out of scope" is binding; its "Constraints /
-   decisions already made" are requirements, not suggestions.
+2. Stay inside the brief. Its "Out of scope" and "Alternatives rejected"
+   are binding; its "Constraints / decisions already made" are
+   requirements, not suggestions.
 3. Resolve `[NEEDS CLARIFICATION]` markers yourself only when the code or the
    brief answers them; cite where. Leave the rest in place.
 4. Never commit.

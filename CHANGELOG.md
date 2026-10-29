@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+- `/feat-brief` has every brief read by a fresh agent before you confirm
+  it: `feat-brief-reviewer` (phase 1, sonnet · medium, opus · medium for
+  large) never sees the interview. It paraphrases the brief (the gate shows
+  it), asks whether existing code, a dependency or a smaller version would
+  do, flags undecided failure and edge cases, uncheckable acceptance and
+  effects on existing data, and estimates the size on its own. Adapted from
+  google/elephant-goldfish-model's brainstorm (Apache-2.0).
+- The interview pushes back: each decision gets its strongest
+  counter-argument before it is written down, and it asks how the problem
+  is handled today.
+- Briefs gain "Today" and "Alternatives rejected". The specifier treats
+  rejected alternatives as binding, the planner doesn't bring them back,
+  and reviewers get them with the rejected findings. Older briefs still
+  work.
+
 ## 0.5.0 — 2026-10-29
 
 - a cost script (since moved out) attributes phases correctly again: since the size

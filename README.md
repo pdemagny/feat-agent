@@ -18,11 +18,12 @@ map, one brief and PR per capability.
 ```mermaid
 flowchart TD
     idea([Feature idea]) --> P1["1 Brief<br/>feat-brief skill · interview-me"]
-    P1 --> G1{{"Gate: brief and size"}}
-    G1 -- huge --> MAP["Capability map<br/>feat-brief skill"]
+    P1 -- huge --> MAP["Capability map<br/>feat-brief skill"]
     MAP --> GM{{"Gate: map"}}
     GM -- "one brief per capability" --> P1
-    G1 -- "small · medium · large" --> CLR["clear context, then run feat on the brief"]
+    P1 -- "small · medium · large" --> R1["Brief review<br/>feat-brief-reviewer<br/>fresh reader"]
+    R1 --> G1{{"Gate: brief, size and review"}}
+    G1 --> CLR["clear context, then run feat on the brief"]
     CLR --> P2["2 Specify<br/>feat-specifier"]
     P2 --> G2{{"Gate: spec.md"}}
     G2 --> P3["3 Plan<br/>feat-planner"]
@@ -111,7 +112,8 @@ from mattpocock/skills' `code-review` (Matt Pocock), over-engineering from
 dietrichgebert/ponytail's pre-v5 `ponytail-review` (Dietrich Gebert),
 readability from addyosmani/agent-skills' `code-simplification` (Addy
 Osmani, itself inspired by Anthropic's code-simplifier plugin). The passes of
-`.apm/agents/feat-design-reviewer.agent.md` are adapted, condensed and
-changed, from the reviewer prompts and document standards of
-google/elephant-goldfish-model (Apache-2.0). Third-party skills installed
+`.apm/agents/feat-design-reviewer.agent.md` and
+`.apm/agents/feat-brief-reviewer.agent.md` are adapted, condensed and
+changed, from the reviewer prompts, brainstorm lenses and document
+standards of google/elephant-goldfish-model (Apache-2.0). Third-party skills installed
 by `install.sh deps` keep their own licenses.

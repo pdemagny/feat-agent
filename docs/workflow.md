@@ -7,7 +7,8 @@ is authoritative; this page mirrors it with explanations.
 ## Roles
 
 - **`/feat-brief`**: phase 1, in its own context. Interviews you, proposes
-  the size, writes the brief (or a capability map for huge ideas).
+  the size, writes the brief (or a capability map for huge ideas) and has
+  `feat-brief-reviewer` read it fresh before you confirm it.
 - **Coordinator**: the session running `/feat`, started from a clean
   context. It holds every gate and edits only `feat-state.md`; it never
   reads code, runs checks or edits artifacts. Every call it makes re-reads
@@ -21,7 +22,7 @@ is authoritative; this page mirrors it with explanations.
 
 | # | Phase         | Runs in                                                                               | Skills used                                                        | Produces                                      | Gate                                                                                                                       |
 | - | ------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| 1 | Brief         | `/feat-brief` (your session)                                                          | `interview-me`                                                     | `specs/briefs/<name>.md`, or a capability map | **hard** (confirm the brief)                                                                                               |
+| 1 | Brief         | `/feat-brief` (your session), then `feat-brief-reviewer`                              | `interview-me`                                                     | `specs/briefs/<name>.md`, or a capability map | **hard** (confirm the brief and the review's findings)                                                                     |
 | 0 | Setup         | coordinator                                                                           | —                                                                  | conventions, hooks checked                    | hard only if a Spec Kit hook would branch or commit                                                                        |
 | 2 | Specify       | `feat-specifier`                                                                      | `speckit-specify`                                                  | branch/worktree, `spec.md`, `feat-state.md`   | **hard** (the only place questions are asked)                                                                              |
 | 3 | Plan          | `feat-planner`                                                                        | `speckit-plan`                                                     | `plan.md` and design docs                     | none (hard for large)                                                                                                      |
@@ -41,6 +42,7 @@ Each cell: model · effort, passed by `/feat` on every spawn.
 | #  | Phase                        | Agent                  | small           | medium          | large           | huge                         |
 | -- | ---------------------------- | ---------------------- | --------------- | --------------- | --------------- | ---------------------------- |
 | 1  | Brief                        | your session           | session         | session         | session         | session, plus capability map |
+| 1  | Brief review                 | `feat-brief-reviewer`  | sonnet · medium | sonnet · medium | opus · medium   | first capability's size      |
 | 2  | Specify                      | `feat-specifier`       | sonnet · medium | sonnet · medium | opus · high     | —                            |
 | 3  | Plan                         | `feat-planner`         | opus · high     | opus · high     | opus · xhigh    | —                            |
 | 4a | Security design ∥            | `feat-design-reviewer` | sonnet · medium | opus · medium   | opus · high     | —                            |
@@ -89,6 +91,9 @@ gets its own brief and size column.
   start costs ~36k tokens before any work; a small design doesn't need
   three separate contexts, nor a small diff five. Lens 4c stays a fresh
   reader either way: no design reviewer gets the planner's report.
+- **A fresh reader on every brief.** One cheap spawn before anything is
+  built; a wrong premise found in phase 4 has already cost a spec, a plan
+  and the design reviews.
 - **Ship on Haiku.** Commits, push and a PR body from the state file need
   little reasoning; it used to run at the coordinator's full context.
 - **Huge is a scoping problem.** One spec with a dozen capabilities gives a
@@ -99,8 +104,32 @@ gets its own brief and size column.
 ### 1 Brief (`/feat-brief`)
 Reads the code the idea touches, interviews you one question at a time
 (`interview-me` steps 1–5; its restate is the brief, its confirmation the
-gate, its hand-off step skipped), proposes a size, writes
-`specs/briefs/<name>.md` and tells you to `/clear` and run `/feat` on it.
+gate, its hand-off step skipped), gives the strongest counter-argument to
+each decision before writing it down, proposes a size and writes
+`specs/briefs/<name>.md`: why, how it's handled today, behaviour, out of
+scope, alternatives rejected with their reasons, acceptance, constraints.
+
+Then `feat-brief-reviewer` reads the brief with no knowledge of the
+interview, as the specifier will, on every brief. It makes four passes:
+- **clarity**: it paraphrases what the feature does, for whom and how it's
+  handled today; the gate shows this so you can check it against what you
+  meant;
+- **yagni**: existing code, a dependency or a config option that already
+  covers it (it searches and names the path), behaviour that could be
+  dropped, a symptom fix, an obvious alternative neither chosen nor
+  rejected;
+- **gap**: undecided failure and edge cases, acceptance nobody could check,
+  existing data or users the change affects, constraints the code
+  contradicts, scope that leaks;
+- **size**: its own task estimate; a higher size is asked, not applied.
+
+Its passes are adapted from the brainstorm lenses and the Heilmeier and
+feature-spec standards of the
+[Elephant-Goldfish Model](https://github.com/google/elephant-goldfish-model)
+(Apache-2.0). Findings `F…` come with recommendations; the accepted ones are
+written into the brief, and a rejected "drop this" goes under "Alternatives
+rejected" with your reason, which the specifier, planner and reviewers
+treat as settled. Then it tells you to `/clear` and run `/feat` on it.
 **Huge:** writes a capability map to `specs/maps/<name>.md` (stable ids,
 responsibility, size, one-way dependencies, a build order where each step
 ships something usable), gates on it, then writes the first capability's
@@ -244,6 +273,7 @@ starts from it; the PR links to it. It's updated at each gate.
 
 | Agent                  | Phase(s)        | small size      | Denied tools                           | Loads                              | Writes                                               |
 | ---------------------- | --------------- | --------------- | -------------------------------------- | ---------------------------------- | ---------------------------------------------------- |
+| `feat-brief-reviewer`  | 1               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | —                                  | nothing                                              |
 | `feat-specifier`       | 2               | sonnet · medium | NotebookEdit, Agent                    | `speckit-specify`                  | spec.md                                              |
 | `feat-planner`         | 3, 4 (amend)    | opus · high     | NotebookEdit, Agent                    | `speckit-plan`                     | plan.md, design docs; accepted findings into spec.md |
 | `feat-design-reviewer` | 4               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | per lens, on demand                | nothing                                              |
@@ -253,5 +283,5 @@ starts from it; the PR links to it. It's updated at each gate.
 | `feat-shipper`         | 8               | haiku · medium  | NotebookEdit, Agent                    | —                                  | docs, commits, PR                                    |
 
 Agent files carry no model or effort: `/feat` passes both on every spawn,
-from the size table. Tool limits are deny lists (`disallowedTools`) rather
+from the size table (`/feat-brief` for `feat-brief-reviewer`). Tool limits are deny lists (`disallowedTools`) rather
 than allow lists, so a new tool is available to an agent unless denied. No agent but the shipper commits, and no agent spawns further agents.

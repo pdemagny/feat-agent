@@ -20,6 +20,7 @@
     "./.apm/skills/"
   ],
   "agents": [
+    "./.apm/agents/feat-brief-reviewer.agent.md",
     "./.apm/agents/feat-code-reviewer.agent.md",
     "./.apm/agents/feat-design-reviewer.agent.md",
     "./.apm/agents/feat-implementer.agent.md",

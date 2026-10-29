@@ -2,8 +2,9 @@
 name: feat-brief
 description: >
   First step of the feature workflow: interviews the user about a feature
-  idea (interview-me), proposes its size, and saves a brief that /feat
-  builds from; splits a huge initiative into a capability map instead. Use
+  idea (interview-me), proposes its size, has a fresh reader review the
+  draft, and saves a brief that /feat builds from; splits a huge initiative
+  into a capability map instead. Use
   it whenever the user wants to build, add or implement a feature and has no
   brief yet, or as /feat-brief followed by the idea, or by a capability map
   path and a capability id.
@@ -32,8 +33,16 @@ two changes: its restate (step 4) is the brief below, and its confirmation
 (step 5) is the gate of this skill, so the user confirms once. Skip its
 step 6: don't offer to save the intent or hand off to other skills.
 
-Cover at least: who uses it and why now, the observable behaviour, what is
-out of scope, how we'll know it works, constraints from existing code.
+Cover at least: who uses it and why now, how it's handled today and why
+that isn't enough, the observable behaviour, what is out of scope, the
+options considered and why the others lose, what is non-negotiable, how
+we'll know it works, constraints from existing code.
+
+Don't agree by default. Before you write a decision down, give its
+strongest counter-argument (doing nothing, something the code or a library
+already has, a smaller version) and let the user answer it. A rejected
+option goes into the brief with its reason: nobody after you saw this
+conversation, so an unwritten rejection gets proposed again.
 
 From a capability map (`/feat-brief <map> <id>`): read the map, use the
 capability's row and its dependencies as the idea, and keep the interview
@@ -72,11 +81,17 @@ Write it to `specs/briefs/<short-name>.md`:
 ## Why
 <the problem, for whom>
 
+## Today
+<how it's handled now, and why that isn't enough>
+
 ## Behaviour
 - <what the user can observe>
 
 ## Out of scope
 - <…>
+
+## Alternatives rejected
+- <option> — <why not>
 
 ## Acceptance
 - <testable>
@@ -85,8 +100,30 @@ Write it to `specs/briefs/<short-name>.md`:
 - <…>
 ```
 
-**Gate**: show the brief and the size; the user confirms or edits. Then end
-with exactly this, so the next step is one copy-paste:
+### Fresh-reader review
+
+Every brief, every size: spawn `feat-brief-reviewer` (or
+`feat-agents:feat-brief-reviewer` as a plugin) with the Agent tool, giving
+it the brief's absolute path, the project root and, from a map, the map's
+path. Nothing about the interview: it reads the brief as the specifier
+will. Pass `model` and `effort` for the size you proposed (this mirrors row
+1 of `/feat`'s size table): small and medium `sonnet` · `medium`, large
+`opus` · `medium`. If the agent isn't installed, say so at the gate and
+skip the review; don't review inline: the context that wrote the brief
+can't read it fresh.
+
+Number its findings `F1…` and give each a recommendation. You know the
+interview, it doesn't: a finding the interview already answered is still a
+gap in the brief, so recommend writing the answer in, not rejecting it.
+
+**Gate**: the brief, the size, then the review: its paraphrase (the user
+checks it against what they meant), its size estimate when it differs, and
+the findings with your recommendations. The user confirms or edits; "ok"
+accepts every recommendation. A size the reviewer puts higher is asked, not
+applied. Write the accepted findings into the brief; a rejected `yagni`
+finding goes under "Alternatives rejected" with the user's reason, so no
+later reviewer proposes it again. Don't rerun the review unless the user
+asks. Then end with exactly this, so the next step is one copy-paste:
 
 ```
 Brief saved: specs/briefs/<short-name>.md

@@ -58,7 +58,8 @@ Subagents don't see this conversation. Give each one, in its prompt:
   findings to apply);
 - the project conventions that matter to it (from step 0), in a few lines;
 - for Spec Kit agents: which `.specify/extensions.yml` hooks are allowed;
-- for reviewers: the rejected findings, so they don't propose them again.
+- for reviewers: the rejected findings and the brief's "Alternatives
+  rejected", so they don't propose them again.
 
 Spawn each with the Agent tool, `subagent_type` = the agent's name as your
 agent list shows it (`feat-planner`, or `feat-agents:feat-planner` when
@@ -75,10 +76,11 @@ say which are pending and continue when they report.
 
 The single source of truth for models and efforts: agent files carry none.
 `Loads` is what the agent reads
-for its job.
+for its job. Row 1 is spawned by `/feat-brief`, which mirrors it.
 
 | Phase                           | Agent                  | Loads                          | small           | medium          | large           |
 | ------------------------------- | ---------------------- | ------------------------------ | --------------- | --------------- | --------------- |
+| 1 Brief review (`/feat-brief`)  | `feat-brief-reviewer`  | —                              | sonnet · medium | sonnet · medium | opus · medium   |
 | 2 Specify                       | `feat-specifier`       | speckit-specify                | sonnet · medium | sonnet · medium | opus · high     |
 | 3 Plan                          | `feat-planner`         | speckit-plan                   | opus · high     | opus · high     | opus · xhigh    |
 | 4a Security design              | `feat-design-reviewer` | security-and-hardening         | sonnet · medium | opus · medium   | opus · high     |
@@ -115,7 +117,8 @@ the phase 6 row.
 | 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5   | **hard**: user picks the fixes                                                                                                         |
 | 8 | Ship          | `feat-shipper`                          | none: ends with the PR link                                                                                                            |
 
-Phase 1 (the interview and the brief) is `/feat-brief`, in its own context.
+Phase 1 (the interview, the brief and its fresh-reader review) is
+`/feat-brief`, in its own context.
 
 **Hard gate**: stop, show the gate summary, wait. Don't start the next phase
 in the same turn. Silence or an ambiguous reply is not approval; ask.
@@ -197,7 +200,7 @@ back late to a long session.
    stop and point to `/feat-brief "<idea>"`. Read the brief; check it has
    size, short name, behaviour and acceptance. Huge isn't a size here.
    Older briefs and state files say "normal" or "big": read them as medium
-   and large.
+   and large; older briefs may lack "Today" and "Alternatives rejected".
 2. Read the project's `CLAUDE.md` / `AGENTS.md` and project memory. They
    override this file where they disagree. Keep the few lines agents need
    (commit style, branch rules, where checks live, docs to update).

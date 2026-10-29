@@ -9,7 +9,9 @@ package (`apm.yml`), a Claude Code plugin (`.claude-plugin/`), and
 When changing it:
 - The size table in `.apm/skills/feat/SKILL.md` is the source of truth for model
   and effort, and its `Loads` column lists what each row's agent reads.
-  Mirror every change in `docs/workflow.md` (matrix and agents table).
+  Mirror every change in `docs/workflow.md` (matrix and agents table);
+  row 1 (`feat-brief-reviewer`) is also written out in
+  `.apm/skills/feat-brief/SKILL.md`, which spawns it.
   Agent frontmatter carries no `model`, `effort`, `tools` or `color`
   (`/feat` passes model and effort per spawn); use `disallowedTools`. Phase 4 and 7
   reviewer groups live under the table and in `REVIEW_GROUPS` in a cost script (since moved out).
