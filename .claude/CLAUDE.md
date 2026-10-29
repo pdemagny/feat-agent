@@ -36,5 +36,6 @@ When changing it:
 - Record user-visible changes in CHANGELOG.md.
 - Tools and tasks are in `mise.toml`: `mise run lint` and `mise run
   test:apm` before committing, `mise run release <version>` to release (it
-  dates the CHANGELOG's `## Unreleased` section, so keep entries there). Bump the tool pins there when you test
-  on newer versions.
+  dates the CHANGELOG's `## Unreleased` section and opens a new one, so
+  keep entries there). Bump the tool pins there when you test on newer
+  versions.
