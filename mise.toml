@@ -50,7 +50,7 @@ description = "a cost script (since moved out) find|measure|simulate ... (simula
 run = "python3 a cost script (since moved out)"
 
 [tasks.release]
-description = "Date the CHANGELOG's Unreleased section, bump apm.yml, plugin.json and the README version, commit, tag v<version>, open a new Unreleased section and push"
+description = "Date the CHANGELOG's Unreleased entries (refuses if none) under a new empty Unreleased, bump apm.yml, plugin.json and the README version, commit, tag v<version> and push"
 depends = ["lint"]
 usage = 'arg "<version>" help="e.g. 0.2.1, without the v"'
 run = '''
@@ -59,19 +59,15 @@ set -euo pipefail
 v="${usage_version}"
 [ "$(git branch --show-current)" = main ] || { echo "release from main" >&2; exit 1; }
 [ -z "$(git status --porcelain)" ] || { echo "working tree not clean" >&2; exit 1; }
-if ! grep -q "^## $v — " CHANGELOG.md; then
-  grep -q "^## Unreleased$" CHANGELOG.md || { echo "CHANGELOG.md has neither '## Unreleased' nor '## $v — <date>'" >&2; exit 1; }
-  sed -i "s/^## Unreleased$/## $v — $(date +%F)/" CHANGELOG.md
-fi
+awk '/^## Unreleased$/{f=1;next} f&&/^## /{exit} f&&NF{n=1} END{exit !n}' CHANGELOG.md \
+  || { echo "CHANGELOG.md has no '## Unreleased' section with entries" >&2; exit 1; }
+sed -i "s/^## Unreleased$/## Unreleased\n\n## $v — $(date +%F)/" CHANGELOG.md
 sed -i "s/^version: .*/version: $v/" apm.yml
 sed -i "s/\"version\": \".*\"/\"version\": \"$v\"/" .claude-plugin/plugin.json
 sed -i -E "s/^Version [0-9]+\.[0-9]+\.[0-9]+\./Version $v./" README.md
 git add CHANGELOG.md apm.yml .claude-plugin/plugin.json README.md
 git commit -m "chore(release): $v"
 git tag -a "v$v" -m "v$v"
-sed -i "0,/^## $v — /s//## Unreleased\n\n&/" CHANGELOG.md
-git add CHANGELOG.md
-git commit -m "docs(changelog): open Unreleased section"
 git push && git push origin "v$v"
 '''
 
