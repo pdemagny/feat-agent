@@ -6,10 +6,10 @@ description: >
   draft, and saves a brief that /feat builds from; splits a huge initiative
   into a capability map instead. Use
   it whenever the user wants to build, add or implement a feature and has no
-  brief yet, or as /feat-brief followed by the idea, or by a capability map
-  path and a capability id.
+  brief yet, or as /feat-brief followed by the idea, by an issue (#N or its
+  URL), or by a capability map path and a capability id.
   Not for bugfixes or pure refactors.
-argument-hint: '"idea in one line" | map-path capability-id'
+argument-hint: '"idea in one line" | #N | issue-url | map-path capability-id'
 ---
 
 # /feat-brief: from an idea to a brief
@@ -48,6 +48,13 @@ From a capability map (`/feat-brief <map> <id>`): read the map, use the
 capability's row and its dependencies as the idea, and keep the interview
 short; most decisions were made when the map was approved.
 
+From an issue (`/feat-brief #N` or an issue URL): read it with `gh issue
+view <N or URL> --json number,title,body,labels,url` and use its title and
+body as the idea. Its unchecked checklist items are questions the interview
+must answer; what the body already decides needs no question, only its
+counter-argument. An issue labelled as a bug is not for this workflow: say
+so and stop. If `gh` can't read it, ask the user to paste the issue.
+
 ## 2. Size
 
 Estimate how many tasks `speckit-tasks` will produce, then propose the
@@ -77,6 +84,7 @@ Write it to `specs/briefs/<short-name>.md`:
 - Size: small | medium | large — <~N tasks expected, one-line reason>
 - Short name: <2–4 word kebab-case, e.g. edit-stack-config>
 - Map: <map path and capability id, if it came from one>
+- Issue: <#N, or owner/repo#N for another repository, if it came from one>
 
 ## Why
 <the problem, for whom>

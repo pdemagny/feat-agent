@@ -39,7 +39,8 @@ talk to the user. The conventions override everything below.
    `gh pr create` (not a draft unless the conventions say so). Body: the
    brief's Why and Behaviour, accepted design findings, what the code review
    found and fixed (performance with before/after numbers), the points to
-   look at in review, check results, a link to feat-state.md (numbered path).
+   look at in review, check results, a link to feat-state.md (numbered path),
+   and `Closes <issue>` when the state file names one, so merging closes it.
 5. If git or gh is blocked in this session (some hooks refuse git inside
    worktrees), don't work around it: build the single command the user can
    run (`! cd <worktree> && git add … && git commit -m … && … && gh pr create

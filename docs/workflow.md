@@ -108,6 +108,8 @@ gate, its hand-off step skipped), gives the strongest counter-argument to
 each decision before writing it down, proposes a size and writes
 `specs/briefs/<name>.md`: why, how it's handled today, behaviour, out of
 scope, alternatives rejected with their reasons, acceptance, constraints.
+From an issue (`/feat-brief #N` or its URL) it reads the issue with `gh` as
+the idea and records it in the brief; the shipper's PR says `Closes #N`.
 
 Then `feat-brief-reviewer` reads the brief with no knowledge of the
 interview, as the specifier will, on every brief. It makes four passes:
@@ -264,7 +266,7 @@ command for you to run. Never merges.
 ## The state file
 
 `specs/<NNN-name>/feat-state.md` is the memory of the run: branch,
-worktree, size, current phase, conventions, allowed hooks, the brief, and a
+worktree, size, current phase, conventions, allowed hooks, the issue if any, the brief, and a
 log of every gate with what you accepted and rejected (and why) and every
 performance attempt with its numbers. Every agent reads it; `/feat resume`
 starts from it; the PR links to it. It's updated at each gate.

@@ -166,6 +166,7 @@ the PR links to it.
 - Conventions: <the few lines agents need>
 - Allowed Spec Kit hooks: <list or "none">
 - Map: <map path and id, if any>
+- Issue: <the brief's issue, if any>
 
 ## Brief
 
@@ -197,7 +198,8 @@ back late to a long session.
    that here, stop: say `/feat` runs only in Claude Code, and that the
    brief can be built there. Don't run the phases inline instead.
 1. `$ARGUMENTS` must be a brief file (or `resume`). If it is an idea instead,
-   stop and point to `/feat-brief "<idea>"`. Read the brief; check it has
+   stop and point to `/feat-brief "<idea>"`; if it is an issue (`#N` or its
+   URL), to `/feat-brief #N`. Read the brief; check it has
    size, short name, behaviour and acceptance. Huge isn't a size here.
    Older briefs and state files say "normal" or "big": read them as medium
    and large; older briefs may lack "Today" and "Alternatives rejected".
@@ -321,8 +323,8 @@ report, performance numbers included.
 
 ## 8. Ship
 
-Spawn `feat-shipper` with the state file, the conventions, the worktree and
-the default branch. It updates the docs the conventions call for, commits
+Spawn `feat-shipper` with the state file, the conventions, the worktree, the
+default branch and the issue, if any. It updates the docs the conventions call for, commits
 (default: `docs(specs)` then `feat(scope)` with its docs; `perf` and `refactor` only when separable),
 pushes and opens the PR, or returns a single `!` command when git is
 blocked in the session: give that line to the user as is. Mark the state

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- `/feat-brief #N` (or an issue URL) starts the brief from a GitHub issue,
+  read with `gh`: its title and body are the idea, its unchecked checklist
+  items are questions to answer, and a bug issue is refused. The brief and
+  the state file record the issue, and the shipper's PR says `Closes #N`.
+  `/feat #N` points to `/feat-brief #N`.
+
 ## 0.6.1 — 2026-10-29
 
 - `mise run release` dates the `## Unreleased` section itself and opens a

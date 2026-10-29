@@ -30,6 +30,11 @@ Claude may also start it on its own when you ask it to build a feature.
 It's not for bugfixes (use Spec Kit's bug commands) or pure refactors. You
 can also write a brief by hand in the same format and skip this step.
 
+From a GitHub issue, run `/feat-brief #N` (or pass its URL): Claude reads it
+with `gh`, its title and body are the idea and its unchecked checklist items
+are questions the interview answers. The brief records the issue, and the PR
+says `Closes #N`, so merging closes it.
+
 **Huge** ideas (several capabilities that could ship on their own) get a
 capability map in `specs/maps/<name>.md` instead: you approve the map, then
 it writes the first capability's brief. Each later capability starts with
