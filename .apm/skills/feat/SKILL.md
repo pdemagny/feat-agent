@@ -40,11 +40,16 @@ Every call you make re-reads your whole context, for the whole run. So:
   narration. Spawn an agent and update the state file in the same turn.
 - Changes the user asks for at a gate go back to the agent that owns the
   artifact (specifier: spec.md; planner: plan.md and accepted design
-  findings; tasker: tasks.md; implementer: code). For the specifier, planner
-  and tasker, continue the agent you spawned with `SendMessage` (note the
-  agent id each spawn returns in the state file's `Agents` line): it keeps
-  its context instead of rereading everything. If it can't be continued
-  (new session after `/feat resume`, an error), spawn it again in amend mode.
+  findings; tasker: tasks.md; implementer: code). A subagent's cache lasts
+  5 minutes, so continuing one pays only while it is warm:
+  - Specifier, planner, tasker: when the change follows its report (or the
+    reviewers') with no stop for the user in between, continue it with
+    `SendMessage` (agent ids in the state file's `Agents` line). After a
+    hard gate the user answered, or when it can't be continued (`/feat
+    resume`, an error), spawn it again in amend mode: a fresh one reads the
+    artifacts (~60–90k), a cold one rewrites all it explored (150–200k).
+  - Implementer: always a fresh spawn, one per story and one for fixes;
+    never continue one into the next story.
 
 Subagents don't see this conversation. Give each one, in its prompt:
 
@@ -249,8 +254,9 @@ above nice-to-have, an assumption with `needs user: yes`, a constitution
 violation, a blocker or a size increase; otherwise soft, and the
 recommendations are applied. "ok" accepts all recommendations.
 
-Accepted findings go to `feat-planner` (continue it with `SendMessage`,
-amend mode) to be written into spec.md as requirements and into plan.md.
+Accepted findings go to `feat-planner` in amend mode (continued after a
+soft gate, spawned fresh after a hard one) to be written into spec.md as
+requirements and into plan.md.
 
 ## 5. Tasks
 

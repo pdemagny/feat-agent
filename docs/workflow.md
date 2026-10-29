@@ -115,8 +115,9 @@ reports stories, requirements, open `[NEEDS CLARIFICATION]` markers with
 recommended answers, assumptions and unchecked checklist items. The
 coordinator moves the brief into `feat-state.md` and gates. This is the only
 place questions are asked, the checklist question included; your answers and
-edits go back to the same specifier, continued with `SendMessage` so it
-keeps what it read.
+edits go back to the specifier in amend mode, spawned fresh (a subagent's
+cache lasts 5 minutes, so after you answer it would rewrite its whole
+context).
 
 ### 3 Plan (`feat-planner`)
 Runs `speckit-plan`, kept to what the spec requires; it never asks you
@@ -136,9 +137,10 @@ dropping a requirement. Each `D…` gets a recommendation. Large: you accept or
 reject each. Small and medium: one gate for phases 3 and 4 ("Plan and design
 review"), hard only on a finding above nice-to-have, an assumption that needs
 your call, a constitution violation, a blocker or a size increase; otherwise
-the recommendations are applied, and "ok" accepts them all. The planner (the
-same one, continued) writes the accepted ones into spec.md (as
-requirements) and plan.md.
+the recommendations are applied, and "ok" accepts them all. The planner
+writes the accepted ones into spec.md (as requirements) and plan.md: the
+same one, continued with `SendMessage`, after a soft gate (still warm); a
+fresh one after a hard gate.
 
 ### 5 Tasks (`feat-tasker`)
 Runs `speckit-tasks` then `speckit-analyze`, fixes MEDIUM/LOW findings that
