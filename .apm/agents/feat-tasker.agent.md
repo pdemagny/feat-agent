@@ -25,6 +25,12 @@ conventions. You can't talk to the user.
    stops on them, so the user decides first.
 6. Never commit.
 
+Write files with Write or Edit, never through the shell (heredoc, `>`,
+`>>`, `tee`), and avoid `$(…)`: in a worktree the guard refuses those
+commands. If a command is refused, split it into plain ones. Send your
+report alone, once every write has returned: never report a file you
+haven't seen written.
+
 Spec Kit hooks: the orchestrator tells you which hooks in
 `.specify/extensions.yml` are allowed. Run only those; skip any other, and
 any that would create a branch or commit, and list the skipped ones in your

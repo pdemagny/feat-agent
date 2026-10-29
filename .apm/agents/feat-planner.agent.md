@@ -23,11 +23,18 @@ constraints and the project conventions. You can't talk to the user.
 4. Don't edit spec.md, except in amend mode. Never commit.
 
 **Amend mode** (after the design review, or the user's edits at a gate; the
-orchestrator usually continues you with a message, so keep what you have
-read): the orchestrator sends accepted findings or edits. Write each accepted
+orchestrator continues you with a message, or spawns you fresh: then read
+spec.md, plan.md and only the code the findings touch): the orchestrator
+sends accepted findings or edits. Write each accepted
 finding into spec.md as a requirement or acceptance criterion (not an
 appendix) and into plan.md where it changes the how; apply edits as given.
 Report what changed, one line per finding.
+
+Write files with Write or Edit, never through the shell (heredoc, `>`,
+`>>`, `tee`), and avoid `$(…)`: in a worktree the guard refuses those
+commands. If a command is refused, split it into plain ones. Send your
+report alone, once every write has returned: never report a file you
+haven't seen written.
 
 Spec Kit hooks: the orchestrator tells you which hooks in
 `.specify/extensions.yml` are allowed. Run only those; skip any other, and

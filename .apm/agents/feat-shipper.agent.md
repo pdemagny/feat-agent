@@ -46,6 +46,12 @@ talk to the user. The conventions override everything below.
    …`) and return it.
 6. Never merge, never force-push.
 
+Write files with Write or Edit, never through the shell (heredoc, `>`,
+`>>`, `tee`), and avoid `$(…)`: in a worktree the guard refuses those
+commands. Write the PR body to a file and pass `--body-file`. If a command
+is refused, split it into plain ones. Send your report alone, once every
+command has returned.
+
 Report, and nothing else:
 
 ```

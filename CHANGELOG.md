@@ -9,6 +9,15 @@
 - a cost script (since moved out) prices subagent cache writes at the 5-minute TTL (1.25×
   input) Claude Code uses for them, not 2×: runs measured ~15% too high.
 - the cost notes (since moved out) records the first measured runs of the current workflow.
+- An agent is continued with `SendMessage` only while it is warm (no stop
+  for the user since its report); after a hard gate you answered, it is
+  spawned fresh in amend mode. Subagent caches last 5 minutes, and a cold
+  planner rewrote 150–200k of context on Opus in 7 of 15 runs. Implementers
+  are never continued into the next story.
+- Agents write files with Write/Edit instead of shell heredocs and
+  redirections, which the worktree guard refused 190 times in 15 runs, and
+  report only once their writes have returned: 4 of 15 specifiers reported
+  a spec.md that wasn't written.
 
 ## 0.4.0 — 2026-10-28
 
