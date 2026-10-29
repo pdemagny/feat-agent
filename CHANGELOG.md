@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 0.6.0 — 2026-10-29
 
 - `/feat-brief` has every brief read by a fresh agent before you confirm
