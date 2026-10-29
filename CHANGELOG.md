@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- a cost script (since moved out) attributes phases correctly again: since the size
+  table was column-aligned, only the 4b and 7 rows parsed, so most runs
+  showed phases 0, 4 and 7 only; and a spawn's phase was applied one call
+  late, so each subagent landed in the previous phase.
+- a cost script (since moved out) prices subagent cache writes at the 5-minute TTL (1.25×
+  input) Claude Code uses for them, not 2×: runs measured ~15% too high.
+- the cost notes (since moved out) records the first measured runs of the current workflow.
+
 ## 0.4.0 — 2026-10-28
 
 - Fewer stops on small and medium features: questions are asked only at
