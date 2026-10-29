@@ -1,6 +1,6 @@
 {
   "name": "feat-agents",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "From a feature idea to a reviewed PR: /feat-brief writes the brief, /feat runs Spec Kit phases in feat-* subagents sized by model and effort.",
   "author": {
     "name": "Pierre Demagny",

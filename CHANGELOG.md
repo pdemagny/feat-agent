@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.7.0 — 2026-10-29
+
 - `/feat-brief #N` (or an issue URL) starts the brief from a GitHub issue,
   read with `gh`: its title and body are the idea, its unchecked checklist
   items are questions to answer, and a bug issue is refused. The brief and
