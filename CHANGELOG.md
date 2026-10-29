@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- `mise run release` dates the `## Unreleased` section itself and opens a
+  new empty one in the same commit; it refuses to release when Unreleased
+  has no entries. Write changes there; no hand-written version heading.
+
 ## 0.6.0 — 2026-10-29
 
 - `/feat-brief` has every brief read by a fresh agent before you confirm
