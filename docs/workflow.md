@@ -46,7 +46,7 @@ Each cell: model · effort, passed by `/feat` on every spawn.
 | 4a | Security design ∥            | `feat-sec-reviewer`    | sonnet · medium | opus · medium   | opus · high     | —                            |
 | 4b | Cost design ∥                | `feat-cost-reviewer`   | sonnet · medium | sonnet · medium | opus · medium   | —                            |
 | 4c | Clarity and fit ∥            | `feat-design-reviewer` | sonnet · medium | sonnet · high   | opus · medium   | —                            |
-| 5  | Tasks + analyze              | `feat-tasker`          | sonnet · medium | sonnet · medium | sonnet · high   | —                            |
+| 5  | Tasks + analyze              | `feat-tasker`          | sonnet · medium | sonnet · medium | opus · high     | —                            |
 | 6  | Implement (×1 per story)     | `feat-implementer`     | sonnet · medium | opus · medium   | opus · high     | —                            |
 | 7a | Correctness, spec, standards | `feat-code-reviewer`   | sonnet · medium | opus · medium   | opus · medium   | —                            |
 | 7b | Security                     | `feat-code-reviewer`   | sonnet · medium | opus · medium   | opus · high     | —                            |

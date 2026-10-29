@@ -25,6 +25,8 @@
   references to things that don't exist, helpers the codebase already has,
   speculative abstractions, and decisions left to the implementer. Adapted
   from google/elephant-goldfish-model's review (Apache-2.0).
+- docs/workflow.md listed the large-size phase 5 row as sonnet · high; it
+  is opus · high, as in the skill.
 
 ## 0.4.0 — 2026-10-28
 
