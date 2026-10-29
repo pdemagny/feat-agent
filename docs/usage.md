@@ -55,11 +55,13 @@ tasks. The feature is built on branch `<NNN>-<name>`, in a worktree under
 
 ```
 ## Phase 3–4: Plan and design review — needs your call
-**What I did:** feat-sec-reviewer (opus · high) and feat-cost-reviewer (sonnet · high) on spec + plan
+**What I did:** feat-sec-reviewer (opus · high), feat-cost-reviewer (opus · medium) and feat-design-reviewer (opus · medium) on spec + plan
+**How a fresh reader understood it:** … (check it against what you meant)
 **What you should know:** …
 **Your call:**
 1. D1 [sec] … — I recommend accepting
 2. D2 [cost] … — I recommend rejecting: …
+3. D3 [design] plan says `config.Load` validates the file; it doesn't → validate in the new command — I recommend accepting
 **Next:** phase 5 Tasks
 ```
 

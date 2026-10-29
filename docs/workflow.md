@@ -19,17 +19,17 @@ is authoritative; this page mirrors it with explanations.
 
 ## Phases at a glance
 
-| #   | Phase         | Runs in                                                                                  | Skills used                                            | Produces                                      | Gate                                                            |
-| --- | ------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------ | --------------------------------------------- | --------------------------------------------------------------- |
-| 1   | Brief         | `/feat-brief` (your session)                                                             | `interview-me`                                         | `specs/briefs/<name>.md`, or a capability map | **hard** (confirm the brief)                                    |
-| 0   | Setup         | coordinator                                                                              | —                                                      | conventions, hooks checked                    | hard only if a Spec Kit hook would branch or commit             |
-| 2   | Specify       | `feat-specifier`                                                                         | `speckit-specify`                                      | branch/worktree, `spec.md`, `feat-state.md`   | **hard** (the only place questions are asked)  |
-| 3   | Plan          | `feat-planner`                                                                           | `speckit-plan`                                         | `plan.md` and design docs                     | none (hard for large)  |
-| 4   | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer`, then `feat-planner` writes accepted findings | `security-and-hardening` (cost checklist in the agent) | findings D1…                                  | one gate with 3: hard only on a real finding, a user-call assumption, a blocker or a size increase (always hard for large) |
-| 5   | Tasks         | `feat-tasker`                                                                            | `speckit-tasks`, `speckit-analyze`                     | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, a size increase or an unanswered checklist item; always for large |
-| 6   | Implement     | `feat-implementer` ×1 per user story, in turn                                            | `speckit-implement`                                    | the code, tasks ticked, checks green          | soft (hard per story for large; hard on a design problem)       |
-| 7   | Code review   | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks             | `security-and-hardening`, `performance-optimization`   | findings B, S, P, C, R; picked fixes applied  | **hard**                                                        |
-| 8   | Ship          | `feat-shipper`                                                                           | —                                                      | docs updated, commits, push, PR               | none                                                            |
+| # | Phase         | Runs in                                                                                                           | Skills used                                                         | Produces                                      | Gate                                                                                                                       |
+| - | ------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| 1 | Brief         | `/feat-brief` (your session)                                                                                      | `interview-me`                                                      | `specs/briefs/<name>.md`, or a capability map | **hard** (confirm the brief)                                                                                               |
+| 0 | Setup         | coordinator                                                                                                       | —                                                                   | conventions, hooks checked                    | hard only if a Spec Kit hook would branch or commit                                                                        |
+| 2 | Specify       | `feat-specifier`                                                                                                  | `speckit-specify`                                                   | branch/worktree, `spec.md`, `feat-state.md`   | **hard** (the only place questions are asked)                                                                              |
+| 3 | Plan          | `feat-planner`                                                                                                    | `speckit-plan`                                                      | `plan.md` and design docs                     | none (hard for large)                                                                                                      |
+| 4 | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer` ∥ `feat-design-reviewer`, then `feat-planner` writes accepted findings | `security-and-hardening` (cost and design checklists in the agents) | a paraphrase, findings D1…                    | one gate with 3: hard only on a real finding, a user-call assumption, a blocker or a size increase (always hard for large) |
+| 5 | Tasks         | `feat-tasker`                                                                                                     | `speckit-tasks`, `speckit-analyze`                                  | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, a size increase or an unanswered checklist item; always for large                                   |
+| 6 | Implement     | `feat-implementer` ×1 per user story, in turn                                                                     | `speckit-implement`                                                 | the code, tasks ticked, checks green          | soft (hard per story for large; hard on a design problem)                                                                  |
+| 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks                                      | `security-and-hardening`, `performance-optimization`                | findings B, S, P, C, R; picked fixes applied  | **hard**                                                                                                                   |
+| 8 | Ship          | `feat-shipper`                                                                                                    | —                                                                   | docs updated, commits, push, PR               | none                                                                                                                       |
 
 **Hard gate**: Claude stops and waits for your answer. **Soft gate**: Claude
 reports and continues; anything surprising turns it into a hard gate.
@@ -38,21 +38,22 @@ reports and continues; anything surprising turns it into a hard gate.
 
 Each cell: model · effort, passed by `/feat` on every spawn.
 
-| #   | Phase                        | Agent                | small           | medium          | large           | huge                         |
-| --- | ---------------------------- | -------------------- | --------------- | --------------- | --------------- | ---------------------------- |
-| 1   | Brief                        | your session         | session         | session         | session         | session, plus capability map |
-| 2   | Specify                      | `feat-specifier`     | sonnet · medium | sonnet · medium | opus · high     | —                            |
-| 3   | Plan                         | `feat-planner`       | opus · high     | opus · high     | opus · xhigh    | —                            |
-| 4a  | Security design ∥            | `feat-sec-reviewer`  | sonnet · medium | opus · medium   | opus · high     | —                            |
-| 4b  | Cost design ∥                | `feat-cost-reviewer` | sonnet · medium | sonnet · medium | opus · medium   | —                            |
-| 5   | Tasks + analyze              | `feat-tasker`        | sonnet · medium | sonnet · medium | sonnet · high   | —                            |
-| 6   | Implement (×1 per story)     | `feat-implementer`   | sonnet · medium | opus · medium   | opus · high     | —                            |
-| 7a  | Correctness, spec, standards | `feat-code-reviewer` | sonnet · medium | opus · medium   | opus · medium   | —                            |
-| 7b  | Security                     | `feat-code-reviewer` | sonnet · medium | opus · medium   | opus · high     | —                            |
-| 7c  | Performance                  | `feat-code-reviewer` | sonnet · medium | sonnet · medium | opus · medium   | —                            |
-| 7d  | Over-engineering             | `feat-code-reviewer` | sonnet · medium | sonnet · medium | sonnet · medium | —                            |
-| 7e  | Readability                  | `feat-code-reviewer` | sonnet · medium | sonnet · medium | sonnet · medium | —                            |
-| 8   | Ship                         | `feat-shipper`       | haiku · medium  | haiku · medium  | haiku · medium  | —                            |
+| #  | Phase                        | Agent                  | small           | medium          | large           | huge                         |
+| -- | ---------------------------- | ---------------------- | --------------- | --------------- | --------------- | ---------------------------- |
+| 1  | Brief                        | your session           | session         | session         | session         | session, plus capability map |
+| 2  | Specify                      | `feat-specifier`       | sonnet · medium | sonnet · medium | opus · high     | —                            |
+| 3  | Plan                         | `feat-planner`         | opus · high     | opus · high     | opus · xhigh    | —                            |
+| 4a | Security design ∥            | `feat-sec-reviewer`    | sonnet · medium | opus · medium   | opus · high     | —                            |
+| 4b | Cost design ∥                | `feat-cost-reviewer`   | sonnet · medium | sonnet · medium | opus · medium   | —                            |
+| 4c | Clarity and fit ∥            | `feat-design-reviewer` | sonnet · medium | sonnet · high   | opus · medium   | —                            |
+| 5  | Tasks + analyze              | `feat-tasker`          | sonnet · medium | sonnet · medium | sonnet · high   | —                            |
+| 6  | Implement (×1 per story)     | `feat-implementer`     | sonnet · medium | opus · medium   | opus · high     | —                            |
+| 7a | Correctness, spec, standards | `feat-code-reviewer`   | sonnet · medium | opus · medium   | opus · medium   | —                            |
+| 7b | Security                     | `feat-code-reviewer`   | sonnet · medium | opus · medium   | opus · high     | —                            |
+| 7c | Performance                  | `feat-code-reviewer`   | sonnet · medium | sonnet · medium | opus · medium   | —                            |
+| 7d | Over-engineering             | `feat-code-reviewer`   | sonnet · medium | sonnet · medium | sonnet · medium | —                            |
+| 7e | Readability                  | `feat-code-reviewer`   | sonnet · medium | sonnet · medium | sonnet · medium | —                            |
+| 8  | Ship                         | `feat-shipper`         | haiku · medium  | haiku · medium  | haiku · medium  | —                            |
 
 **Phase 7 reviewers.** small: two reviewers, lenses 7a+7b and 7c+7d+7e. medium and large: one reviewer per lens, 7a–7d in parallel, then 7e
 with 7d's cuts. A group runs on the strongest model among its lenses.
@@ -128,17 +129,38 @@ call for as assumptions with a recommendation and whether they need your
 call. Only a blocker stops the run. Small and medium go straight to phase 4;
 large stops here.
 
-### 4 Design review (`feat-sec-reviewer` ∥ `feat-cost-reviewer`)
-Both read spec and plan. Security translates the web-app checklist to the
+### 4 Design review (`feat-sec-reviewer` ∥ `feat-cost-reviewer` ∥ `feat-design-reviewer`)
+All three read spec and plan. Security translates the web-app checklist to the
 project (exposure, identities, secrets, defaults, input, supply chain,
 blast radius); cost looks for oversized resources, repeated work, unbounded
 loops, extra calls, slow feedback loops, unused code, and may propose
-dropping a requirement. Each `D…` gets a recommendation. Large: you accept or
+dropping a requirement. The design reviewer reads them as someone new to
+the project, with the paths only, never the planner's report, and makes
+four passes:
+- **clarity**: it first paraphrases what the feature does and how the
+  system works today, as the documents say; a part it can't paraphrase is a
+  finding, and so are undefined project terms and unstated prerequisites;
+- **fit**: statements the code contradicts, files, functions or commands
+  cited as existing that don't exist, unbacked assumptions, logic in the
+  wrong layer;
+- **simplicity**: symptom fixes, new helpers the codebase already has (it
+  greps for them), speculative abstractions, dead ends;
+- **readiness**: decisions the plan leaves to the implementer (formats,
+  schemas, error handling, edge cases), criteria nobody could check.
+
+Its passes are adapted from the comprehension, codebase-details, zoom-out
+and implementation-readiness reviewers of the
+[Elephant-Goldfish Model](https://github.com/google/elephant-goldfish-model)
+(Apache-2.0). Its paraphrase opens the gate, so you can check it against
+what you meant; one that contradicts the brief makes the gate hard.
+
+Each `D…` gets a recommendation. Large: you accept or
 reject each. Small and medium: one gate for phases 3 and 4 ("Plan and design
 review"), hard only on a finding above nice-to-have, an assumption that needs
 your call, a constitution violation, a blocker or a size increase; otherwise
 the recommendations are applied, and "ok" accepts them all. The planner
-writes the accepted ones into spec.md (as requirements) and plan.md: the
+writes the accepted ones into spec.md (as requirements) and plan.md;
+`[design]` findings are corrections applied where they point. It is the
 same one, continued with `SendMessage`, after a soft gate (still warm); a
 fresh one after a hard gate.
 
@@ -213,16 +235,17 @@ starts from it; the PR links to it. It's updated at each gate.
 
 ## Agents
 
-| Agent                | Phase(s)        | small size      | Denied tools                           | Loads                              | Writes                                               |
-| -------------------- | --------------- | --------------- | -------------------------------------- | ---------------------------------- | ---------------------------------------------------- |
-| `feat-specifier`     | 2               | sonnet · medium | NotebookEdit, Agent                    | `speckit-specify`                  | spec.md                                              |
-| `feat-planner`       | 3, 4 (amend)    | opus · high     | NotebookEdit, Agent                    | `speckit-plan`                     | plan.md, design docs; accepted findings into spec.md |
-| `feat-sec-reviewer`  | 4               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | `security-and-hardening`           | nothing                                              |
-| `feat-cost-reviewer` | 4               | sonnet · medium | Bash, Edit, Write, NotebookEdit, Agent | none (checklist in its prompt)     | nothing                                              |
-| `feat-tasker`        | 5               | sonnet · medium | NotebookEdit, Agent                    | `speckit-tasks`, `speckit-analyze` | tasks.md, small artifact fixes                       |
-| `feat-implementer`   | 6, 7 (fix mode) | sonnet · medium | Agent                                  | `speckit-implement`                | code, tasks.md                                       |
-| `feat-code-reviewer` | 7               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | per lens, on demand                | nothing                                              |
-| `feat-shipper`       | 8               | haiku · medium  | NotebookEdit, Agent                    | —                                  | docs, commits, PR                                    |
+| Agent                  | Phase(s)        | small size      | Denied tools                           | Loads                              | Writes                                               |
+| ---------------------- | --------------- | --------------- | -------------------------------------- | ---------------------------------- | ---------------------------------------------------- |
+| `feat-specifier`       | 2               | sonnet · medium | NotebookEdit, Agent                    | `speckit-specify`                  | spec.md                                              |
+| `feat-planner`         | 3, 4 (amend)    | opus · high     | NotebookEdit, Agent                    | `speckit-plan`                     | plan.md, design docs; accepted findings into spec.md |
+| `feat-sec-reviewer`    | 4               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | `security-and-hardening`           | nothing                                              |
+| `feat-cost-reviewer`   | 4               | sonnet · medium | Bash, Edit, Write, NotebookEdit, Agent | none (checklist in its prompt)     | nothing                                              |
+| `feat-design-reviewer` | 4               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | none (checklist in its prompt)     | nothing                                              |
+| `feat-tasker`          | 5               | sonnet · medium | NotebookEdit, Agent                    | `speckit-tasks`, `speckit-analyze` | tasks.md, small artifact fixes                       |
+| `feat-implementer`     | 6, 7 (fix mode) | sonnet · medium | Agent                                  | `speckit-implement`                | code, tasks.md                                       |
+| `feat-code-reviewer`   | 7               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | per lens, on demand                | nothing                                              |
+| `feat-shipper`         | 8               | haiku · medium  | NotebookEdit, Agent                    | —                                  | docs, commits, PR                                    |
 
 Agent files carry no model or effort: `/feat` passes both on every spawn,
 from the size table. Tool limits are deny lists (`disallowedTools`) rather

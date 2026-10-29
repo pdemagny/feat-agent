@@ -28,6 +28,9 @@ spec.md, plan.md and only the code the findings touch): the orchestrator
 sends accepted findings or edits. Write each accepted
 finding into spec.md as a requirement or acceptance criterion (not an
 appendix) and into plan.md where it changes the how; apply edits as given.
+A `[design]` finding is a correction, not a requirement: apply it where it
+points (add the definition, fix the reference, write down the decision with
+the accepted option), and add a requirement only if it changes behaviour.
 Report what changed, one line per finding.
 
 Write files with Write or Edit, never through the shell (heredoc, `>`,

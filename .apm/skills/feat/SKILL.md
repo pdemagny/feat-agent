@@ -2,8 +2,8 @@
 name: feat
 description: >
   Builds a feature from a brief (written by /feat-brief) to a reviewed PR:
-  specify and plan it with Spec Kit, review the design for security and
-  cost, generate and analyze tasks, implement, review the code, then commit
+  specify and plan it with Spec Kit, review the design for security, cost
+  and fit with the code, generate and analyze tasks, implement, review the code, then commit
   and open a PR on its own branch/worktree. Each phase runs in a dedicated
   feat-* subagent whose model and effort follow the feature's size; this
   session only coordinates and holds the gates where the user decides. Use
@@ -77,20 +77,21 @@ The single source of truth for models and efforts: agent files carry none.
 `Loads` is what the agent reads
 for its job.
 
-| Phase                           | Agent                | Loads                          | small           | medium          | large           |
-| ------------------------------- | -------------------- | ------------------------------ | --------------- | --------------- | --------------- |
-| 2 Specify                       | `feat-specifier`     | speckit-specify                | sonnet · medium | sonnet · medium | opus · high     |
-| 3 Plan                          | `feat-planner`       | speckit-plan                   | opus · high     | opus · high     | opus · xhigh    |
-| 4a Security design              | `feat-sec-reviewer`  | security-and-hardening         | sonnet · medium | opus · medium   | opus · high     |
-| 4b Cost design                  | `feat-cost-reviewer` | —                              | sonnet · medium | sonnet · medium | opus · medium   |
-| 5 Tasks                         | `feat-tasker`        | speckit-tasks, speckit-analyze | sonnet · medium | sonnet · medium | opus · high     |
-| 6 Implement                     | `feat-implementer`   | speckit-implement              | sonnet · medium | opus · medium   | opus · high     |
-| 7a Correctness, spec, standards | `feat-code-reviewer` | —                              | sonnet · medium | opus · medium   | opus · medium   |
-| 7b Security                     | `feat-code-reviewer` | security-and-hardening         | sonnet · medium | opus · medium   | opus · high     |
-| 7c Performance                  | `feat-code-reviewer` | performance-optimization       | sonnet · medium | sonnet · medium | opus · medium   |
-| 7d Over-engineering             | `feat-code-reviewer` | —                              | sonnet · medium | sonnet · medium | sonnet · medium |
-| 7e Readability                  | `feat-code-reviewer` | —                              | sonnet · medium | sonnet · medium | sonnet · medium |
-| 8 Ship                          | `feat-shipper`       | —                              | haiku · medium  | haiku · medium  | haiku · medium  |
+| Phase                           | Agent                  | Loads                          | small           | medium          | large           |
+| ------------------------------- | ---------------------- | ------------------------------ | --------------- | --------------- | --------------- |
+| 2 Specify                       | `feat-specifier`       | speckit-specify                | sonnet · medium | sonnet · medium | opus · high     |
+| 3 Plan                          | `feat-planner`         | speckit-plan                   | opus · high     | opus · high     | opus · xhigh    |
+| 4a Security design              | `feat-sec-reviewer`    | security-and-hardening         | sonnet · medium | opus · medium   | opus · high     |
+| 4b Cost design                  | `feat-cost-reviewer`   | —                              | sonnet · medium | sonnet · medium | opus · medium   |
+| 4c Clarity and fit              | `feat-design-reviewer` | —                              | sonnet · medium | sonnet · high   | opus · medium   |
+| 5 Tasks                         | `feat-tasker`          | speckit-tasks, speckit-analyze | sonnet · medium | sonnet · medium | opus · high     |
+| 6 Implement                     | `feat-implementer`     | speckit-implement              | sonnet · medium | opus · medium   | opus · high     |
+| 7a Correctness, spec, standards | `feat-code-reviewer`   | —                              | sonnet · medium | opus · medium   | opus · medium   |
+| 7b Security                     | `feat-code-reviewer`   | security-and-hardening         | sonnet · medium | opus · medium   | opus · high     |
+| 7c Performance                  | `feat-code-reviewer`   | performance-optimization       | sonnet · medium | sonnet · medium | opus · medium   |
+| 7d Over-engineering             | `feat-code-reviewer`   | —                              | sonnet · medium | sonnet · medium | sonnet · medium |
+| 7e Readability                  | `feat-code-reviewer`   | —                              | sonnet · medium | sonnet · medium | sonnet · medium |
+| 8 Ship                          | `feat-shipper`         | —                              | haiku · medium  | haiku · medium  | haiku · medium  |
 
 Phase 7 runs one `feat-code-reviewer` per group of lenses. **small**: two
 reviewers, lenses `7a+7b` and `7c+7d+7e`. **medium / large**: one per lens,
@@ -100,16 +101,16 @@ the phase 6 row.
 
 ## Phases and gates
 
-| #   | Phase         | Runs in                                    | Gate                                                                             |
-| --- | ------------- | ------------------------------------------ | -------------------------------------------------------------------------------- |
-| 0   | Setup         | you                                        | hard only if a Spec Kit hook would branch or commit                              |
-| 2   | Specify       | `feat-specifier`                           | **hard**: spec.md, the only place questions are asked                            |
-| 3   | Plan          | `feat-planner`                             | none for small and medium (merged with 4); **hard** for large                    |
-| 4   | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer` | small and medium: one gate for 3+4, hard only on a real finding, a user-call assumption, a blocker or a size increase; large: **hard** |
-| 5   | Tasks         | `feat-tasker`                              | **hard** on CRITICAL/HIGH findings, a size increase or an unanswered checklist item, and always for large; else soft |
-| 6   | Implement     | `feat-implementer`, one per user story     | soft unless checks fail; **hard after each story** for large                     |
-| 7   | Code review   | `feat-code-reviewer` ×2 (small) or ×5      | **hard**: user picks the fixes                                                   |
-| 8   | Ship          | `feat-shipper`                             | none: ends with the PR link                                                      |
+| # | Phase         | Runs in                                                             | Gate                                                                                                                                   |
+| - | ------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 0 | Setup         | you                                                                 | hard only if a Spec Kit hook would branch or commit                                                                                    |
+| 2 | Specify       | `feat-specifier`                                                    | **hard**: spec.md, the only place questions are asked                                                                                  |
+| 3 | Plan          | `feat-planner`                                                      | none for small and medium (merged with 4); **hard** for large                                                                          |
+| 4 | Design review | `feat-sec-reviewer` ∥ `feat-cost-reviewer` ∥ `feat-design-reviewer` | small and medium: one gate for 3+4, hard only on a real finding, a user-call assumption, a blocker or a size increase; large: **hard** |
+| 5 | Tasks         | `feat-tasker`                                                       | **hard** on CRITICAL/HIGH findings, a size increase or an unanswered checklist item, and always for large; else soft                   |
+| 6 | Implement     | `feat-implementer`, one per user story                              | soft unless checks fail; **hard after each story** for large                                                                           |
+| 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5                               | **hard**: user picks the fixes                                                                                                         |
+| 8 | Ship          | `feat-shipper`                                                      | none: ends with the PR link                                                                                                            |
 
 Phase 1 (the interview and the brief) is `/feat-brief`, in its own context.
 
@@ -243,15 +244,21 @@ constitution check, assumptions.
 
 ## 4. Design review
 
-Spawn `feat-sec-reviewer` and `feat-cost-reviewer` in parallel. Merge their
-findings into `D1…`, drop duplicates, give each a recommendation.
+Spawn `feat-sec-reviewer`, `feat-cost-reviewer` and `feat-design-reviewer`
+in parallel. Give them the paths only, never the planner's report: the
+design reviewer is a fresh reader on purpose. Merge their findings into
+`D1…`, drop duplicates, give each a recommendation.
+
+Every gate of this phase starts with the design reviewer's paraphrase, as
+it reported it: the user checks it against what they meant. If it
+contradicts the brief, the gate is hard.
 
 **Large**: hard gate, the user accepts or rejects each finding. **Small and
 medium**: one gate for phases 3 and 4, headed "Plan and design review":
-approach, what it touches, assumptions, any size increase (asked first),
-the findings with their recommendations. It is hard if there is a finding
-above nice-to-have, an assumption with `needs user: yes`, a constitution
-violation, a blocker or a size increase; otherwise soft, and the
+the paraphrase, approach, what it touches, assumptions, any size increase
+(asked first), the findings with their recommendations. It is hard if there
+is a finding above nice-to-have, an assumption with `needs user: yes`, a
+constitution violation, a blocker or a size increase; otherwise soft, and the
 recommendations are applied. "ok" accepts all recommendations.
 
 Accepted findings go to `feat-planner` in amend mode (continued after a

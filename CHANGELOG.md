@@ -18,6 +18,13 @@
   redirections, which the worktree guard refused 190 times in 15 runs, and
   report only once their writes have returned: 4 of 15 specifiers reported
   a spec.md that wasn't written.
+- New design reviewer in phase 4 (4c clarity and fit, `feat-design-reviewer`),
+  next to security and cost. It reads spec and plan as someone new to the
+  project: it paraphrases them (the gate shows it, so you can check it against
+  what you meant), and flags undefined terms, statements the code contradicts,
+  references to things that don't exist, helpers the codebase already has,
+  speculative abstractions, and decisions left to the implementer. Adapted
+  from google/elephant-goldfish-model's review (Apache-2.0).
 
 ## 0.4.0 — 2026-10-28
 

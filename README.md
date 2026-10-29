@@ -28,8 +28,10 @@ flowchart TD
     G2 --> P3["3 Plan<br/>feat-planner"]
     P3 --> P4a["4a Security design<br/>feat-sec-reviewer"]
     P3 --> P4b["4b Cost design<br/>feat-cost-reviewer"]
+    P3 --> P4c["4c Clarity and fit<br/>feat-design-reviewer"]
     P4a --> G4{{"Gate: design findings"}}
     P4b --> G4
+    P4c --> G4
     G4 --> P5["5 Tasks + analyze<br/>feat-tasker"]
     P5 --> P6["6 Implement<br/>feat-implementer<br/>one per user story, in turn"]
     P6 --> P7["7 Code review<br/>feat-code-reviewer<br/>2 reviewers on small, 5 otherwise"]
@@ -42,12 +44,15 @@ flowchart TD
     classDef agent fill:#eef7ee,stroke:#4a9a4a,color:#1d3d1d
     classDef gate fill:#fff4e0,stroke:#d18b2a,color:#5c3a0a
     class P1,MAP,CLR you
-    class P2,P3,P4a,P4b,P5,P6,P7,P7f,P8 agent
+    class P2,P3,P4a,P4b,P4c,P5,P6,P7,P7f,P8 agent
     class G1,GM,G2,G4,G7 gate
 ```
 
 Blue runs in your session, green in a subagent, orange hexagons are hard
-gates. Branches out of one box run in parallel. The phase 4 gate is soft for
+gates. Branches out of one box run in parallel. Phase 4c reads spec and plan
+as someone new to the project would: it paraphrases them for you to check,
+then flags what is unclear, what the code contradicts, what already exists
+and what is left for the implementer to decide. The phase 4 gate is soft for
 a small feature without real findings. Phases 3, 5 and each story of 6 also
 stop for a large feature. Phase 7's lenses: correctness/spec/standards,
 security, performance, over-engineering, readability. Full matrix in
@@ -109,5 +114,8 @@ are adapted from addyosmani/agent-skills (MIT), and three checklists in
 from mattpocock/skills' `code-review` (Matt Pocock), over-engineering from
 dietrichgebert/ponytail's pre-v5 `ponytail-review` (Dietrich Gebert),
 readability from addyosmani/agent-skills' `code-simplification` (Addy
-Osmani, itself inspired by Anthropic's code-simplifier plugin). Third-party skills installed
+Osmani, itself inspired by Anthropic's code-simplifier plugin). The passes of
+`.apm/agents/feat-design-reviewer.agent.md` are adapted, condensed and
+changed, from the reviewer prompts and document standards of
+google/elephant-goldfish-model (Apache-2.0). Third-party skills installed
 by `install.sh deps` keep their own licenses.
