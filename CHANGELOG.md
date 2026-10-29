@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.0 — 2026-10-29
 
 - a cost script (since moved out) attributes phases correctly again: since the size
   table was column-aligned, only the 4b and 7 rows parsed, so most runs
