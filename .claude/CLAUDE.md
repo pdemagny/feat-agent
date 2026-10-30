@@ -34,6 +34,10 @@ When changing it:
   after changing models, agents or dependencies, and record notable results
   in the cost notes (since moved out). Keep `PRICES` current.
 - Record user-visible changes in CHANGELOG.md.
+- The roadmap is the GitHub Project https://github.com/users/pdemagny/projects/2:
+  one issue per item, label `feat` or `bug`, fields Priority (P1/P2/P3), Size
+  (small/medium/large), Status. A PR says `Closes #N`; follow-ups are new
+  issues.
 - Tools and tasks are in `mise.toml`: `mise run lint` and `mise run
   test:apm` before committing, `mise run release <version>` to release (it
   dates the CHANGELOG's `## Unreleased` section and opens a new one, so
