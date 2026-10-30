@@ -1,0 +1,22 @@
+name: Bug
+description: Something feat-workflows does wrong
+labels: [bug]
+body:
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happens
+      description: The skill or agent, what it did or its error.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: The smallest brief or run that shows it.

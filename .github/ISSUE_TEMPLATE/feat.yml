@@ -1,0 +1,22 @@
+name: Feature
+description: A new capability for the roadmap
+labels: [feat]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What and why
+      description: What feat-workflows lacks today, and what to add.
+    validations:
+      required: true
+  - type: textarea
+    id: questions
+    attributes:
+      label: Questions for the brief
+      description: Decisions left to /brief, one checkbox each.
+      placeholder: "- [ ] "
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: What a reviewer checks to call it finished.
