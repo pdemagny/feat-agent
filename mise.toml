@@ -1,4 +1,4 @@
-# Tools and tasks for working on feat-workflows: `mise install`, then `mise tasks`.
+# Tools and tasks for working on feat-agent: `mise install`, then `mise tasks`.
 # Versions are the ones the current release was tested with.
 
 [tools]
@@ -72,12 +72,12 @@ git push && git push origin "v$v"
 '''
 
 [tasks.pin]
-description = "Pin your user-level APM install of feat-workflows to a tag and reinstall"
+description = "Pin your user-level APM install of feat-agent to a tag and reinstall"
 usage = 'arg "<tag>" help="e.g. v0.2.1"'
 run = '''
 #!/usr/bin/env bash
 set -euo pipefail
-sed -i -E "s|^(\s*- pdemagny/feat-workflows)(#.*)?$|\1#${usage_tag}|" "$HOME/.apm/apm.yml"
-grep -n 'pdemagny/feat-workflows' "$HOME/.apm/apm.yml"
+sed -i -E "s|^(\s*- pdemagny/feat-agent)(#.*)?$|\1#${usage_tag}|" "$HOME/.apm/apm.yml"
+grep -n 'pdemagny/feat-agent' "$HOME/.apm/apm.yml"
 cd "$HOME" && GITHUB_TOKEN="$(gh auth token)" apm install -g
 '''

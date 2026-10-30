@@ -6,7 +6,7 @@ body:
     id: what
     attributes:
       label: What and why
-      description: What feat-workflows lacks today, and what to add.
+      description: What feat-agent lacks today, and what to add.
     validations:
       required: true
   - type: textarea

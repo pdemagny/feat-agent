@@ -1,5 +1,5 @@
 name: Bug
-description: Something feat-workflows does wrong
+description: Something feat-agent does wrong
 labels: [bug]
 body:
   - type: textarea

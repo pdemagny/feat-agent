@@ -48,7 +48,7 @@ place() {
   elif [ -e "$dest" ] || [ -L "$dest" ]; then
     local bak
     # Outside skills/ and agents/: Claude Code would load a backup there as a skill or agent.
-    bak="$HOME/.claude/feat-workflows-backups/$(basename "$dest").$(date +%Y%m%d%H%M%S)"
+    bak="$HOME/.claude/feat-agent-backups/$(basename "$dest").$(date +%Y%m%d%H%M%S)"
     mkdir -p "$(dirname "$bak")"
     mv "$dest" "$bak"
     echo "backup   $dest -> $bak"
@@ -72,7 +72,7 @@ has_agent() {
 
 # Installed as a Claude Code plugin: its skills and agents live in the plugin cache.
 has_plugin() {
-  claude plugin list 2>/dev/null | grep -q 'feat-workflows@'
+  claude plugin list 2>/dev/null | grep -q 'feat-agent@'
 }
 
 case "$cmd" in
@@ -105,7 +105,7 @@ case "$cmd" in
     for t in "${tools[@]}"; do expect "tool $t" "install it" command -v "$t"; done
     expect "gh authenticated" "gh auth login" gh auth status
     if has_plugin; then
-      echo "ok       plugin feat-workflows (skills and agents)"
+      echo "ok       plugin feat-agent (skills and agents)"
     else
       for d in "$repo"/.apm/skills/*/; do
         s="$(basename "$d")"
@@ -117,7 +117,7 @@ case "$cmd" in
       done
     fi
     for skill in "${deps[@]}"; do
-      expect "skill $skill" "apm install -g pdemagny/feat-workflows, or ./install.sh deps" has_skill "$skill"
+      expect "skill $skill" "apm install -g pdemagny/feat-agent, or ./install.sh deps" has_skill "$skill"
     done
     if [ -n "$project" ]; then
       fix="specify init --here --integration claude"

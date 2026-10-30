@@ -62,7 +62,7 @@ Subagents don't see this conversation. Give each one, in its prompt:
   rejected", so they don't propose them again.
 
 Spawn each with the Agent tool, `subagent_type` = the agent's name as your
-agent list shows it (`feat-planner`, or `feat-workflows:feat-planner` when
+agent list shows it (`feat-planner`, or `feat-agent:feat-planner` when
 installed as a Claude Code plugin), and
 **always pass `model` and `effort` from the size table**. If an agent file
 is missing, say so at the next gate and run that phase inline with its
@@ -208,7 +208,7 @@ back late to a long session.
    (commit style, branch rules, where checks live, docs to update).
 3. Check `.specify/` exists (else stop: `specify init --here --integration
 claude`) and the `feat-*` agents are installed (plain or
-   `feat-workflows:`-prefixed).
+   `feat-agent:`-prefixed).
 4. Read `.specify/extensions.yml`. Hooks that create branches or commit (the
    git extension's) clash with this workflow owning git: if any are enabled,
    **hard gate** before phase 2; unless the user says otherwise, agents skip

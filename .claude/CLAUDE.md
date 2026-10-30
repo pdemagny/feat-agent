@@ -1,4 +1,4 @@
-# feat-workflows
+# feat-agent
 
 Two skills (`.apm/skills/brief/SKILL.md` writes the brief,
 `.apm/skills/feat/SKILL.md` coordinates the build) and the phase subagents

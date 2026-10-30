@@ -111,7 +111,7 @@ Write it to `specs/briefs/<short-name>.md`:
 ### Fresh-reader review
 
 Every brief, every size: spawn `feat-brief-reviewer` (or
-`feat-workflows:feat-brief-reviewer` as a plugin) with the Agent tool, giving
+`feat-agent:feat-brief-reviewer` as a plugin) with the Agent tool, giving
 it the brief's absolute path, the project root and, from a map, the map's
 path. Nothing about the interview: it reads the brief as the specifier
 will. Pass `model` and `effort` for the size you proposed (this mirrors row
@@ -140,7 +140,7 @@ Start the build in a fresh context:
   /feat specs/briefs/<short-name>.md
 ```
 
-Installed as a Claude Code plugin, the command is `/feat-workflows:feat`:
+Installed as a Claude Code plugin, the command is `/feat-agent:feat`:
 print that instead. Don't start `/feat` yourself: it would inherit this
 whole interview.
 
