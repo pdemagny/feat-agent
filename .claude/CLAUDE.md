@@ -1,6 +1,6 @@
 # feat-agents
 
-Two skills (`.apm/skills/feat-brief/SKILL.md` writes the brief,
+Two skills (`.apm/skills/brief/SKILL.md` writes the brief,
 `.apm/skills/feat/SKILL.md` coordinates the build) and the phase subagents
 (`.apm/agents/*.agent.md`), distributed three ways from one source, for Claude Code only: an APM
 package (`apm.yml`), a Claude Code plugin (`.claude-plugin/`), and
@@ -11,7 +11,7 @@ When changing it:
   and effort, and its `Loads` column lists what each row's agent reads.
   Mirror every change in `docs/workflow.md` (matrix and agents table);
   row 1 (`feat-brief-reviewer`) is also written out in
-  `.apm/skills/feat-brief/SKILL.md`, which spawns it.
+  `.apm/skills/brief/SKILL.md`, which spawns it.
   Agent frontmatter carries no `model`, `effort`, `tools` or `color`
   (`/feat` passes model and effort per spawn); use `disallowedTools`. Phase 4 and 7
   reviewer groups live under the table and in `REVIEW_GROUPS` in a cost script (since moved out).

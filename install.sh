@@ -130,7 +130,7 @@ case "$cmd" in
     ;;
 
   uninstall)
-    for dest in "$target"/skills/feat "$target"/skills/feat-* "$target"/agents/feat-*.md; do
+    for dest in "$target"/skills/brief "$target"/skills/feat "$target"/skills/feat-* "$target"/agents/feat-*.md; do
       [ -e "$dest" ] || [ -L "$dest" ] || continue
       if [ -L "$dest" ] && [[ "$(readlink "$dest")" == "$repo"/* ]]; then
         rm "$dest"; echo "removed  $dest"

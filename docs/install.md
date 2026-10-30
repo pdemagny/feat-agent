@@ -52,7 +52,7 @@ claude plugin install feat-agents@feat-agents
 ```
 
 Plugins name everything after the plugin: the commands become
-`/feat-agents:feat` and `/feat-agents:feat-brief`, the agents
+`/feat-agents:feat` and `/feat-agents:brief`, the agents
 `feat-agents:feat-planner` and so on. The skills handle both names. A plugin
 can't install the third-party skills, so add them with the [skills
 CLI](https://github.com/vercel-labs/skills):
@@ -85,7 +85,7 @@ Restart Claude Code (or start a new session) after any of the three.
 
 | Skill                      | Source                                                                | Used by                                                     |
 | -------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `interview-me`             | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | `/feat-brief` (phase 1)                                     |
+| `interview-me`             | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | `/brief` (phase 1)                                          |
 | `security-and-hardening`   | addyosmani/agent-skills                                               | `feat-design-reviewer` lens 4a, `feat-code-reviewer` lens 7b |
 | `performance-optimization` | addyosmani/agent-skills                                               | `feat-code-reviewer` lens 7c                                |
 
@@ -109,7 +109,7 @@ specify init --here --integration claude
 ```
 
 This adds `.specify/` and the `speckit-*` skills in `.claude/skills/`
-(`/feat-brief` doesn't need them). The workflow uses `speckit-specify`, `speckit-clarify`, `speckit-plan`,
+(`/brief` doesn't need them). The workflow uses `speckit-specify`, `speckit-clarify`, `speckit-plan`,
 `speckit-tasks`, `speckit-analyze` and `speckit-implement`. Writing a
 constitution (`/speckit-constitution`) is optional but makes phase 3's
 constitution check meaningful.

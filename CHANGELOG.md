@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- The `/feat-brief` skill is now `/brief`. The `feat-*` agents keep their
+  names.
+
 ## 0.7.0 — 2026-10-29
 
 - `/feat-brief #N` (or an issue URL) starts the brief from a GitHub issue,

@@ -1,7 +1,7 @@
 # feat-agents
 
 A Claude Code workflow that takes a feature idea to a reviewed pull request,
-in two commands: `/feat-brief "let users edit a stack's config"` interviews
+in two commands: `/brief "let users edit a stack's config"` interviews
 you and writes a brief; `/clear`, then `/feat specs/briefs/<name>.md`
 specifies, plans, reviews, breaks down, implements and code-reviews it with
 [Spec Kit](https://github.com/github/spec-kit), then commits, pushes and
@@ -17,8 +17,8 @@ map, one brief and PR per capability.
 
 ```mermaid
 flowchart TD
-    idea([Feature idea]) --> P1["1 Brief<br/>feat-brief skill · interview-me"]
-    P1 -- huge --> MAP["Capability map<br/>feat-brief skill"]
+    idea([Feature idea]) --> P1["1 Brief<br/>brief skill · interview-me"]
+    P1 -- huge --> MAP["Capability map<br/>brief skill"]
     MAP --> GM{{"Gate: map"}}
     GM -- "one brief per capability" --> P1
     P1 -- "small · medium · large" --> R1["Brief review<br/>feat-brief-reviewer<br/>fresh reader"]
@@ -63,7 +63,7 @@ apm install -g pdemagny/feat-agents -t claude  # skills, agents and their depend
 cd ~/your-project
 specify init --here --integration claude       # once per project, if not already
 claude
-> /feat-brief "describe the feature in one line"
+> /brief "describe the feature in one line"
 > /clear
 > /feat specs/briefs/<name>.md
 ```
@@ -88,7 +88,7 @@ for any of them: [docs/install.md](docs/install.md).
 
 ```
 .apm/skills/feat/        the orchestrator: phases, gates, size table (source of truth)
-.apm/skills/feat-brief/  phase 1: interview, size, brief or capability map
+.apm/skills/brief/  phase 1: interview, size, brief or capability map
 .apm/agents/*.agent.md   one subagent per phase role
 apm.yml                  APM package: metadata and the third-party skill dependencies
 .claude-plugin/          Claude Code plugin and marketplace manifests
@@ -105,7 +105,7 @@ Version 0.7.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli)
 
 ## License
 
-MIT, see [LICENSE](LICENSE). The capability-map rules in `.apm/skills/feat-brief`
+MIT, see [LICENSE](LICENSE). The capability-map rules in `.apm/skills/brief`
 are adapted from addyosmani/agent-skills (MIT), and three checklists in
 `.apm/agents/feat-code-reviewer.agent.md` from MIT skills: standards and spec review
 from mattpocock/skills' `code-review` (Matt Pocock), over-engineering from

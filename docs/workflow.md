@@ -6,7 +6,7 @@ is authoritative; this page mirrors it with explanations.
 
 ## Roles
 
-- **`/feat-brief`**: phase 1, in its own context. Interviews you, proposes
+- **`/brief`**: phase 1, in its own context. Interviews you, proposes
   the size, writes the brief (or a capability map for huge ideas) and has
   `feat-brief-reviewer` read it fresh before you confirm it.
 - **Coordinator**: the session running `/feat`, started from a clean
@@ -22,7 +22,7 @@ is authoritative; this page mirrors it with explanations.
 
 | # | Phase         | Runs in                                                                               | Skills used                                                        | Produces                                      | Gate                                                                                                                       |
 | - | ------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| 1 | Brief         | `/feat-brief` (your session), then `feat-brief-reviewer`                              | `interview-me`                                                     | `specs/briefs/<name>.md`, or a capability map | **hard** (confirm the brief and the review's findings)                                                                     |
+| 1 | Brief         | `/brief` (your session), then `feat-brief-reviewer`                                   | `interview-me`                                                     | `specs/briefs/<name>.md`, or a capability map | **hard** (confirm the brief and the review's findings)                                                                     |
 | 0 | Setup         | coordinator                                                                           | —                                                                  | conventions, hooks checked                    | hard only if a Spec Kit hook would branch or commit                                                                        |
 | 2 | Specify       | `feat-specifier`                                                                      | `speckit-specify`                                                  | branch/worktree, `spec.md`, `feat-state.md`   | **hard** (the only place questions are asked)                                                                              |
 | 3 | Plan          | `feat-planner`                                                                        | `speckit-plan`                                                     | `plan.md` and design docs                     | none (hard for large)                                                                                                      |
@@ -101,14 +101,14 @@ gets its own brief and size column.
 
 ## Phase details
 
-### 1 Brief (`/feat-brief`)
+### 1 Brief (`/brief`)
 Reads the code the idea touches, interviews you one question at a time
 (`interview-me` steps 1–5; its restate is the brief, its confirmation the
 gate, its hand-off step skipped), gives the strongest counter-argument to
 each decision before writing it down, proposes a size and writes
 `specs/briefs/<name>.md`: why, how it's handled today, behaviour, out of
 scope, alternatives rejected with their reasons, acceptance, constraints.
-From an issue (`/feat-brief #N` or its URL) it reads the issue with `gh` as
+From an issue (`/brief #N` or its URL) it reads the issue with `gh` as
 the idea and records it in the brief; the shipper's PR says `Closes #N`.
 
 Then `feat-brief-reviewer` reads the brief with no knowledge of the
@@ -285,5 +285,5 @@ starts from it; the PR links to it. It's updated at each gate.
 | `feat-shipper`         | 8               | haiku · medium  | NotebookEdit, Agent                    | —                                  | docs, commits, PR                                    |
 
 Agent files carry no model or effort: `/feat` passes both on every spawn,
-from the size table (`/feat-brief` for `feat-brief-reviewer`). Tool limits are deny lists (`disallowedTools`) rather
+from the size table (`/brief` for `feat-brief-reviewer`). Tool limits are deny lists (`disallowedTools`) rather
 than allow lists, so a new tool is available to an agent unless denied. No agent but the shipper commits, and no agent spawns further agents.

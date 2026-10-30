@@ -1,18 +1,18 @@
 ---
-name: feat-brief
+name: brief
 description: >
   First step of the feature workflow: interviews the user about a feature
   idea (interview-me), proposes its size, has a fresh reader review the
   draft, and saves a brief that /feat builds from; splits a huge initiative
   into a capability map instead. Use
   it whenever the user wants to build, add or implement a feature and has no
-  brief yet, or as /feat-brief followed by the idea, by an issue (#N or its
+  brief yet, or as /brief followed by the idea, by an issue (#N or its
   URL), or by a capability map path and a capability id.
   Not for bugfixes or pure refactors.
 argument-hint: '"idea in one line" | #N | issue-url | map-path capability-id'
 ---
 
-# /feat-brief: from an idea to a brief
+# /brief: from an idea to a brief
 
 The user's request: `$ARGUMENTS`
 
@@ -44,11 +44,11 @@ already has, a smaller version) and let the user answer it. A rejected
 option goes into the brief with its reason: nobody after you saw this
 conversation, so an unwritten rejection gets proposed again.
 
-From a capability map (`/feat-brief <map> <id>`): read the map, use the
+From a capability map (`/brief <map> <id>`): read the map, use the
 capability's row and its dependencies as the idea, and keep the interview
 short; most decisions were made when the map was approved.
 
-From an issue (`/feat-brief #N` or an issue URL): read it with `gh issue
+From an issue (`/brief #N` or an issue URL): read it with `gh issue
 view <N or URL> --json number,title,body,labels,url` and use its title and
 body as the idea. Its unchecked checklist items are questions the interview
 must answer; what the body already decides needs no question, only its
@@ -186,4 +186,4 @@ Build order: identity → billing, notifications
 **Gate** on the map: boundaries, dependency direction, sizes, build order.
 Then write the brief for the first capability (step 3, short interview) and
 end the same way. The map is the index of what remains: each capability
-gets its own `/feat-brief <map> <id>` when the previous one has shipped.
+gets its own `/brief <map> <id>` when the previous one has shipped.

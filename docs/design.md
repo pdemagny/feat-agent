@@ -30,7 +30,7 @@ size table.
 
 The skill can't change the main session's model beyond one turn (above).
 Start the session on the model you want orchestrating (Opus recommended);
-all gate handling runs on it, and `/feat-brief`'s interview on the session
+all gate handling runs on it, and `/brief`'s interview on the session
 you run it in.
 
 ## Why not make /feat itself an agent
@@ -83,7 +83,7 @@ dependency was checked for that, and handled one of three ways:
 | `spec-driven-development`                                  | its own Specify → Plan → Tasks → Implement pipeline, `SPEC-*.md` at the project root                                                                                                                    | **dropped**; the capability-map part (about 30 lines) is inlined in `SKILL.md`, credited                                                                                                                                                                                                                                                                              |
 | `performance-optimization`                                 | measure-first web workflow (Lighthouse, Core Web Vitals), fix, commit after each fix                                                                                                                    | **moved to phase 7** (lens 7c of `feat-code-reviewer`), where there is code to measure: the reviewer does its measure and identify steps; `feat-implementer` in fix mode does fix, re-measure and keep-or-revert; the attempt log goes in the state file; commits stay in phase 8. Phase 4's cost review keeps its own checklist.                                     |
 | `incremental-implementation`                               | commit after every slice, "no uncommitted changes remain"                                                                                                                                               | **dropped**; `speckit-implement` already works task by task with checks, and the workflow commits only in phase 8                                                                                                                                                                                                                                                     |
-| `interview-me`                                             | its own restate and confirmation, then "offer downstream paths" (save to `docs/intent/`, hand off to `spec-driven-development`) and stop                                                                | **overridden** in `/feat-brief`: its restate is the brief, its confirmation is the gate, its step 6 is skipped                                                                                                                                                                                                                                                        |
+| `interview-me`                                             | its own restate and confirmation, then "offer downstream paths" (save to `docs/intent/`, hand off to `spec-driven-development`) and stop                                                                | **overridden** in `/brief`: its restate is the brief, its confirmation is the gate, its step 6 is skipped                                                                                                                                                                                                                                                             |
 | `code-simplification`                                      | applies changes and commits; 13.5KB, mostly language examples; its duplication and dead-code rows overlap lenses 7a and 7d                                                                              | **dropped**; its behaviour-preserving rule, readability signals and over-simplification traps (about 35 lines) are inlined in lens 7e, credited. Applying picked changes one at a time with tests is `feat-implementer`'s fix mode.                                                                                                                                   |
 | Matt Pocock's `code-review`                                | asks the user for the fixed point and spec, needs issue-tracker setup, diffs `...HEAD` (empty here), runs its two axes in sub-agents; installed as a skill it would replace the built-in `/code-review` | **dropped**; its standards and spec axes and its Fowler smell baseline (about 40 lines) are inlined in lens 7a, credited. The reviewer runs them as separate passes in its own context instead of two sub-agents.                                                                                                                                                     |
 | `speckit-implement`                                        | stops to ask about unchecked checklists                                                                                                                                                                 | **overridden**: the orchestrator asks at the phase 5 gate and passes the answer                                                                                                                                                                                                                                                                                       |
@@ -107,7 +107,7 @@ keeping contexts small:
 - **The brief is its own command.** The interview is the most
   back-and-forth part; in the same session, every later call of the run
   would re-read it. No skill or hook can clear the context, so the workflow
-  splits where you are typing anyway: `/feat-brief`, `/clear`, `/feat`.
+  splits where you are typing anyway: `/brief`, `/clear`, `/feat`.
 - **A thin coordinator.** `/feat` never reads code, runs checks or edits
   artifacts; it reads reports and keeps the state file. Gate changes go back
   to the agent owning the artifact, review findings are verified by the
@@ -142,7 +142,7 @@ spawn from the size table) and limits tools with `disallowedTools`.
 Only Claude Code is supported: the skill relies on its Agent tool with
 per-call `model` and `effort`, and on `EnterWorktree`. Other harnesses
 (Codex, OpenCode, Gemini) were supported through APM and dropped: they got
-`/feat-brief` and loose agents but not the build, and the partial install
+`/brief` and loose agents but not the build, and the partial install
 confused more than it helped. Running every phase inline on harnesses
 without agents was considered and rejected: it brings back the single
 growing context this workflow exists to avoid.

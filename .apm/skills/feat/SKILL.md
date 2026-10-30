@@ -1,14 +1,14 @@
 ---
 name: feat
 description: >
-  Builds a feature from a brief (written by /feat-brief) to a reviewed PR:
+  Builds a feature from a brief (written by /brief) to a reviewed PR:
   specify and plan it with Spec Kit, review the design for security, cost
   and fit with the code, generate and analyze tasks, implement, review the code, then commit
   and open a PR on its own branch/worktree. Each phase runs in a dedicated
   feat-* subagent whose model and effort follow the feature's size; this
   session only coordinates and holds the gates where the user decides. Use
   it as /feat followed by a brief path, or /feat resume, when a brief exists. Without a
-  brief, use /feat-brief first. Not for bugfixes or pure refactors.
+  brief, use /brief first. Not for bugfixes or pure refactors.
 argument-hint: "specs/briefs/name.md | resume"
 ---
 
@@ -76,11 +76,11 @@ say which are pending and continue when they report.
 
 The single source of truth for models and efforts: agent files carry none.
 `Loads` is what the agent reads
-for its job. Row 1 is spawned by `/feat-brief`, which mirrors it.
+for its job. Row 1 is spawned by `/brief`, which mirrors it.
 
 | Phase                           | Agent                  | Loads                          | small           | medium          | large           |
 | ------------------------------- | ---------------------- | ------------------------------ | --------------- | --------------- | --------------- |
-| 1 Brief review (`/feat-brief`)  | `feat-brief-reviewer`  | —                              | sonnet · medium | sonnet · medium | opus · medium   |
+| 1 Brief review (`/brief`)       | `feat-brief-reviewer`  | —                              | sonnet · medium | sonnet · medium | opus · medium   |
 | 2 Specify                       | `feat-specifier`       | speckit-specify                | sonnet · medium | sonnet · medium | opus · high     |
 | 3 Plan                          | `feat-planner`         | speckit-plan                   | opus · high     | opus · high     | opus · xhigh    |
 | 4a Security design              | `feat-design-reviewer` | security-and-hardening         | sonnet · medium | opus · medium   | opus · high     |
@@ -118,7 +118,7 @@ the phase 6 row.
 | 8 | Ship          | `feat-shipper`                          | none: ends with the PR link                                                                                                            |
 
 Phase 1 (the interview, the brief and its fresh-reader review) is
-`/feat-brief`, in its own context.
+`/brief`, in its own context.
 
 **Hard gate**: stop, show the gate summary, wait. Don't start the next phase
 in the same turn. Silence or an ambiguous reply is not approval; ask.
@@ -198,8 +198,8 @@ back late to a long session.
    that here, stop: say `/feat` runs only in Claude Code, and that the
    brief can be built there. Don't run the phases inline instead.
 1. `$ARGUMENTS` must be a brief file (or `resume`). If it is an idea instead,
-   stop and point to `/feat-brief "<idea>"`; if it is an issue (`#N` or its
-   URL), to `/feat-brief #N`. Read the brief; check it has
+   stop and point to `/brief "<idea>"`; if it is an issue (`#N` or its
+   URL), to `/brief #N`. Read the brief; check it has
    size, short name, behaviour and acceptance. Huge isn't a size here.
    Older briefs and state files say "normal" or "big": read them as medium
    and large; older briefs may lack "Today" and "Alternatives rejected".
@@ -332,4 +332,4 @@ file done. Never merge.
 
 Final message: the PR link, the branch/worktree, the two or three things
 you'd look at first in review, and for a capability from a map, the next
-capability with `/feat-brief <map> <id>`.
+capability with `/brief <map> <id>`.
