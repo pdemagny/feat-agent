@@ -131,7 +131,7 @@ installer read it:
   `.apm/agents/*.agent.md`, which is why the files live there.
 - **Claude Code plugin** (`.claude-plugin/`): native install and updates,
   pointing at the same `.apm/` paths. Plugin components are namespaced, so
-  the skills accept both `feat-planner` and `feat-agents:feat-planner`. A
+  the skills accept both `feat-planner` and `feat-workflows:feat-planner`. A
   plugin can't depend on loose skills (only on other plugins), so the
   third-party skills come from the skills CLI.
 - **`install.sh`**: symlinks for working on the workflow itself.

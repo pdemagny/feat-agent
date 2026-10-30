@@ -1,4 +1,4 @@
-# feat-agents
+# feat-workflows
 
 A Claude Code workflow that takes a feature idea to a reviewed pull request,
 in two commands: `/brief "let users edit a stack's config"` interviews
@@ -59,7 +59,7 @@ security, performance, over-engineering, readability. Full matrix in
 
 ```sh
 uv tool install apm-cli
-apm install -g pdemagny/feat-agents -t claude  # skills, agents and their dependencies
+apm install -g pdemagny/feat-workflows -t claude  # skills, agents and their dependencies
 cd ~/your-project
 specify init --here --integration claude       # once per project, if not already
 claude

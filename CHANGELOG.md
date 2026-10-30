@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Renamed the project from feat-agents to feat-workflows. The repository, APM
+  package and plugin move to `pdemagny/feat-workflows`, and plugin commands
+  become `/feat-workflows:feat` and `/feat-workflows:brief`. Uninstall the old
+  name before installing the new one.
 - The `/feat-brief` skill is now `/brief`. The `feat-*` agents keep their
   names.
 

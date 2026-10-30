@@ -146,5 +146,5 @@ that phase's effort before its model.
 
 They're ordinary Claude Code subagents: "have feat-code-reviewer review my
 uncommitted diff with lenses 7b and 7d", "have feat-design-reviewer review
-this plan with lens 4b". Installed as a plugin, they're `feat-agents:feat-code-reviewer` and
+this plan with lens 4b". Installed as a plugin, they're `feat-workflows:feat-code-reviewer` and
 so on.

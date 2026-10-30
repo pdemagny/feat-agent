@@ -1,4 +1,4 @@
-# Installing feat-agents
+# Installing feat-workflows
 
 Claude Code only. Three ways to install; the design behind them:
 [design.md](design.md#distribution-one-source-three-installers).
@@ -32,7 +32,7 @@ in one command:
 
 ```sh
 uv tool install apm-cli          # or: pipx install apm-cli
-apm install -g pdemagny/feat-agents -t claude
+apm install -g pdemagny/feat-workflows -t claude
 ```
 
 `-g` installs for your user (all projects) into `~/.claude/`; drop it
@@ -41,19 +41,19 @@ inside a project to install there only.
 ### As a Claude Code plugin
 
 ```
-/plugin install feat-agents --marketplace pdemagny/feat-agents
+/plugin install feat-workflows --marketplace pdemagny/feat-workflows
 ```
 
 On Claude Code before 2.1.275, use two commands:
 
 ```sh
-claude plugin marketplace add pdemagny/feat-agents
-claude plugin install feat-agents@feat-agents
+claude plugin marketplace add pdemagny/feat-workflows
+claude plugin install feat-workflows@feat-workflows
 ```
 
 Plugins name everything after the plugin: the commands become
-`/feat-agents:feat` and `/feat-agents:brief`, the agents
-`feat-agents:feat-planner` and so on. The skills handle both names. A plugin
+`/feat-workflows:feat` and `/feat-workflows:brief`, the agents
+`feat-workflows:feat-planner` and so on. The skills handle both names. A plugin
 can't install the third-party skills, so add them with the [skills
 CLI](https://github.com/vercel-labs/skills):
 
@@ -61,13 +61,13 @@ CLI](https://github.com/vercel-labs/skills):
 npx skills add addyosmani/agent-skills -s interview-me security-and-hardening performance-optimization -a claude-code -g -y
 ```
 
-Update with `/plugin update feat-agents`.
+Update with `/plugin update feat-workflows`.
 
 ### From a clone (to work on the workflow)
 
 ```sh
-git clone https://github.com/pdemagny/feat-agents ~/Projects/feat-agents
-cd ~/Projects/feat-agents
+git clone https://github.com/pdemagny/feat-workflows ~/Projects/feat-workflows
+cd ~/Projects/feat-workflows
 ./install.sh             # symlinks into ~/.claude, so edits apply at once
 ./install.sh deps        # the three third-party skills (skills CLI)
 ```
@@ -75,7 +75,7 @@ cd ~/Projects/feat-agents
 `--copy` copies instead of linking; `--target ~/proj/.claude` installs for
 one project. Anything already at a destination that isn't a link into this
 repo (for example an older hand-written `feat` skill) is moved to
-`~/.claude/feat-agents-backups/<name>.<timestamp>` first, never deleted.
+`~/.claude/feat-workflows-backups/<name>.<timestamp>` first, never deleted.
 Backups stay out of `skills/` and `agents/`, where Claude Code would load
 them as a second skill or agent.
 
@@ -117,7 +117,7 @@ constitution check meaningful.
 ## 4. Check
 
 ```sh
-~/Projects/feat-agents/install.sh check ~/your-project
+~/Projects/feat-workflows/install.sh check ~/your-project
 ```
 
 It needs a clone of this repo, and works whichever way you installed. Every
@@ -126,7 +126,7 @@ Exit code 0 means ready.
 
 ## Updating
 
-- APM: `apm update -g`. Plugin: `/plugin update feat-agents`. Clone:
+- APM: `apm update -g`. Plugin: `/plugin update feat-workflows`. Clone:
   `git pull` (with `--copy`, rerun `./install.sh --copy`).
 - Third-party skills installed with the skills CLI: `npx skills update -g`.
 - Spec Kit: upgrade the CLI, then rerun `specify init --here --integration
@@ -134,8 +134,8 @@ Exit code 0 means ready.
 
 ## Uninstalling
 
-APM: `apm uninstall -g pdemagny/feat-agents`. Plugin: `/plugin uninstall
-feat-agents`. Clone:
+APM: `apm uninstall -g pdemagny/feat-workflows`. Plugin: `/plugin uninstall
+feat-workflows`. Clone:
 
 ```sh
 ./install.sh uninstall               # or --target <dir>
