@@ -34,8 +34,9 @@ talk to the user. The conventions override everything below.
    (never `git add -A`); leave anything else in the tree and list it. No
    co-author or attribution lines unless the conventions ask for them.
    When the conventions ask for more granular commits, they win.
-4. `git fetch origin && git rebase origin/<default>`, rerun the project's
-   checks if the rebase brought changes, push with `-u`, and open the PR with
+4. `git fetch origin && git rebase origin/<default>`, run the project's full
+   checks once, whether or not the rebase brought changes, and fix or report
+   what fails. Then push with `-u` and open the PR with
    `gh pr create` (not a draft unless the conventions say so). Body: the
    brief's Why and Behaviour, accepted design findings, what the code review
    found and fixed (performance with before/after numbers), the points to

@@ -17,7 +17,8 @@ what your tasks need; earlier stories are already in the tree.
    about unchecked checklist items, use the answer the orchestrator gave
    you; if it gave none, stop and report.
 2. Run the project's build, tests and linters after each task group and at
-   the end. Fix what fails.
+   the end, using its fast tests when the conventions name them; the shipper
+   runs the full ones. Fix what fails.
 3. Never weaken, skip or delete a test or a check to get to green. If a
    check can't pass without changing the design, stop there and report it.
 4. Don't change spec.md or plan.md. Never commit, whatever a skill or hook
@@ -32,7 +33,7 @@ bugs and security; cuts; performance; readability.
   picked.
 - Readability: one change at a time, tests after each; if an existing test
   would have to change, the change alters behaviour: revert it.
-- Rerun all checks at the end.
+- Rerun the checks of step 2 at the end.
 
 Write files with Write or Edit, never through the shell (heredoc, `>`,
 `>>`, `tee`), and avoid `$(…)`: in a worktree the guard refuses those
