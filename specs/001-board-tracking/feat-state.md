@@ -1,15 +1,27 @@
-# Brief: /brief and /feat move the feature's issue across a GitHub Projects board
+# /feat state: /brief and /feat move the feature's issue across a GitHub Projects board
+
+- Branch: board-tracking Worktree: .claude/worktrees/brief-board-tracking
+- Size: medium
+- Agents: specifier a6bdd95367686cd60, planner a8d5d89fcf9686b05
+- Current phase: 8 Ship (diff: `git diff a5548b96127dec88dd0e92514a0df5ef6d537b37`, new files intent-to-add; Spec Kit's .specify/ and .claude/skills/ left out)
+- Conventions: conventional commits `type(scope): msg`, one logical change per commit, no co-author; `mise run lint` + `mise run test:apm` before committing; CHANGELOG under `## Unreleased`; update docs/workflow.md and docs/install.md; /feat stays thin; no change to the size table, apm.yml, plugin.json or install.sh install logic; shellcheck clean; git via `/usr/bin/git` in the worktree, one plain command per call; PR says `Closes #11`
+- Allowed Spec Kit hooks: none (no .specify/extensions.yml)
+- Map: none
+- Issue: #11
+
+## Brief
+
 - Size: medium — ~32 tasks expected; one script and edits to both skills and three docs, raised to medium anyway by the new `project` token scope
 - Short name: board-tracking
 - Issue: #11
 
-## Why
+### Why
 Adopters who track features on a GitHub Projects board want each card to
 follow the workflow (Todo → Brief → In progress → In review → Done) without
 moving it by hand. Today nothing in the workflow writes to the board, so a
 card sits in Todo through the brief and the build.
 
-## Today
+### Today
 `/brief #N` reads the issue with `gh issue view`, and the brief's `Issue:`
 line is carried to `feat-shipper`, which writes `Closes #N` in the PR. A
 brief from a plain idea has no issue at all. GitHub's built-in board
@@ -20,7 +32,7 @@ or In progress were made by agents improvising `gh project item-edit` from
 a memory note. No skill or agent asks for those moves, so they happen
 inconsistently.
 
-## Behaviour
+### Behaviour
 - Opt-in through a committed `.feat-agent.yml` at the repo root. If the
   file is absent, the workflow behaves exactly as it does today and makes
   no tracker calls:
@@ -78,7 +90,7 @@ inconsistently.
   context, written to the state file when phase 2 creates it, and flagged
   at the first gate.
 
-## Out of scope
+### Out of scope
 - Other providers (Linear is its own item and may reshape the four
   operations) and third-party provider plugins.
 - Detecting manual moves; agents setting Done; syncing Priority, Size or
@@ -87,7 +99,7 @@ inconsistently.
   but not change them.
 - Labels on created issues.
 
-## Alternatives rejected
+### Alternatives rejected
 - Doing nothing and leaving moves manual: that's today, and it produced
   inconsistent moves on another project's board and gives adopters nothing.
 - A third skill holding the `gh` instructions: it sits in the
@@ -108,7 +120,7 @@ inconsistently.
 - Caching field and option IDs in the config or state: that's one more
   thing to keep in sync, for no measurable saving.
 
-## Acceptance
+### Acceptance
 - On a configured repo whose board has "Item closed" enabled, a feature
   goes from Todo (or no ticket) to Done with no manual board moves.
 - A repo without `.feat-agent.yml` behaves exactly as today, and the
@@ -135,7 +147,7 @@ inconsistently.
   move, send-back, resume, failure flagging) are updated, as are
   `docs/workflow.md`, `docs/install.md` and CHANGELOG.md.
 
-## Constraints / decisions already made
+### Constraints / decisions already made
 - `/feat` stays thin: it runs the script and logs its one-line result,
   the way it runs git in phase 7, and it never reads GraphQL or IDs. No
   new agent and no change to the size table.
@@ -165,3 +177,21 @@ inconsistently.
 - Conventions: conventional commits, `mise run lint` and `mise run
   test:apm` before committing, CHANGELOG under `## Unreleased`, PR says
   `Closes #11`.
+
+## Log
+
+- [x] 0 Setup — Spec Kit initialised with `specify init --here --integration claude --force` (added only .specify/ and .claude/skills/, both untracked; decide at ship whether to commit them); branch renamed to board-tracking. No board check/move: this repo has no `.feat-agent.yml` and the feature isn't built yet.
+- [x] 2 Specify — approved as written (user: "ok, approved"); 6 stories, 27 FRs, 8 SCs, no open markers, checklist all checked (no checklist items to proceed past)
+- [x] 3+4 Plan and design review — accepted D1–D13 and N1–N8 (user: "ok"); rejected D14 drop `read-issue` (recommendation accepted: the brief fixes four operations, and the script is one place to validate refs); `Brief:` line kept, its dead link after phase 2 noted as a limitation in the contract; dismissed: folding check into set-status, dropping send-back (a brief decision)
+  - Planner amend: FR-028–035 added, 12 FRs amended, SC-009. New planner assumptions (needs user: no): `#N` resolved with `gh repo view` in every subcommand (no `{owner}`/`{repo}` placeholders); tests use a python3-stdlib fake GraphQL endpoint on a unix socket so gh's real `--jq` runs; docs state minimum gh 2.0, untested (only 2.103.3 tested); leaf symlinks still refused; M_ADD/M_SET only exercised by the live quickstart.
+- [x] 5 Tasks — soft gate: 47 tasks (medium fits); no CRITICAL/HIGH; 3 LOW left as is (feat SKILL.md 12-line budget tight, T045 trims; US3 parser built in foundational; FR-013 holds by construction); checklist all checked. Stories: US1 T001–T019 (with setup + foundational), US2 T020–T025, US3 T026–T031, US4 T032–T036, US5 T037–T038, US6 T039–T047 (with polish). T047 live quickstart is [MANUAL/USER], pending for the user.
+- [x] 6 Implement — soft gate: T001–T046 done, lint, test:apm, test:tracker (10 cases) pass; T047 live quickstart pending for the user before merge. Final SKILL.md added lines: /feat 10/12, /brief 6/10. Open: FR-035's "minimum gh version" clause not met (docs say only "tested on 2.103.3"; no older gh verified) → spec to amend at the phase 7 gate. Note: I had the implementer reword FR-033 in spec.md (should have gone to the planner).
+  - US1 T001–T019 done; shellcheck, test:tracker, lint, test:apm pass. T001 confirmed apm ships scripts/. Deviations: GraphQL docs as quoted heredocs (SC2016), LC_ALL=C, ASCII `, ...`. SKILL.md lines: /feat 6/12, /brief 4/10
+  - US2 T020–T025 done; all checks pass. FR-033 read as physical root + fixed `specs/briefs` suffix (literal wording would never catch a symlinked dir; spec wording to tighten). Content refusals exit 2. SKILL.md lines: /feat 6/12, /brief 6/10. (Report mentioned skipping hooks in .specify/extensions.yml; that file doesn't exist; nothing ran.)
+  - US3 T026–T031 done; tests only (cases 2, 3, 4, 7), tracker.sh unchanged; all checks pass. Open nit: contract says `, …`, script prints ASCII `, ...`. SKILL.md lines unchanged.
+  - US4 T032–T036 done; retry only on gh failure (return 1), case 8 red then green; all checks pass. Install hint wording is the implementer's own. SKILL.md lines: /feat 8/12, /brief 6/10.
+  - US5 T037–T038 done (two lines extended in place); all checks pass. SKILL.md lines: /feat 10/12 added (6 net). Wording fix handed to T045: resume runs "the board check from Setup step 5, without its move".
+- [x] 7 Code review — user: "ok" to all recommendations. Picked: B1 (document backslash unsupported), B2, B3, B4, B5 (FR-026 reword), B6 (drop FR-035 minimum clause), T1 (read-issue + missing-scope tests), S1, S2, C1–C6, C8, C9, C11, C12, C13–C15, P1 with Std1 (wrap SKILL.md prose at ~76 cols, judge by tokens not line count), Std2, Std3, R1–R4, R6, R7, R8, R9. Rejected: C7 (keep valid_id: the named check is clearer), C10 (superseded by T1's read-issue test), P2 (the re-read keeps idempotence), R5 (extra function for little gain). Spec/contract edits → planner; code → implementer fix mode.
+  - Planner amend done: B1, B3, B5, B6, S1 (into FR-022), S2 (FR-011, US2 AS8; `create-issue <brief-file> <owner/repo>`, mismatch → exit 1), C8, C13–C15, 12 cases, FR-034 judged by tokens. tasks.md left as the phase 5/6 record (now says "ten cases", 256-char title, "minimum 2.0" in places).
+  - Fixes applied: B2, B3, B4, T1, S1, S2, C1–C6, C8, C9, C11, C12, SKILL.md wording (wrapped ~76 cols; wc -w feat 3214 → 3193, brief 1494 → 1493), Std2–4, R1–R4, R6, R7, R9. test:tracker 12 cases, lint, test:apm pass. No performance attempts (P2 skipped). B2/B3 have no dedicated test (stateless stub). Small leftover: the contract doesn't name the exit-2 "malformed repo" message or RE_SCOPE_PROJECT.
+- [ ] 8 Ship
