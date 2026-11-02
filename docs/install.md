@@ -9,7 +9,7 @@ Claude Code only. Three ways to install; the design behind them:
 | ------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------- |
 | Claude Code (tested on 2.1.308) | runs `/feat` and its agents; older versions may ignore subagent `effort` or `skills`  | <https://code.claude.com/docs/en/setup>         |
 | git                             | branches, worktrees, diffs                                                            | your package manager                            |
-| GitHub CLI `gh`, logged in      | phase 8 pushes and opens the PR                                                       | <https://cli.github.com>, then `gh auth login`  |
+| GitHub CLI `gh`, logged in      | phase 8 pushes and opens the PR; board tracking needs the `project` scope ([section 5](#5-board-tracking-optional)) | <https://cli.github.com>, then `gh auth login`  |
 | Spec Kit CLI `specify`          | phases 2–6 are Spec Kit skills                                                        | `uv tool install specify-cli`                   |
 | APM (`apm`) or Node.js (`npx`)  | APM installs everything; `npx` installs the third-party skills for the other two ways | `uv tool install apm-cli`; <https://nodejs.org> |
 
@@ -123,6 +123,53 @@ constitution check meaningful.
 It needs a clone of this repo, and works whichever way you installed. Every
 line should say `ok`; each `MISSING` line names the command that fixes it.
 Exit code 0 means ready.
+
+## 5. Board tracking (optional)
+
+`/brief` and `/feat` can move a brief's issue across a GitHub Projects
+board: Brief when the brief is written, In progress while it is built, In
+review from the code review on. Which moment sets which status:
+[workflow.md](workflow.md#board-tracking). It is off unless the repo has a
+`.feat-agent.yml` at its root:
+
+```yaml
+tracker:
+  provider: github            # only value accepted
+  project: https://github.com/users/<login>/projects/<number>   # or /orgs/<org>/...
+  statuses:                   # option names of the board's Status field, exact case
+    brief: Brief
+    building: In progress
+    review: In review
+```
+
+Exactly this shape: comments and quoted values are fine, other keys or
+indents are refused. Commit and push it: `/feat` builds in a worktree
+branched from `origin/<default>`, which only sees what is pushed (without it
+the run says so and skips its moves).
+
+Then give `gh` (tested on 2.103.3) the `project` scope:
+
+```sh
+gh auth refresh -s project
+```
+
+That scope is broad: it grants read and write on every Projects board your
+account can reach, not just this one. Without the file, nothing calls `gh`
+for a board and the scope isn't needed.
+
+On the board, in its workflows:
+- **Enable "Item closed"** (sets Done). Merging the PR closes the issue and
+  this moves the card. Without it, cards stop at In review and you move
+  them to Done by hand.
+- **Check what "Pull request linked to issue" sets.** It fires when phase 8
+  opens the PR (`Closes #N`) and could move the card back from In review;
+  turn it off or point it at In review.
+
+**Repos you didn't write.** A repo's `.feat-agent.yml` and a brief's
+`Issue:` line decide where the writes go: they can point at any board your
+account can edit and add any issue you can read to it. Each run starts by
+printing the board it will write to (`tracker: ok users/<login>/projects/<n>
+...`); on a repo you didn't write, check that line before going on.
 
 ## Updating
 

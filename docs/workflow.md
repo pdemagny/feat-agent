@@ -110,6 +110,9 @@ each decision before writing it down, proposes a size and writes
 scope, alternatives rejected with their reasons, acceptance, constraints.
 From an issue (`/brief #N` or its URL) it reads the issue with `gh` as
 the idea and records it in the brief; the shipper's PR says `Closes #N`.
+With [board tracking](#board-tracking) it checks the board first, moves the
+issue to Brief, and after the gate offers to create the issue when the
+brief has none.
 
 Then `feat-brief-reviewer` reads the brief with no knowledge of the
 interview, as the specifier will, on every brief. It makes four passes:
@@ -143,7 +146,8 @@ brief. Detection rules and map format adapted from the scope check in
 Checks the argument is a brief, reads `CLAUDE.md`/`AGENTS.md` and project
 memory (they override the skill), checks Spec Kit and the agents, and reads
 `.specify/extensions.yml`: hooks that would create branches or commit are
-put to you before anything runs.
+put to you before anything runs. With [board tracking](#board-tracking) it
+runs the board check and moves the issue to In progress.
 
 ### 2 Specify (`feat-specifier`)
 The coordinator creates branch `<NNN>-<short-name>` (worktree when possible,
@@ -223,7 +227,8 @@ check, never commits. Failing checks go back once; a needed design change is
 a hard gate. **Large:** a gate after each story.
 
 ### 7 Code review (`feat-code-reviewer`)
-The coordinator makes the uncommitted work reviewable (`git add -N` on new
+With [board tracking](#board-tracking) the coordinator first moves the issue
+to In review. It then makes the uncommitted work reviewable (`git add -N` on new
 files, `git diff <merge-base>`; a `...HEAD` diff would be empty) and spawns
 the reviewers with their lenses:
 - **7a Correctness, spec, standards**: three separate passes. Standards:
@@ -262,6 +267,24 @@ stages only the feature's files, rebases, pushes, opens a non-draft PR with
 the brief, accepted design changes, review results and numbers, and a link
 to the state file. If git is blocked in the session, it returns one `!`
 command for you to run. Never merges.
+
+## Board tracking
+
+Optional, and off unless the repo has a `.feat-agent.yml`; setup, scope and
+the board's own workflows are in [install.md](install.md#5-board-tracking-optional).
+The skills run `.apm/skills/feat/scripts/tracker.sh` (no agent does): one
+`check` at the start of each run, which prints the board it will write to,
+then one move per moment, only when the brief has an `Issue:` line.
+
+| Moment                                                                                  | Status      |
+| --------------------------------------------------------------------------------------- | ----------- |
+| `/brief` writes the brief (from an idea: once confirmed at the gate, after creating the issue) | Brief       |
+| `/feat` setup; resume in phases 2–6; "back to N" (2–6) from 7 or 8                      | In progress |
+| Phase 7 starts; resume in phases 7–8                                                    | In review   |
+| The PR is merged and closes the issue                                                   | Done, by the board's "Item closed" workflow |
+
+A failed move never stops the run: it is logged as a `[!]` line in the
+state file and flagged at the next gate. A failed `check` stops it.
 
 ## The state file
 

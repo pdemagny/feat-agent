@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Stub gh for tests/tracker: logs its argv, answers `repo view` and `issue`
+# from case files, and hands `api` to the real gh (pointed at the fake
+# endpoint by GH_CONFIG_DIR). Stateless.
+set -euo pipefail
+case_dir="${TRACKER_CASE:?TRACKER_CASE not set}"
+printf '%s\n' "$*" >>"$case_dir/calls"
+
+case "${1:-} ${2:-}" in
+  api\ *)
+    exec "${TRACKER_REAL_GH:?TRACKER_REAL_GH not set}" "$@"
+    ;;
+  "repo view")
+    cat "$case_dir/repo"
+    ;;
+  "issue view")
+    cat "$case_dir/issue.json"
+    ;;
+  "issue create")
+    body=""
+    while [ "$#" -gt 0 ]; do
+      if [ "$1" = "--body-file" ] && [ "$#" -gt 1 ]; then
+        body="$2"
+        shift
+      fi
+      shift
+    done
+    [ -n "$body" ] || exit 1
+    cat "$body" >"$case_dir/body"
+    cat "$case_dir/issue-url"
+    ;;
+  *)
+    echo "stub gh: unexpected call: $*" >&2
+    exit 1
+    ;;
+esac

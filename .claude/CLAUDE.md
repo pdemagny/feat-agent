@@ -27,7 +27,9 @@ When changing it:
 - `version` in `apm.yml` and `.claude-plugin/plugin.json` must match;
   `mise run release` bumps both (plugin users stay on the version they
   have until it changes).
-- Shell: `shellcheck install.sh` must stay clean.
+- Shell: `shellcheck` must stay clean on `install.sh`, the tracker script
+  (`.apm/skills/feat/scripts/`) and its bash tests (`tests/tracker/`);
+  `mise run lint` runs all three, `mise run test:tracker` the offline tests.
 - a cost script (since moved out) parses SKILL.md's size table (`| <N><a-e> <name> |
   \`feat-x\` | <loads> | model · effort | …`); keep that format or update the
   parser. Run a cost script (since moved out) on a real run

@@ -35,6 +35,12 @@ with `gh`, its title and body are the idea and its unchecked checklist items
 are questions the interview answers. The brief records the issue, and the PR
 says `Closes #N`, so merging closes it.
 
+**Board tracking** (optional): with a `.feat-agent.yml` at the repo root,
+`/brief` and `/feat` move the issue across a GitHub Projects board (Brief,
+In progress, In review; Done when the PR merges). Each run first prints the
+board it will write to. A brief without an issue gets one created after you
+confirm it at the gate. Setup: [install.md](install.md#5-board-tracking-optional).
+
 **Huge** ideas (several capabilities that could ship on their own) get a
 capability map in `specs/maps/<name>.md` instead: you approve the map, then
 it writes the first capability's brief. Each later capability starts with

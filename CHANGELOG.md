@@ -8,6 +8,14 @@
   name before installing the new one.
 - The `/feat-brief` skill is now `/brief`. The `feat-*` agents keep their
   names.
+- Optional GitHub Projects board tracking, off unless the repo commits a
+  `.feat-agent.yml` (board URL and the three status names). `/brief` and
+  `/feat` check the board at the start of each run and move the issue to
+  Brief, In progress (setup, resume, send-back) and In review (phase 7);
+  the board's "Item closed" workflow sets Done. `/brief` can create the
+  issue after the gate. Needs `gh auth refresh -s project`; setup in
+  docs/install.md. `gh` is now pinned to 2.103.3, and `mise run
+  test:tracker` runs the script's offline tests.
 
 ## 0.7.0 — 2026-10-29
 

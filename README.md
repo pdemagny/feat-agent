@@ -77,7 +77,7 @@ for any of them: [docs/install.md](docs/install.md).
 
 | Doc | What's in it |
 |---|---|
-| [docs/install.md](docs/install.md) | Prerequisites, the three ways to install, dependencies, update, uninstall |
+| [docs/install.md](docs/install.md) | Prerequisites, the three ways to install, dependencies, board tracking setup, update, uninstall |
 | [docs/usage.md](docs/usage.md) | Brief, build, answering gates, resuming, changing size, tuning models and effort |
 | [docs/workflow.md](docs/workflow.md) | Every phase, gate and agent: the size × phase matrix, what runs when and how |
 | [docs/design.md](docs/design.md) | Why it is built this way: Claude Code mechanics, rejected alternatives |
@@ -88,13 +88,15 @@ for any of them: [docs/install.md](docs/install.md).
 
 ```
 .apm/skills/feat/        the orchestrator: phases, gates, size table (source of truth)
+.apm/skills/feat/scripts/  tracker.sh: optional GitHub Projects board moves
 .apm/skills/brief/  phase 1: interview, size, brief or capability map
 .apm/agents/*.agent.md   one subagent per phase role
 apm.yml                  APM package: metadata and the third-party skill dependencies
 .claude-plugin/          Claude Code plugin and marketplace manifests
 install.sh               developer install (symlinks), deps, check, uninstall
 a cost script (since moved out)            tokens and $ of a run, per phase and model, from transcripts
-mise.toml                pinned tools and tasks (lint, check, test:apm, cost, release, pin)
+tests/tracker/           offline tests for tracker.sh (stub gh, fake GraphQL endpoint)
+mise.toml                pinned tools and tasks (lint, check, test:apm, test:tracker, cost, release, pin)
 docs/                    the documentation above
 ```
 
