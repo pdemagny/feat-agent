@@ -3,7 +3,7 @@
 - Branch: board-tracking Worktree: .claude/worktrees/brief-board-tracking
 - Size: medium
 - Agents: specifier a6bdd95367686cd60, planner a8d5d89fcf9686b05
-- Current phase: 8 Ship (diff: `git diff a5548b96127dec88dd0e92514a0df5ef6d537b37`, new files intent-to-add; Spec Kit's .specify/ and .claude/skills/ left out)
+- Current phase: done (PR #14)
 - Conventions: conventional commits `type(scope): msg`, one logical change per commit, no co-author; `mise run lint` + `mise run test:apm` before committing; CHANGELOG under `## Unreleased`; update docs/workflow.md and docs/install.md; /feat stays thin; no change to the size table, apm.yml, plugin.json or install.sh install logic; shellcheck clean; git via `/usr/bin/git` in the worktree, one plain command per call; PR says `Closes #11`
 - Allowed Spec Kit hooks: none (no .specify/extensions.yml)
 - Map: none
@@ -194,4 +194,4 @@ inconsistently.
 - [x] 7 Code review — user: "ok" to all recommendations. Picked: B1 (document backslash unsupported), B2, B3, B4, B5 (FR-026 reword), B6 (drop FR-035 minimum clause), T1 (read-issue + missing-scope tests), S1, S2, C1–C6, C8, C9, C11, C12, C13–C15, P1 with Std1 (wrap SKILL.md prose at ~76 cols, judge by tokens not line count), Std2, Std3, R1–R4, R6, R7, R8, R9. Rejected: C7 (keep valid_id: the named check is clearer), C10 (superseded by T1's read-issue test), P2 (the re-read keeps idempotence), R5 (extra function for little gain). Spec/contract edits → planner; code → implementer fix mode.
   - Planner amend done: B1, B3, B5, B6, S1 (into FR-022), S2 (FR-011, US2 AS8; `create-issue <brief-file> <owner/repo>`, mismatch → exit 1), C8, C13–C15, 12 cases, FR-034 judged by tokens. tasks.md left as the phase 5/6 record (now says "ten cases", 256-char title, "minimum 2.0" in places).
   - Fixes applied: B2, B3, B4, T1, S1, S2, C1–C6, C8, C9, C11, C12, SKILL.md wording (wrapped ~76 cols; wc -w feat 3214 → 3193, brief 1494 → 1493), Std2–4, R1–R4, R6, R7, R9. test:tracker 12 cases, lint, test:apm pass. No performance attempts (P2 skipped). B2/B3 have no dedicated test (stateless stub). Small leftover: the contract doesn't name the exit-2 "malformed repo" message or RE_SCOPE_PROJECT.
-- [ ] 8 Ship
+- [x] 8 Ship — PR 14 of the pre-release repo (draft); commits 0f2d752 docs(specs), 0da3ed1 feat(board); branch 001-board-tracking; .specify/ and .claude/skills/ left uncommitted

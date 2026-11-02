@@ -72,8 +72,8 @@ caller's write access and the three status names (FR-009).
 - Output of that call: the HTTP status line and headers, an empty line, then
   the `J_BOARD` lines (verified).
 - Scope: the `X-Oauth-Scopes` header (name compared case-insensitively),
-  split on `, `. Present without the exact entry `project` (`read:project`
-  is not enough) → `tracker: error: token lacks the project scope; run gh auth refresh -s project`.
+  matched against `RE_SCOPE_PROJECT` (`(^|,) *project *(,|$)`). Without the
+  exact entry `project` (`read:project` is not enough) → `tracker: error: token lacks the project scope; run gh auth refresh -s project`.
   Absent (fine-grained or app token) → not judged; `viewerCanUpdate` decides.
 - No `B` line (the owner login doesn't exist: gh exits 0 with
   `repositoryOwner: null`) or the ProjectV2 error → `tracker: error: board <kind>/<login>/projects/<n> not found or not visible to this account; check tracker.project`.
@@ -106,12 +106,14 @@ repository the `/brief` gate named and the user confirmed. No retry: a
 timeout after a server-side success would leave a duplicate.
 
 - Arguments, checked before any gh call, else exit 2:
-  - `<owner/repo>` matches the current-repo pattern above;
+  - `<owner/repo>` matches the current-repo pattern above, else
+    `tracker: error: malformed repo "<x>" (want owner/repo)`;
   - `<brief-file>` (FR-033):
     - relative, matching `^specs/briefs/[a-z0-9][a-z0-9-]*\.md$`;
     - its directory, resolved with `cd -P` and `pwd -P` (bash builtins, so
-      no `realpath`), equals `<root>/specs/briefs` resolved the same way
-      (this catches a symlinked `specs` or `specs/briefs`);
+      no `realpath`), equals the physical repo root (`cd -P <root> && pwd -P`)
+      plus `/specs/briefs` (this catches a symlinked `specs` or
+      `specs/briefs`);
     - the file is a regular file and not a symlink (`-f` and not `-L`):
       resolving a leaf link would need `readlink`, so leaf links are
       refused.
