@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.8.0 — 2026-11-02
+
 - Renamed the project from feat-agents to feat-agent. The repository, APM
   package and plugin move to `pdemagny/feat-agent`, and plugin commands
   become `/feat-agent:feat` and `/feat-agent:brief`. Uninstall the old
