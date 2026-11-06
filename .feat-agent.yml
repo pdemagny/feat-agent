@@ -1,0 +1,7 @@
+tracker:
+  provider: github
+  project: https://github.com/users/pdemagny/projects/2
+  statuses:
+    brief: Brief
+    building: In progress
+    review: In review
