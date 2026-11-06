@@ -15,6 +15,12 @@ it). Keeping the coordinator's context small is what keeps the token count
 down on a plan with a usage limit. A huge idea is split into a capability
 map, one brief and PR per capability.
 
+Bugs take one command: `/fix #N` (or `/fix "<symptom>"`) assesses the
+report with Spec Kit's bug extension, fixes it, has a different agent
+verify the fix, code-reviews it and opens a PR with `Fixes #N`, through
+the same gates, state file and board moves as `/feat`
+([docs/workflow.md](docs/workflow.md#fix)).
+
 ```mermaid
 flowchart TD
     idea([Feature idea]) --> P1["1 Brief<br/>brief skill · interview-me"]
@@ -68,6 +74,12 @@ claude
 > /feat specs/briefs/<name>.md
 ```
 
+For a bug, once per project `specify extension add bug`, then:
+
+```sh
+> /fix #42                                       # or /fix "<symptom>"
+```
+
 Claude Code only: `/feat` relies on its subagents with a model and effort
 per call, and on `EnterWorktree`. Besides APM there are two other ways to
 install (a Claude Code plugin, or `install.sh` from a clone), and a check
@@ -78,7 +90,7 @@ for any of them: [docs/install.md](docs/install.md).
 | Doc | What's in it |
 |---|---|
 | [docs/install.md](docs/install.md) | Prerequisites, the three ways to install, dependencies, board tracking setup, update, uninstall |
-| [docs/usage.md](docs/usage.md) | Brief, build, answering gates, resuming, changing size, tuning models and effort |
+| [docs/usage.md](docs/usage.md) | Brief, build, fixing a bug, answering gates, resuming, changing size, tuning models and effort |
 | [docs/workflow.md](docs/workflow.md) | Every phase, gate and agent: the size × phase matrix, what runs when and how |
 | [docs/design.md](docs/design.md) | Why it is built this way: Claude Code mechanics, rejected alternatives |
 | the cost notes (since moved out) | Measuring a run's tokens and cost with a cost script (since moved out); the baseline to compare against |
@@ -89,6 +101,8 @@ for any of them: [docs/install.md](docs/install.md).
 ```
 .apm/skills/feat/        the orchestrator: phases, gates, size table (source of truth)
 .apm/skills/feat/scripts/  tracker.sh: optional GitHub Projects board moves
+.apm/skills/feat/references/  harness.md: the rules /feat and /fix share (gates, state file, board, resume)
+.apm/skills/fix/         the bugfix orchestrator: assess, fix, test, review, ship; its own size table
 .apm/skills/brief/  phase 1: interview, size, brief or capability map
 .apm/agents/*.agent.md   one subagent per phase role
 apm.yml                  APM package: metadata and the third-party skill dependencies

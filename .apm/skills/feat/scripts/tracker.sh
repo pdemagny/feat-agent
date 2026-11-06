@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Board tracking for /brief and /feat: moves the feature's issue across the
+# Board tracking for /brief, /feat and /fix: moves the feature's issue across the
 # GitHub Projects board named in <repo root>/.feat-agent.yml.
 #
 #   tracker.sh check
 #   tracker.sh read-issue <ref>
-#   tracker.sh create-issue <brief-file> <owner/repo confirmed by the user>
+#   tracker.sh create-issue <brief-file | assessment-file> <owner/repo confirmed by the user>
 #   tracker.sh set-status <brief|building|review> <ref>
 #
 # One line on stdout ("tracker: ..." or read-issue's JSON), nothing on
@@ -28,6 +28,9 @@ RE_SKIP_LINE='^ *(#.*)?$'
 RE_ISSUE_URL='^https://github\.com/([A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9._-]{1,100})/issues/([1-9][0-9]{0,9})$'
 RE_AFTER_QUOTE='^ *(#.*)?$'
 RE_SCOPE_PROJECT='(^|,) *project *(,|$)'
+# Secret-looking values (FR-038's patterns): an assessment-derived issue body
+# that matches one is refused.
+RE_SECRET='-----BEGIN|gh[opsur]_|github_pat_|AKIA|xox[bp]-|(^|[^A-Za-z0-9_])sk-|(password|token|secret)["'"'"']?[[:space:]]*[:=]'
 
 # GraphQL documents and --jq filters, verbatim from the contract
 # (specs/001-board-tracking/contracts/tracker-cli.md). Never spliced into: each
@@ -111,7 +114,7 @@ J_SET='.data.updateProjectV2ItemFieldValue.projectV2Item.id'
 say() { printf 'tracker: %s\n' "$1"; }
 die() { say "error: $1"; exit "${2:-1}"; }
 usage() {
-  die "usage: tracker.sh check | read-issue <ref> | create-issue <brief-file> <owner/repo> | set-status <brief|building|review> <ref>" 2
+  die "usage: tracker.sh check | read-issue <ref> | create-issue <brief-file | assessment-file> <owner/repo> | set-status <brief|building|review> <ref>" 2
 }
 
 # Invisible format characters, as UTF-8 bytes (so any locale matches them):
@@ -386,66 +389,93 @@ trim_blank() {
   while [[ "$val" == *$'\n' ]]; do val="${val%$'\n'}"; done
 }
 
-# brief_parts <file>: sets $title, $why, $behaviour, or refuses (exit 2).
-title="" why="" behaviour=""
-brief_parts() {
-  local line first=1 fence=0 section="" why_lines="" behaviour_lines=""
+# doc_parts <file> <kind> <title prefix> <section 1> <section 2>: sets
+# $title, $part1, $part2 (each section's text, outside-fence "## " lines
+# start sections), or refuses (exit 2) naming <kind> and the section.
+title="" part1="" part2=""
+doc_parts() {
+  local file="$1" kind="$2" prefix="$3" s1="$4" s2="$5"
+  local line first=1 fence=0 section="" lines1="" lines2=""
   while IFS= read -r line || [ -n "$line" ]; do
     line="${line%$'\r'}"
     if [ "$first" = 1 ]; then
       first=0
-      [[ "$line" == "# Brief: "* ]] || die "brief has no \"# Brief: \" first line" 2
-      title="${line#"# Brief: "}"
+      [[ "$line" == "$prefix"* ]] || die "$kind has no \"$prefix\" first line" 2
+      title="${line#"$prefix"}"
       continue
     fi
     if [ "$fence" = 0 ] && [[ "$line" == "## "* ]]; then
       case "${line%"${line##*[! ]}"}" in
-        "## Why") section=why ;;
-        "## Behaviour") section=behaviour ;;
+        "$s1") section=1 ;;
+        "$s2") section=2 ;;
         *) section="" ;;
       esac
       continue
     fi
     [[ "$line" != '```'* ]] || fence=$((1 - fence))
     case "$section" in
-      why) why_lines+="$line"$'\n' ;;
-      behaviour) behaviour_lines+="$line"$'\n' ;;
+      1) lines1+="$line"$'\n' ;;
+      2) lines2+="$line"$'\n' ;;
     esac
-  done <"$1"
-  [ -n "${title//[[:space:]]/}" ] || die "brief title is empty" 2
-  trim_blank "$why_lines"; why="$val"
-  trim_blank "$behaviour_lines"; behaviour="$val"
-  [ -n "${why//[[:space:]]/}" ] || die "brief has no Why section" 2
-  [ -n "${behaviour//[[:space:]]/}" ] || die "brief has no Behaviour section" 2
+  done <"$file"
+  [ -n "${title//[[:space:]]/}" ] || die "$kind title is empty" 2
+  trim_blank "$lines1"; part1="$val"
+  trim_blank "$lines2"; part2="$val"
+  [ -n "${part1//[[:space:]]/}" ] || die "$kind has no ${s1#"## "} section" 2
+  [ -n "${part2//[[:space:]]/}" ] || die "$kind has no ${s2#"## "} section" 2
 }
 
+RE_BRIEF_PATH='^specs/briefs/[a-z0-9][a-z0-9-]*\.md$'
+RE_ASSESSMENT_PATH='^\.specify/bugs/([a-z0-9][a-z0-9-]*)/assessment\.md$'
+
 cmd_create_issue() {
-  local path="$1" confirmed="$2" dir want body url
-  [[ "$path" =~ ^specs/briefs/[a-z0-9][a-z0-9-]*\.md$ ]] ||
-    die "brief path must be specs/briefs/<name>.md" 2
+  local path="$1" confirmed="$2" kind sub dir want body url slug="" label=() note=""
+  # The path decides the source: a brief, or a bug's assessment.
+  if [[ "$path" =~ $RE_BRIEF_PATH ]]; then
+    kind=brief sub=specs/briefs
+  elif [[ "$path" =~ $RE_ASSESSMENT_PATH ]]; then
+    slug="${BASH_REMATCH[1]}"
+    kind=assessment sub=".specify/bugs/$slug"
+  else
+    die "brief path must be specs/briefs/<name>.md or .specify/bugs/<slug>/assessment.md" 2
+  fi
   [[ "$confirmed" =~ $RE_REPO ]] || die "malformed repo \"$(clean "$confirmed")\" (want owner/repo)" 2
-  # The directory must physically be <root>/specs/briefs: a symlinked specs
-  # or specs/briefs resolves elsewhere. A leaf symlink is refused outright.
-  dir="$(cd -P -- "$root/specs/briefs" 2>/dev/null && pwd -P)" || die "no specs/briefs directory" 2
-  want="$(cd -P -- "$root" && pwd -P)/specs/briefs"
-  [ "$dir" = "$want" ] || die "specs/briefs resolves outside the repo" 2
-  [ -f "$root/$path" ] && [ ! -L "$root/$path" ] || die "brief is not a regular file" 2
-  brief_parts "$root/$path"
+  # The directory must physically be <root>/<sub>: a symlinked parent
+  # resolves elsewhere. A leaf symlink is refused outright.
+  dir="$(cd -P -- "$root/$sub" 2>/dev/null && pwd -P)" || die "no $sub directory" 2
+  want="$(cd -P -- "$root" && pwd -P)/$sub"
+  [ "$dir" = "$want" ] || die "$sub resolves outside the repo" 2
+  [ -f "$root/$path" ] && [ ! -L "$root/$path" ] || die "$kind is not a regular file" 2
 
   body="$(mktemp)"
   tmpfiles+=("$body")
-  printf '## Why\n%s\n\n## Behaviour\n%s\n\nBrief: %s\n' "$why" "$behaviour" "$path" >"$body"
+  if [ "$kind" = brief ]; then
+    doc_parts "$root/$path" brief "# Brief: " "## Why" "## Behaviour"
+    printf '## Why\n%s\n\n## Behaviour\n%s\n\nBrief: %s\n' "$part1" "$part2" "$path" >"$body"
+  else
+    doc_parts "$root/$path" assessment "# Bug Assessment: " "## Symptom" "## Root Cause Hypothesis"
+    [[ ! "$part1"$'\n'"$part2" =~ $RE_SECRET ]] ||
+      die "assessment's Symptom or Root Cause Hypothesis holds a secret-looking value; redact it first" 2
+    printf '## Symptom\n%s\n\n## Root cause\n%s\n\nTrail: .specify/bugs/%s/\n' "$part1" "$part2" "$slug" >"$body"
+    label=(--label bug)
+  fi
 
   current_repo || die "could not create the issue ($gh_reason)"
   # The user confirmed a repo at the gate: never create it anywhere else.
   [ "$cur_repo" = "$confirmed" ] ||
     die "could not create the issue (current repo is $cur_repo, not $confirmed named at the gate)"
-  # Never retried: a timeout after a server-side success would duplicate it.
-  run_gh issue create -R "$cur_repo" --title "$title" --body-file "$body" ||
-    die "could not create the issue ($gh_reason)"
+  # Never retried, but for a missing label: gh checks labels before it
+  # creates anything, so that retry cannot duplicate the issue.
+  if ! run_gh issue create -R "$cur_repo" --title "$title" --body-file "$body" ${label[@]+"${label[@]}"}; then
+    [[ "${#label[@]}" != 0 && "$gh_reason" == *"could not add label"*"not found"* ]] ||
+      die "could not create the issue ($gh_reason)"
+    run_gh issue create -R "$cur_repo" --title "$title" --body-file "$body" ||
+      die "could not create the issue ($gh_reason)"
+    note=" (without the bug label: $cur_repo has none)"
+  fi
   url="$gh_out"
   [[ "$url" =~ $RE_ISSUE_URL ]] || die "could not create the issue (unexpected URL from gh: $(clean "$url"))"
-  say "created ${BASH_REMATCH[1]}#${BASH_REMATCH[2]}"
+  say "created ${BASH_REMATCH[1]}#${BASH_REMATCH[2]}$note"
 }
 
 # set_attempt <status name>: one try. Returns 0 done, 1 gh failure (worth a

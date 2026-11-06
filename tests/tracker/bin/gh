@@ -17,6 +17,12 @@ case "${1:-} ${2:-}" in
     cat "$case_dir/issue.json"
     ;;
   "issue create")
+    # A case file "no-label": the repo has no label, so --label fails the way
+    # gh does, before anything is created.
+    if [ -e "$case_dir/no-label" ] && [[ " $* " == *" --label "* ]]; then
+      echo "could not add label: 'bug' not found" >&2
+      exit 1
+    fi
     body=""
     while [ "$#" -gt 0 ]; do
       if [ "$1" = "--body-file" ] && [ "$#" -gt 1 ]; then

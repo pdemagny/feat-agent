@@ -23,6 +23,16 @@ deps_repo="addyosmani/agent-skills"
 deps=(interview-me security-and-hardening performance-optimization)
 # Installed per project by `specify init --integration claude`.
 speckit_skills=(speckit-specify speckit-clarify speckit-plan speckit-tasks speckit-analyze speckit-implement)
+# Spec Kit's bug extension, per project by `specify extension add bug`; /fix only.
+# The headings and verdict words /fix relies on, as recorded for this version
+# (specs/002-fix-workflow/contracts/bug-extension.md).
+bug_version="1.0.1"
+bug_skills=(speckit-bug-assess speckit-bug-fix speckit-bug-test)
+bug_words_assess=("# Bug Assessment:" "**Verdict**" "**Severity**" "## Symptom" "## Reproduction"
+  "## Suspected Code Paths" "## Root Cause Hypothesis" "## Proposed Remediation" "## Open Questions"
+  "likely valid, needs reproduction" "invalid")
+bug_words_fix=("# Bug Fix:" "**Status**" "## Deviations from Assessment" "applied" "partial" "not-applied")
+bug_words_test=("# Bug Verification:" "**Result**" "## Checks Performed" "verified" "partial" "failed")
 tools=(claude git gh specify)
 
 while [ $# -gt 0 ]; do
@@ -57,12 +67,24 @@ place() {
   echo "$mode     $dest"
 }
 
-has_skill() {
+# skill_file NAME: print the path of the first SKILL.md found for NAME.
+skill_file() {
   local name="$1" dir
   for dir in "$target/skills" "$HOME/.claude/skills" ${project:+"$project/.claude/skills"}; do
-    [ -f "$dir/$name/SKILL.md" ] && return 0
+    [ -f "$dir/$name/SKILL.md" ] && { echo "$dir/$name/SKILL.md"; return 0; }
   done
   return 1
+}
+
+has_skill() {
+  skill_file "$1" >/dev/null
+}
+
+# bug_words_found FILE WORD...: how many of the WORDs FILE contains.
+bug_words_found() {
+  local file="$1" args=() w; shift
+  for w in "$@"; do args+=(-e "$w"); done
+  { grep -oF "${args[@]}" "$file" || true; } | sort -u | wc -l
 }
 
 has_agent() {
@@ -123,6 +145,22 @@ case "$cmd" in
       fix="specify init --here --integration claude"
       expect "spec kit in $project" "$fix" test -d "$project/.specify"
       for s in "${speckit_skills[@]}"; do expect "skill $s" "$fix" has_skill "$s"; done
+      # Not counted as missing: only /fix needs the bug extension.
+      for s in "${bug_skills[@]}"; do
+        if ! f="$(skill_file "$s")"; then
+          echo "note     skill $s (needed by /fix only: specify extension add bug)"
+          continue
+        fi
+        echo "ok       skill $s"
+        case "$s" in
+          *-assess) words=("${bug_words_assess[@]}") ;;
+          *-fix) words=("${bug_words_fix[@]}") ;;
+          *) words=("${bug_words_test[@]}") ;;
+        esac
+        if [ "$(bug_words_found "$f" "${words[@]}")" -lt "${#words[@]}" ]; then
+          echo "warn     $s differs from the names /fix was tested with (bug $bug_version)"
+        fi
+      done
     else
       echo "skipped  spec kit checks (pass a project dir)"
     fi
@@ -130,7 +168,7 @@ case "$cmd" in
     ;;
 
   uninstall)
-    for dest in "$target"/skills/brief "$target"/skills/feat "$target"/skills/feat-* "$target"/agents/feat-*.md; do
+    for dest in "$target"/skills/brief "$target"/skills/feat "$target"/skills/fix "$target"/skills/feat-* "$target"/agents/feat-*.md; do
       [ -e "$dest" ] || [ -L "$dest" ] || continue
       if [ -L "$dest" ] && [[ "$(readlink "$dest")" == "$repo"/* ]]; then
         rm "$dest"; echo "removed  $dest"

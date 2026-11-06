@@ -287,3 +287,117 @@ expect_rc 1
 expect_out "tracker: error: token lacks the project scope; run gh auth refresh -s project"
 expect_ops "TrackerBoard"
 ok
+
+# write_assessment <slug> <lines...>: .specify/bugs/<slug>/assessment.md.
+write_assessment() {
+  local slug="$1"
+  shift
+  mkdir -p "$repo/.specify/bugs/$slug"
+  printf '%s\n' "$@" >"$repo/.specify/bugs/$slug/assessment.md"
+}
+
+# 13. Bug issue: an assessment gives a `bug`-labelled issue whose body holds
+# the Symptom (a fenced "## " line included) and the Root Cause Hypothesis,
+# and nothing else; an unconfirmed repo still creates nothing.
+new_case "bug issue"
+write_config "$CONFIG"
+printf 'up/r\n' >"$case_dir/repo"
+printf 'https://github.com/up/r/issues/8\n' >"$case_dir/issue-url"
+write_assessment login-timeout '# Bug Assessment: Login times out' '' \
+  '## Report (verbatim or summarized)' 'It hangs at login.' '' \
+  '## Symptom' 'Login spins for 30s.' '```text' '## not a heading' '```' '' \
+  '## Reproduction' '1. Open /login.' '' \
+  '## Suspected Code Paths' '- auth/session.py' '' \
+  '## Root Cause Hypothesis' 'The session lock is never released (confidence: medium).' '' \
+  '## Proposed Remediation' 'Release the lock.'
+tracker create-issue .specify/bugs/login-timeout/assessment.md up/r
+expect_rc 0
+expect_out "tracker: created up/r#8"
+grep -q '^issue create -R up/r --title Login times out --body-file .* --label bug$' "$case_dir/calls" ||
+  fail "issue create call: $(grep '^issue create' "$case_dir/calls" || true)"
+for frag in '## Symptom' 'Login spins for 30s.' '## not a heading' '## Root cause' \
+  'The session lock is never released (confidence: medium).' 'Trail: .specify/bugs/login-timeout/'; do
+  grep -qxF -- "$frag" "$case_dir/body" || fail "body lacks: $frag"
+done
+[ "$(tail -n 1 "$case_dir/body")" = 'Trail: .specify/bugs/login-timeout/' ] || fail "body's last line is not the Trail: line"
+for frag in 'It hangs at login.' 'Open /login.' 'auth/session.py' 'Release the lock.' '# Bug Assessment'; do
+  ! grep -qF -- "$frag" "$case_dir/body" || fail "body holds: $frag"
+done
+command rm -f -- "$case_dir/calls"
+tracker create-issue .specify/bugs/login-timeout/assessment.md other/r
+expect_rc 1
+expect_out "tracker: error: could not create the issue (current repo is up/r, not other/r named at the gate)"
+! grep -q '^issue create' "$case_dir/calls" || fail "an issue was created in an unconfirmed repo"
+ok
+
+# 14. Bad assessment path: a .specify/bugs symlinked outside the repo, or a
+# path that is not <slug>/assessment.md, is refused before any gh call.
+new_case "bad assessment path"
+write_config "$CONFIG"
+mkdir -p "$repo/.specify" "$work/outside-bugs/x"
+printf '%s\n' '# Bug Assessment: X' '## Symptom' 's' '## Root Cause Hypothesis' 'h' \
+  >"$work/outside-bugs/x/assessment.md"
+ln -s "$work/outside-bugs" "$repo/.specify/bugs"
+tracker create-issue .specify/bugs/x/assessment.md up/r
+expect_rc 2
+expect_out "tracker: error: .specify/bugs/x resolves outside the repo"
+expect_no_calls
+tracker create-issue .specify/bugs/x/fix.md up/r
+expect_rc 2
+expect_out "tracker: error: brief path must be specs/briefs/<name>.md or .specify/bugs/<slug>/assessment.md"
+expect_no_calls
+ok
+
+# 15. Missing section: an assessment without a Root Cause Hypothesis is
+# refused, naming the section, before any gh call.
+new_case "missing section"
+write_config "$CONFIG"
+write_assessment login-timeout '# Bug Assessment: Login times out' '' \
+  '## Symptom' 'Login spins for 30s.' '' \
+  '## Proposed Remediation' 'Release the lock.'
+tracker create-issue .specify/bugs/login-timeout/assessment.md up/r
+expect_rc 2
+expect_out "tracker: error: assessment has no Root Cause Hypothesis section"
+expect_no_calls
+ok
+
+# 16. Missing bug label: gh refuses --label before creating anything, so the
+# script retries once without it and says so; any other failure is not retried.
+new_case "missing bug label"
+write_config "$CONFIG"
+printf 'up/r\n' >"$case_dir/repo"
+printf 'https://github.com/up/r/issues/9\n' >"$case_dir/issue-url"
+: >"$case_dir/no-label"
+write_assessment login-timeout '# Bug Assessment: Login times out' '' \
+  '## Symptom' 'Login spins for 30s.' '' \
+  '## Root Cause Hypothesis' 'The session lock is never released.'
+tracker create-issue .specify/bugs/login-timeout/assessment.md up/r
+expect_rc 0
+expect_out "tracker: created up/r#9 (without the bug label: up/r has none)"
+[ "$(grep -c '^issue create' "$case_dir/calls")" = 2 ] || fail "want two issue create calls"
+grep '^issue create' "$case_dir/calls" | tail -n 1 | grep -qv -- '--label' || fail "the retry kept --label"
+command rm -f -- "$case_dir/calls" "$case_dir/issue-url"
+tracker create-issue .specify/bugs/login-timeout/assessment.md up/r
+expect_rc 1
+[ "$(grep -c '^issue create' "$case_dir/calls")" = 2 ] || fail "want the label retry only"
+command rm -f -- "$case_dir/calls" "$case_dir/no-label"
+tracker create-issue .specify/bugs/login-timeout/assessment.md up/r
+expect_rc 1
+[ "$(grep -c '^issue create' "$case_dir/calls")" = 1 ] || fail "a failure other than the label was retried"
+ok
+
+# 17. Secret in the body: an assessment whose Symptom or Root Cause holds a
+# secret-looking value is refused before any gh call.
+new_case "secret in body"
+write_config "$CONFIG"
+want="tracker: error: assessment's Symptom or Root Cause Hypothesis holds a secret-looking value; redact it first"
+for value in 'password=hunter2' '"token": "abc"' 'key ghs_abc' 'sk-proj123' '-----BEGIN RSA PRIVATE KEY-----'; do
+  write_assessment login-timeout '# Bug Assessment: Login times out' '' \
+    '## Symptom' 'Login spins.' "$value" '' \
+    '## Root Cause Hypothesis' 'The lock is held.'
+  tracker create-issue .specify/bugs/login-timeout/assessment.md up/r
+  expect_rc 2
+  expect_out "$want"
+  expect_no_calls
+done
+ok

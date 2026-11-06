@@ -294,19 +294,148 @@ log of every gate with what you accepted and rejected (and why) and every
 performance attempt with its numbers. Every agent reads it; `/feat resume`
 starts from it; the PR links to it. It's updated at each gate.
 
+## /fix
+
+`/fix #N`, `/fix <issue URL>`, `/fix "<symptom>"` or `/fix resume` takes a
+bug report to a reviewed PR with Spec Kit's bug extension (`specify
+extension add bug`): assess, fix and test, each in a subagent, then the
+code review and the ship of `/feat`. It reads the same harness as `/feat`
+([`.apm/skills/feat/references/harness.md`](../.apm/skills/feat/references/harness.md):
+thin orchestrator, gate shape, state file, board moves, resume); its own
+values and size table are in [`.apm/skills/fix/SKILL.md`](../.apm/skills/fix/SKILL.md),
+which is authoritative for this section.
+
+### Roles
+
+- **Coordinator**: the session running `/fix`. As in `/feat`, it holds the
+  gates, edits only the state file, never reads code or runs checks; it
+  quotes a line of assessment.md, fix.md or test.md only when you must
+  decide on it.
+- **`feat-bug-assessor`**: runs `speckit-bug-assess` (phase 1) or
+  `speckit-bug-test` (phase 3); never edits source. Every test is a fresh
+  spawn, never the agent that wrote the fix.
+- **`feat-implementer`** in bug mode runs `speckit-bug-fix` (phase 2); in
+  fix mode it applies the review picks (phase 4).
+- **`feat-code-reviewer`**, unchanged, with a subset of its lenses.
+- **`feat-shipper`** in fix mode commits `fix(<scope>)` with the
+  `.specify/bugs/<slug>/` trail and opens the PR. Never merges.
+
+No agent is continued: every spawn is fresh.
+
+### Phases at a glance
+
+| # | Phase       | Runs in                                         | Produces                                          | Gate                                                                                         |
+| - | ----------- | ----------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| 0 | Setup       | coordinator                                     | worktree on `fix-<slug>`, state file              | hard only if a hook would branch or commit                                                   |
+| 1 | Assess      | `feat-bug-assessor` (assess mode)               | `assessment.md`, the proposed size                | **stop** if not a bug; **hard** by default; soft only when nothing needs your call (below)   |
+| 2 | Fix         | `feat-implementer` (bug mode)                   | the code, `fix.md`                                | soft unless deviations from the assessment, a failing check or a status other than `applied` |
+| 3 | Test        | `feat-bug-assessor` (test mode), always fresh   | `test.md` with `verified`, `partial` or `failed`  | soft on `verified`; **hard** on `partial`; `failed` back to 2 once, then **hard**            |
+| 4 | Code review | `feat-code-reviewer` ×1 (small, medium) or ×2–3 | findings B, S, P, C; picks applied, then 3 again  | soft only when clean, small and not a security bug; else **hard**                            |
+| 5 | Ship        | `feat-shipper` (fix mode)                       | one `fix(<scope>)` commit, push, PR               | none                                                                                         |
+
+### Gates
+
+- **Assess** stops the run when the report is not a bug (a missing
+  feature points to `/brief #N`), invalid or unintelligible; the issue is
+  left untouched. It is soft only for a small fix with high confidence, a
+  reproduced bug, one remediation, no public behaviour change, a trusted
+  report author, no open question, no security risk and no issue to
+  create. Nothing from the report (command, script or code) runs unless
+  you approve it, and only an `OWNER`, `MEMBER` or `COLLABORATOR` of this
+  repo's issue (or you, for a typed symptom) counts as trusted. A security bug is always hard: it
+  suggests a private security advisory instead of an issue and states the
+  repo's visibility.
+- **Fix** turns hard on deviations from the assessment (handled like a size
+  increase: one size step up, or "back to 1"), a failing check, or a status
+  other than `applied`.
+- **Test**: `partial` asks you for the missing environment or evidence;
+  the first `failed` goes back to the fix once (`retry 1 of 1` in the
+  log), a second one, or one after review fixes, is hard with "back to 1"
+  offered. A verdict other than `verified` reaches ship only on your
+  explicit words, logged and copied into the PR body.
+- **Code review**: picked fixes go to the implementer in fix mode, then a
+  fresh test (`after review fixes`) must say `verified` again.
+- "skip 1", "skip 2" and "skip 3" are refused; "skip 4" on a security bug
+  still asks for the go-ahead to ship; every "back to N" is logged and
+  starts a new test cycle.
+
+### Size matrix
+
+Each cell: model · effort, passed by `/fix` on every spawn. The size is set
+at the assess gate, so phase 1 is the same in every column.
+
+| #  | Phase                                 | Agent                | small           | medium          | large           |
+| -- | ------------------------------------- | -------------------- | --------------- | --------------- | --------------- |
+| 1  | Assess                                | `feat-bug-assessor`  | opus · medium   | opus · medium   | opus · medium   |
+| 2  | Fix (and review picks)                | `feat-implementer`   | sonnet · medium | opus · medium   | opus · high     |
+| 3  | Test                                  | `feat-bug-assessor`  | sonnet · medium | sonnet · high   | opus · medium   |
+| 4a | Correctness, spec, standards (lens 7a) | `feat-code-reviewer` | sonnet · medium | opus · medium   | opus · medium   |
+| 4b | Security (lens 7b)                    | `feat-code-reviewer` | sonnet · medium | opus · medium   | opus · high     |
+| 4c | Performance (lens 7c)                 | `feat-code-reviewer` | sonnet · medium | sonnet · medium | opus · medium   |
+| 4d | Over-engineering (lens 7d)            | `feat-code-reviewer` | sonnet · medium | sonnet · medium | sonnet · medium |
+| 5  | Ship                                  | `feat-shipper`       | haiku · medium  | haiku · medium  | haiku · medium  |
+
+**Phase 4 reviewers.** small: one reviewer, lenses 7a+7b+7d. medium: one
+reviewer, 7a+7b (7a+7b+7c for a performance bug). large: 7a and 7b in
+parallel, plus 7c for a performance bug. A group runs on the strongest
+model and effort among its lenses. The spec pass reads assessment.md and
+fix.md, as a bug has no spec.md.
+
+### Why these choices
+
+- **Assess on Opus at every size.** Every later phase builds on its root
+  cause, and the size isn't known until it reports.
+- **A different agent tests the fix.** The fixer never marks its own work:
+  each test run is a fresh `feat-bug-assessor`.
+- **One retry, then you.** A first `failed` is often a missed case the fix
+  can catch; a second means the assessment is wrong, which a person should
+  see.
+- **Fewer reviewers than `/feat`.** A fix is a small diff against a known
+  root cause; readability (7e) and the design review are left out, and
+  performance joins only for a performance bug.
+- **A hard assess gate by default.** Running a stranger's reproduction
+  steps, opening a public issue for a security bug or fixing the wrong
+  thing costs more than one stop.
+
+### Board moments
+
+| Moment                                                                       | Status      |
+| ---------------------------------------------------------------------------- | ----------- |
+| Assess gate passes (after creating the issue for `/fix "<symptom>"`); resume in 1–3; "back to N" (1–3) from 4 or 5 | In progress |
+| Phase 4 starts; resume in 4–5                                                | In review   |
+| The PR (`Fixes #N`) is merged                                                | Done, by the board's workflow |
+
+Setup runs `check` only. With board tracking and no issue, `/fix
+"<symptom>"` creates a `bug` issue from the assessment after the gate,
+in the repo you confirm (never for a report that isn't a bug, nor by
+default for a security bug). Without an issue there are no moves and no
+`Fixes` line.
+
+### State file
+
+`.specify/bugs/<slug>/feat-state.md`, beside the extension's reports, in
+`/feat`'s format (`# /fix state: <bug title>`, a `## Report` section
+instead of the brief). It is committed with the trail, already marked
+`done (shipping)`. `/fix resume` searches it in this checkout and in every
+worktree of `git worktree list`, enters that worktree, and asks when
+several runs are unfinished.
+
 ## Agents
 
 | Agent                  | Phase(s)        | small size      | Denied tools                           | Loads                              | Writes                                               |
 | ---------------------- | --------------- | --------------- | -------------------------------------- | ---------------------------------- | ---------------------------------------------------- |
 | `feat-brief-reviewer`  | 1               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | —                                  | nothing                                              |
+| `feat-bug-assessor`    | `/fix` 1 (assess mode), 3 (test mode) | opus · medium (assess), sonnet · medium (test) | Edit, NotebookEdit, Agent | `speckit-bug-assess`, `speckit-bug-test` | assessment.md, test.md                     |
 | `feat-specifier`       | 2               | sonnet · medium | NotebookEdit, Agent                    | `speckit-specify`                  | spec.md                                              |
 | `feat-planner`         | 3, 4 (amend)    | opus · high     | NotebookEdit, Agent                    | `speckit-plan`                     | plan.md, design docs; accepted findings into spec.md |
 | `feat-design-reviewer` | 4               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | per lens, on demand                | nothing                                              |
 | `feat-tasker`          | 5               | sonnet · medium | NotebookEdit, Agent                    | `speckit-tasks`, `speckit-analyze` | tasks.md, small artifact fixes                       |
-| `feat-implementer`     | 6, 7 (fix mode) | sonnet · medium | Agent                                  | `speckit-implement`                | code, tasks.md                                       |
+| `feat-implementer`     | 6, 7 (fix mode); `/fix` 2 (bug mode), 4 (fix mode) | sonnet · medium | Agent           | `speckit-implement`; `speckit-bug-fix` in bug mode | code, tasks.md; fix.md in bug mode   |
 | `feat-code-reviewer`   | 7               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | per lens, on demand                | nothing                                              |
-| `feat-shipper`         | 8               | haiku · medium  | NotebookEdit, Agent                    | —                                  | docs, commits, PR                                    |
+| `feat-shipper`         | 8; `/fix` 5 (fix mode) | haiku · medium  | NotebookEdit, Agent             | —                                  | docs, commits, PR                                    |
 
-Agent files carry no model or effort: `/feat` passes both on every spawn,
-from the size table (`/brief` for `feat-brief-reviewer`). Tool limits are deny lists (`disallowedTools`) rather
+`feat-code-reviewer` also runs `/fix`'s phase 4, unchanged, with lenses
+7a–7d only. Agent files carry no model or effort: `/feat` and `/fix` pass
+both on every spawn, from their size tables (`/brief` for
+`feat-brief-reviewer`). Tool limits are deny lists (`disallowedTools`) rather
 than allow lists, so a new tool is available to an agent unless denied. No agent but the shipper commits, and no agent spawns further agents.

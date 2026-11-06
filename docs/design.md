@@ -93,6 +93,24 @@ dependency was checked for that, and handled one of three ways:
 | Elephant-Goldfish Model's `egm-review`                     | an interactive five-stage pipeline with its own gates, report files written to the project, a resolve loop that edits the document, seven reviewer personas, Apache-2.0                                 | **dropped**; four of its reviewers (comprehension, codebase details, zoom out, implementation readiness) and their standards are condensed into the passes of `feat-design-reviewer` (phase 4c), credited. Structural and style checks are left to Spec Kit's templates, the design critic to 4a and 4b; `/feat` merges the findings and `feat-planner` applies them. |
 | `security-and-hardening`, `speckit-specify`/`plan`/`tasks` | none beyond hooks                                                                                                                                                                                       | used as is                                                                                                                                                                                                                                                                                                                                                            |
 
+**Spec Kit's bug extension** (`speckit-bug-assess`, `-fix`, `-test`, used
+by `/fix`) is written for a user at the keyboard and is overridden in five
+places. Its interactive slug prompt: `/fix` derives the slug, passes it as
+`slug=<slug>` and checks the stage reported that same slug. Its refusal to
+overwrite an existing report in automated mode: the earlier attempt is
+renamed first (`test.md` → `test-<n>.md`), so every attempt stays in the
+trail. Its "re-run assess" advice on a `failed` test: `/fix` retries the
+fix once with a fresh implementer, then hands it to you with "back to 1"
+offered. Its hooks (`before_bug_*`, `after_bug_*` in
+`.specify/extensions.yml`) are read as configuration and allowed or
+refused at setup, like the other Spec Kit hooks. And the commands a report
+asks to run are not run blindly: nothing from an untrusted author runs
+without your approval. The rules are in
+[`.apm/skills/fix/SKILL.md`](../.apm/skills/fix/SKILL.md) and
+[`.apm/agents/feat-bug-assessor.agent.md`](../.apm/agents/feat-bug-assessor.agent.md);
+what both skills share is in
+[`.apm/skills/feat/references/harness.md`](../.apm/skills/feat/references/harness.md).
+
 Rule for new dependencies: read the whole skill first, look for asking,
 committing, editing, branching, handing off and turn-ending instructions,
 and either override them explicitly in the agent prompt or inline only the
@@ -135,6 +153,12 @@ installer read it:
   plugin can't depend on loose skills (only on other plugins), so the
   third-party skills come from the skills CLI.
 - **`install.sh`**: symlinks for working on the workflow itself.
+
+The rules `/feat` and `/fix` share (thin orchestrator, gates, state file,
+board moves, resume) live in one file, `.apm/skills/feat/references/harness.md`,
+which `/fix` reaches as `../feat/references/harness.md` from its own base
+dir, as `/brief` reaches the tracker script; all three installers keep it
+in place, and `mise run lint` greps it for `/feat`-only words.
 
 Agent frontmatter has no `model` or `effort` (`/feat` passes both on every
 spawn from the size table) and limits tools with `disallowedTools`.

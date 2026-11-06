@@ -8,7 +8,7 @@ description: >
   it whenever the user wants to build, add or implement a feature and has no
   brief yet, or as /brief followed by the idea, by an issue (#N or its
   URL), or by a capability map path and a capability id.
-  Not for bugfixes or pure refactors.
+  Not for bugfixes (use /fix) or pure refactors.
 argument-hint: '"idea in one line" | #N | issue-url | map-path capability-id'
 ---
 
@@ -23,6 +23,10 @@ the build re-reads its context, so this split is the cheapest thing the
 workflow does.
 
 ## 1. Interview
+
+An idea that describes a bug (something that should already work and
+doesn't) is not for this workflow either: point to `/fix "<symptom>"`
+(`/feat-agent:fix` as a plugin) and stop.
 
 **Board tracking**, only when `<repo root>/.feat-agent.yml` exists. The
 script is `bash <this skill's base dir>/../feat/scripts/tracker.sh`; if it
@@ -60,8 +64,8 @@ From an issue (`/brief #N` or an issue URL): read it with `gh issue
 view <N or URL> --json number,title,body,labels,url` and use its title and
 body as the idea. Its unchecked checklist items are questions the interview
 must answer; what the body already decides needs no question, only its
-counter-argument. An issue labelled as a bug is not for this workflow: say
-so and stop. If it can't be read, ask the user to paste the issue. With
+counter-argument. An issue labelled as a bug is not for this workflow:
+point to `/fix #N` (`/feat-agent:fix #N` as a plugin) and stop. If it can't be read, ask the user to paste the issue. With
 board tracking, read it with the script's `read-issue <ref>` instead (a
 URL becomes `owner/repo#N`, or `#N` for this repo).
 

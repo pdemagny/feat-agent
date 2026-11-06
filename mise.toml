@@ -19,6 +19,7 @@ run = [
   "python3 -m py_compile a cost script (since moved out)",
   "python3 -m py_compile tests/tracker/fake_github.py",
   "claude plugin validate .",
+  "! grep -Eiq 'specifier|planner|tasker|spec\\.md|brief|phase [0-9]|/feat' .apm/skills/feat/references/harness.md",
 ]
 
 [tasks.check]
@@ -39,6 +40,8 @@ for d in .claude/agents .claude/skills; do
   printf '%-18s %s\n' "$d" "$(ls "$d" | wc -l)"
 done
 test -f .claude/skills/feat/scripts/tracker.sh
+test -f .claude/skills/feat/references/harness.md
+test -f .claude/skills/fix/SKILL.md
 '''
 
 [tasks."test:tracker"]

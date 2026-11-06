@@ -27,7 +27,7 @@ paraphrase of the feature, its own size estimate and its findings `F1…`,
 each with a recommendation; "ok" accepts them all.
 
 Claude may also start it on its own when you ask it to build a feature.
-It's not for bugfixes (use Spec Kit's bug commands) or pure refactors. You
+It's not for bugfixes (use [`/fix`](#fixing-a-bug-fix)) or pure refactors. You
 can also write a brief by hand in the same format and skip this step.
 
 From a GitHub issue, run `/brief #N` (or pass its URL): Claude reads it
@@ -112,6 +112,42 @@ smaller than the conversation.
 
 Finds the latest unfinished `feat-state.md` (asks if there are several),
 recaps, and shows the gate you were at.
+
+## Fixing a bug: `/fix`
+
+```
+/fix #42                      # a GitHub issue (or owner/repo#42, or its URL)
+/fix "export drops the last row when the file has no trailing newline"
+/fix resume
+```
+
+One command, no brief and no `/clear` step: `/fix` assesses the report
+with Spec Kit's bug extension (install it once per project: `specify
+extension add bug`), fixes it, has a different agent verify the fix,
+reviews the code and opens a PR with `Fixes #N` when there is an issue.
+Installed as a plugin, it is `/feat-agent:fix`. A report that turns out to
+be a missing feature stops at the first gate and points to `/brief #N`.
+
+The gates you see:
+- **Assess**: the root cause, its confidence, whether it was reproduced,
+  the remediation and the proposed size. It stops for you unless all of
+  it is plain and safe; it always stops when the report comes from someone
+  without write access (nothing from it runs unless you approve it), for a
+  security bug, and before it creates an issue for a `"<symptom>"` with
+  board tracking.
+- **Fix**: shown when the fix deviates from the assessment or a check
+  fails.
+- **Test**: `verified` goes on; `partial` asks for what is missing; a
+  `failed` test goes back to the fix once, then asks you. A fix that is not
+  `verified` ships only if you say so.
+- **Code review**: you pick the fixes, unless the review is clean on a
+  small, non-security fix.
+
+The same answers work at every gate (`back to N`, `size <s>`, `stop`),
+except that assess, fix and test can't be skipped. `/fix resume` finds the
+unfinished run in this checkout or any of its worktrees (it asks when
+there are several) and continues where it stopped. Phases, models and
+board moves: [workflow.md](workflow.md#fix).
 
 ## Sizes
 

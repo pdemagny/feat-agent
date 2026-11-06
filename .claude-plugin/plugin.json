@@ -1,7 +1,7 @@
 {
   "name": "feat-agent",
   "version": "0.8.0",
-  "description": "From a feature idea to a reviewed PR: /brief writes the brief, /feat runs Spec Kit phases in feat-* subagents sized by model and effort.",
+  "description": "From a feature idea or a bug report to a reviewed PR: /brief writes the brief, /feat runs Spec Kit phases in feat-* subagents sized by model and effort, /fix runs Spec Kit's bug extension the same way.",
   "author": {
     "name": "Pierre Demagny",
     "url": "https://github.com/pdemagny"
@@ -21,6 +21,7 @@
   ],
   "agents": [
     "./.apm/agents/feat-brief-reviewer.agent.md",
+    "./.apm/agents/feat-bug-assessor.agent.md",
     "./.apm/agents/feat-code-reviewer.agent.md",
     "./.apm/agents/feat-design-reviewer.agent.md",
     "./.apm/agents/feat-implementer.agent.md",

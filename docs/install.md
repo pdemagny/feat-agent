@@ -11,6 +11,7 @@ Claude Code only. Three ways to install; the design behind them:
 | git                             | branches, worktrees, diffs                                                            | your package manager                            |
 | GitHub CLI `gh`, logged in      | phase 8 pushes and opens the PR; board tracking needs the `project` scope ([section 5](#5-board-tracking-optional)) | <https://cli.github.com>, then `gh auth login`  |
 | Spec Kit CLI `specify`          | phases 2–6 are Spec Kit skills                                                        | `uv tool install specify-cli`                   |
+| Spec Kit bug extension, `/fix` only (tested with bug 1.0.1) | `/fix`'s assess, fix and test phases are its skills       | `specify extension add bug` in each project     |
 | APM (`apm`) or Node.js (`npx`)  | APM installs everything; `npx` installs the third-party skills for the other two ways | `uv tool install apm-cli`; <https://nodejs.org> |
 
 In a clone of this repo, `mise install` installs all of these (and
@@ -27,7 +28,7 @@ Pick one of three ways. Use only one: two would load the workflow twice.
 ### With APM (recommended: dependencies included)
 
 [APM](https://microsoft.github.io/apm/) (Microsoft's Agent Package Manager)
-installs the 2 skills, the 8 agents and the 3 third-party skills they use,
+installs the 3 skills, the 9 agents and the 3 third-party skills they use,
 in one command:
 
 ```sh
@@ -52,7 +53,7 @@ claude plugin install feat-agent@feat-agent
 ```
 
 Plugins name everything after the plugin: the commands become
-`/feat-agent:feat` and `/feat-agent:brief`, the agents
+`/feat-agent:feat`, `/feat-agent:brief` and `/feat-agent:fix`, the agents
 `feat-agent:feat-planner` and so on. The skills handle both names. A plugin
 can't install the third-party skills, so add them with the [skills
 CLI](https://github.com/vercel-labs/skills):
@@ -114,6 +115,16 @@ This adds `.specify/` and the `speckit-*` skills in `.claude/skills/`
 constitution (`/speckit-constitution`) is optional but makes phase 3's
 constitution check meaningful.
 
+For `/fix`, also add Spec Kit's bundled bug extension (no network needed):
+
+```sh
+specify extension add bug
+```
+
+It adds `speckit-bug-assess`, `speckit-bug-fix` and `speckit-bug-test`;
+`/fix` stops at setup and names this command when they are missing.
+`/brief` and `/feat` don't need it.
+
 ## 4. Check
 
 ```sh
@@ -124,11 +135,21 @@ It needs a clone of this repo, and works whichever way you installed. Every
 line should say `ok`; each `MISSING` line names the command that fixes it.
 Exit code 0 means ready.
 
+With a project dir it also lists the bug extension's skills. They are
+needed by `/fix` only, so neither of these lines changes the exit code:
+- `note skill <name> (needed by /fix only: specify extension add bug)`:
+  the skill is not installed;
+- `warn <name> differs from the names /fix was tested with (bug 1.0.1)`:
+  an installed skill lacks a section heading or verdict word `/fix`
+  relies on, usually a newer extension. `/fix` may still work; its assessor
+  reports a missing section as an error.
+
 ## 5. Board tracking (optional)
 
 `/brief` and `/feat` can move a brief's issue across a GitHub Projects
 board: Brief when the brief is written, In progress while it is built, In
-review from the code review on. Which moment sets which status:
+review from the code review on (`/fix` moves a bug's issue the same way:
+[workflow.md](workflow.md#board-moments)). Which moment sets which status:
 [workflow.md](workflow.md#board-tracking). It is off unless the repo has a
 `.feat-agent.yml` at its root:
 
@@ -164,6 +185,11 @@ On the board, in its workflows:
 - **Check what "Pull request linked to issue" sets.** It fires when phase 8
   opens the PR (`Closes #N`) and could move the card back from In review;
   turn it off or point it at In review.
+
+**A `bug` label in the repo.** The issues `/fix` creates are labelled
+`bug` (one of GitHub's default labels). If the repo has no such label, the
+issue is created without it and the run says so; create the label (`gh
+label create bug`) to keep bug issues labelled.
 
 **Repos you didn't write.** A repo's `.feat-agent.yml` and a brief's
 `Issue:` line decide where the writes go: they can point at any board your

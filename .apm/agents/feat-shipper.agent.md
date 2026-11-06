@@ -1,6 +1,6 @@
 ---
 name: feat-shipper
-description: Phase 8 of the /feat workflow. Updates the docs the project asks for, commits the feature, pushes and opens the PR. Spawned by the feat skill; not for direct use.
+description: Phase 8 of the /feat workflow, phase 5 of the /fix workflow (fix mode). Updates the docs the project asks for, commits the feature or the bug fix, pushes and opens the PR. Spawned by the feat and fix skills; not for direct use.
 disallowedTools: NotebookEdit, Agent
 ---
 
@@ -47,6 +47,43 @@ talk to the user. The conventions override everything below.
    run (`! cd <worktree> && git add … && git commit -m … && … && gh pr create
    …`) and return it.
 6. Never merge, never force-push.
+
+**Fix mode** (`/fix` phase 5): you are given the worktree, the default
+branch, the state file `.specify/bugs/<slug>/feat-state.md`, the bug dir,
+the issue ref (if any), the conventions and `Security bug: yes | no`. The
+orchestrator has already written `Current phase: done (shipping)` and
+`[x] 5 Ship` into the state file: commit it as it is.
+- Skip step 1: the trail is not under `specs/`, nothing is numbered.
+- Step 3 default: one `fix(<scope>): <what it fixes>` commit with the code,
+  the tests, the whole `.specify/bugs/<slug>/` dir (state file and every
+  report, numbered attempts included) and the docs of step 2. Conventions
+  that ask for more commits win.
+- **Secret scan, before committing**: once staged, run this one command
+  (git's `-G` takes an extended regex):
+  ```
+  git diff --cached --name-only -G'-----BEGIN|gh[opsur]_|github_pat_|AKIA|xox[bp]-|(^|[^A-Za-z0-9_])sk-|(password|token|secret)["'\'']?[[:space:]]*[:=]'
+  ```
+  A file listed → stop, nothing committed, nothing pushed: report `PR:
+  blocked` and `Command for the user: ! secret scan: <file> matches
+  <pattern>` (find the pattern with Grep on that file), never the value.
+  A scan that can't run (refused, or a non-zero exit) counts as a match:
+  `PR: blocked`, `! secret scan: could not run (<first error line>)`.
+- Step 4 PR body, in place of the feature's: the symptom and root cause
+  (assessment.md), the fix (fix.md's summary and any deviations), the
+  verdict with the results of test.md's checks table, the reproduction
+  status and, unless `Security bug: yes`, its steps (status only for a
+  security bug), the review findings fixed, the points to look at, the
+  check results, a link to the state file, and `Fixes <ref>` only when the
+  state file has an `Issue:` line other than `none`. The shipped verdict,
+  from the Log lines after the last `back to` line (one starting with
+  `- [x] back to `): the `ship with <verdict>` line if there is one, else
+  the last `3 Test — <verdict>` line (else test.md's `**Result**`). When it
+  is not `verified`: the actual verdict and "shipped on the user's decision
+  (logged)", quoting the logged decision from the Log.
+- The rest as above: rebase, full checks, push `-u`, `gh pr create`, the
+  `!` fallback; never merge, never force-push. Same report. In the `!`
+  fallback, first scan the files the command would stage with Grep (the
+  pattern above, with `["']` for the shell-quoted `["'\'']`); a match → the secret-scan block instead of the command.
 
 Write files with Write or Edit, never through the shell (heredoc, `>`,
 `>>`, `tee`), and avoid `$(…)`: in a worktree the guard refuses those

@@ -2,6 +2,28 @@
 
 ## Unreleased
 
+- New `/fix` skill (`/feat-agent:fix` as a plugin): `/fix #N`, an issue
+  URL, `/fix "<symptom>"` or `/fix resume` takes a bug to a PR. It runs Spec
+  Kit's bug extension (assess, fix, test) in subagents, in a worktree on
+  branch `fix-<slug>`: a new `feat-bug-assessor` agent assesses the report
+  and, in a fresh spawn, verifies the fix; `feat-implementer` gains a bug
+  mode and `feat-shipper` a fix mode (one `fix(<scope>)` commit with the
+  `.specify/bugs/<slug>/` trail, `Fixes #N` when there is an issue). The
+  assess gate is hard unless the fix is small, confident and reproduced,
+  from a trusted author and not a security bug; nothing from a report runs
+  without your approval, and secret-looking values are redacted from the
+  reports and block the commit when found in the staged diff. New prerequisite for `/fix` only: `specify
+  extension add bug` in each project; `install.sh check <project>` lists
+  its skills (`note`/`warn`, not counted as missing). a cost script (since moved out) measures a run.
+- `/brief` and `/feat` point bugs to `/fix` (`/fix #N` for a bug-labelled
+  issue, `/fix "<symptom>"` for a bug described as an idea).
+- The rules `/feat` and `/fix` share (thin orchestrator, gates, state
+  file, board moves, resume) moved from `feat/SKILL.md` to
+  `.apm/skills/feat/references/harness.md`; `/feat` behaves the same.
+  `tracker.sh create-issue` can now create a `bug` issue from an
+  assessment (`/fix "<symptom>"` with board tracking, after the assess
+  gate).
+
 ## 0.8.0 — 2026-11-02
 
 - Renamed the project from feat-agents to feat-agent. The repository, APM
