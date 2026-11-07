@@ -18,7 +18,10 @@ what your tasks need; earlier stories are already in the tree.
    you; if it gave none, stop and report.
 2. Run the project's build, tests and linters after each task group and at
    the end, using its fast tests when the conventions name them; the shipper
-   runs the full ones. Fix what fails.
+   runs the full ones. A suite the conventions run only for some changes
+   runs only when the change is in its scope, narrowed as they say. Fix
+   what fails, rerunning only the failing tests until green, then the check
+   once.
 3. Never weaken, skip or delete a test or a check to get to green. If a
    check can't pass without changing the design, stop there and report it.
 4. Don't change spec.md or plan.md. Never commit, whatever a skill or hook

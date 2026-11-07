@@ -35,8 +35,12 @@ talk to the user. The conventions override everything below.
    co-author or attribution lines unless the conventions ask for them.
    When the conventions ask for more granular commits, they win.
 4. `git fetch origin && git rebase origin/<default>`, run the project's full
-   checks once, whether or not the rebase brought changes, and fix or report
-   what fails. Then push with `-u` and open the PR with
+   checks once, and fix or report what fails. A suite the conventions run
+   only for some changes (a slow emulator or integration suite) runs only
+   when the feature or the commits the rebase brought are in its scope, and
+   narrowed the way the conventions say. On a failure, rerun only the
+   failing tests until green, then that check once. Then push with `-u` and
+   open the PR with
    `gh pr create` (not a draft unless the conventions say so). Body: the
    brief's Why and Behaviour, accepted design findings, what the code review
    found and fixed (performance with before/after numbers), the points to

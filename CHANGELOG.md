@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- The shipper no longer reruns every check after the rebase whatever it
+  brought: a suite the project's conventions scope to some changes (a slow
+  emulator or integration suite) runs only when the feature or the rebased
+  commits are in its scope. The implementer follows the same scoping, and
+  both rerun only the failing tests after a red run, then the check once.
+
 - New `/fix` skill (`/feat-agent:fix` as a plugin): `/fix #N`, an issue
   URL, `/fix "<symptom>"` or `/fix resume` takes a bug to a PR. It runs Spec
   Kit's bug extension (assess, fix, test) in subagents, in a worktree on
