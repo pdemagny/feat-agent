@@ -1,5 +1,7 @@
 # feat-agent
 
+### From idea to merge-ready PR on autopilot: an AI engineering team in your terminal, with spec-driven planning, right-sized models and smart gates that only stop you when it matters.
+
 A Claude Code workflow that takes a feature idea to a reviewed pull request,
 in two commands: `/brief "let users edit a stack's config"` interviews
 you and writes a brief; `/clear`, then `/feat specs/briefs/<name>.md`
