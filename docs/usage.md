@@ -1,8 +1,7 @@
 # Using the workflow
 
-Both commands run in Claude Code.
-
-Two commands, in two contexts:
+Everything here runs in Claude Code. A feature takes two commands, in two
+contexts:
 
 ```
 /brief "let users edit a stack's config from the CLI"
@@ -11,6 +10,24 @@ Two commands, in two contexts:
 /feat specs/briefs/edit-stack-config.md
    … gates …  → PR link
 ```
+
+A bug takes one: `/fix #42` ([below](#fixing-a-bug-fix)).
+
+Words you'll meet:
+
+- **Brief**: a one-page description of the feature (why, behaviour, scope,
+  acceptance), written with you by `/brief`. `/feat` builds from it alone.
+- **Size**: small, medium, large or huge. It picks the model and effort of
+  every agent and how often the run stops for you ([Sizes](#sizes)).
+- **Gate**: a point where the run reports to you. At a *hard* gate it waits
+  for your answer; at a *soft* one it reports and goes on.
+- **Phase agent**: a `feat-*` subagent that does one phase (plan, review,
+  implement…) in its own fresh context, then reports back.
+- **Lens**: one angle of a review (security, cost, performance…). Reviews
+  are numbered by phase and lens: 4a is the design's security lens, 7d the
+  code's over-engineering lens.
+- **State file**: `feat-state.md`, the run's memory: size, phase, every
+  decision you made. `/feat resume` and `/fix resume` start from it.
 
 ## 1. Brief: `/brief "<idea>"`
 
@@ -74,7 +91,7 @@ on branch `<name>`, in a worktree under
 
 ```
 ## Phase 3–4: Plan and design review — needs your call
-**What I did:** feat-design-reviewer ×3 on spec + plan: 4a (opus · high), 4b and 4c (opus · medium)
+**What I did:** feat-design-reviewer ×3 on spec + plan: 4a (opus · medium), 4b (sonnet · medium), 4c (sonnet · high)
 **How a fresh reader understood it:** … (check it against what you meant)
 **What you should know:** …
 **Your call:**
@@ -132,8 +149,9 @@ be a missing feature stops at the first gate and points to `/brief #N`.
 The gates you see:
 - **Assess**: the root cause, its confidence, whether it was reproduced,
   the remediation and the proposed size. It stops for you unless all of
-  it is plain and safe; it always stops when the report comes from someone
-  without write access (nothing from it runs unless you approve it), for a
+  it is plain and safe; it always stops when the report comes from someone who
+  is not an owner, member or collaborator of the repo (nothing from it runs
+  unless you approve it), for a
   security bug, and before it creates an issue for a `"<symptom>"` with
   board tracking.
 - **Fix**: shown when the fix deviates from the assessment or a check
@@ -158,17 +176,17 @@ Proposed by `/brief`; you decide.
 | ------ | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
 | small  | up to ~30 tasks, no new service, permissions, exposure or dependency; docs-only work | Sonnet at medium effort for most phases, two code reviewers, fewest gates                                |
 | medium | ~31–60 tasks, or a small one adding a service, permissions, exposure or dependency   | Opus for planning, design security, implementation, correctness and security review; five code reviewers |
-| large  | more than ~60 tasks                                                                  | higher effort on planning and reviews; a gate after each story                                           |
+| large  | more than ~60 tasks                                                                  | Opus for nearly every phase, higher effort on planning and reviews; gates at 3, 4, 5 and after each story |
 | huge   | capabilities that could ship on their own                                            | a capability map; one brief, `/feat` run and PR per capability                                           |
 
 Full matrix in [workflow.md](workflow.md#size--phase-matrix).
 
 ## Tuning
 
-The size table in [`.apm/skills/feat/SKILL.md`](../.apm/skills/feat/SKILL.md) is the
-single source of truth: the coordinator passes `model` and `effort` from it
-on every agent call. Edit it and mirror the change in
-[workflow.md](workflow.md).
+The size tables in [`.apm/skills/feat/SKILL.md`](../.apm/skills/feat/SKILL.md) and
+[`.apm/skills/fix/SKILL.md`](../.apm/skills/fix/SKILL.md) are the single source
+of truth: the coordinator passes `model` and `effort` from them on every
+agent call. Edit them and mirror the change in [workflow.md](workflow.md).
 
 Agent files carry no model or effort; outside the workflow an agent runs
 on the session's model unless you name one.
@@ -177,7 +195,7 @@ on the session's model unless you name one.
 | --------------- | ------------------------------------------------------ | ------------------------------------------------------------ |
 | model           | `haiku`, `sonnet`, `opus`, `fable`, or a full model ID | capability vs. usage; Opus also has its own plan limit       |
 | effort          | `low`, `medium`, `high`, `xhigh`, `max`                | thinking per step and number of tool calls on the same model |
-| reviewer groups | phase 7 note under the size table                      | fewer reviewers = fewer cold starts                          |
+| reviewer groups | phase 4 and 7 notes under the size tables              | fewer reviewers = fewer cold starts                          |
 | gates           | the Phases and gates table                             | more stops where mistakes cost more                          |
 
 Suggested approach: run two or three real features, note the phase where
@@ -189,3 +207,17 @@ They're ordinary Claude Code subagents: "have feat-code-reviewer review my
 uncommitted diff with lenses 7b and 7d", "have feat-design-reviewer review
 this plan with lens 4b". Installed as a plugin, they're `feat-agent:feat-code-reviewer` and
 so on.
+
+## When something goes wrong
+
+| What you see | What to do |
+| --- | --- |
+| `apm` or `specify`: command not found after installing | `uv tool update-shell`, then open a new shell |
+| `/brief`, `/feat` or `/fix` is not a known command | Restart Claude Code after installing. Installed as a plugin, they are `/feat-agent:brief` and so on. `install.sh check` lists what is missing ([install.md](install.md#4-check)) |
+| `/fix` stops at setup and names `specify extension add bug` | Run it in the project, then `/fix` again |
+| `tracker: error: …` at the start of a run | Check `.feat-agent.yml` is committed and pushed, and `gh auth refresh -s project` ([board tracking](install.md#5-board-tracking-optional)) |
+| A `[!] tracker:` line at a gate | A board move failed; the run went on. Move the card by hand |
+| The run ends with a line starting `! cd … && git …` | Git or `gh` was blocked in the session. Type that line as is: the `!` runs it in Claude Code |
+| The run ends with `! spec-number: error: …` | Nothing was pushed. Fix the cause (usually `gh` auth or network), then `/feat resume` |
+| The session closed, crashed or ran out of context mid-run | `/feat resume` (or `/fix resume`) continues from the state file |
+| Your plan has no Opus (or no Sonnet) | Change the model in the size tables ([Tuning](#tuning)) |
