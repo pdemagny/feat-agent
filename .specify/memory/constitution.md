@@ -1,50 +1,57 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# feat-agent Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Thin coordinators
+`/feat` and `/fix` only coordinate: they spawn the phase agents, hold the
+gates and keep the state file. They never read code or edit artifacts. New
+work goes into an agent (`.apm/agents/*.agent.md`), not into a coordinator.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. The user decides at gates
+Nothing is merged, and nothing is called done, without the user. A phase
+that needs a decision stops at a hard gate; a soft gate only reports. A
+fix is called fixed only after an agent that did not write it has
+verified it.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. One source of truth per fact
+The size tables in `.apm/skills/feat/SKILL.md` and `.apm/skills/fix/SKILL.md`
+set every agent's model, effort and loaded skills; agent frontmatter
+carries no `model`, `effort`, `tools` or `color`. Rules both skills share
+live once, in `.apm/skills/feat/references/harness.md`. Anything that
+mirrors them (`docs/workflow.md`, `.apm/skills/brief/SKILL.md`) changes in
+the same commit.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Fixed report formats
+Every agent prompt ends with a fixed report format that the coordinators
+parse. A change to a format changes both sides together.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Small and plain
+Prompts are prose, read by a model on every run: each added line has to
+earn its tokens. Prefer a rule in an existing file to a new file, and a
+shell one-liner to a script. Scripts are bash, `shellcheck`-clean, and
+tested offline (`tests/`).
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Distribution
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+One source (`.apm/`), shipped three ways: an APM package (`apm.yml`), a
+Claude Code plugin (`.claude-plugin/`, whose `agents` list names every
+agent) and `install.sh` for development. A third-party skill is added or
+removed in all of them at once (see `.claude/CLAUDE.md`).
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Development Workflow
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- Conventional commits, one logical change per commit; `feat` and `fix`
+  subjects become the CHANGELOG, so they are written for users.
+- Every change reaches `main` through a PR. `mise run lint`,
+  `mise run test:apm` and `mise run test:tracker` pass before committing.
+- Releases are cut by release-please when its release PR is merged;
+  versions and the CHANGELOG are never edited by hand.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution sums up `.claude/CLAUDE.md`, which holds the detailed
+rules; when they disagree, `.claude/CLAUDE.md` wins and this file is
+updated. A plan that breaks a principle says so in its constitution check,
+with the reason, and stops at the design gate.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-11-16 | **Last Amended**: 2026-11-16
