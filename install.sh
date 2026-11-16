@@ -19,7 +19,8 @@ cmd=install
 project=""
 
 # Third-party skills, all from one repo. Keep in sync with apm.yml.
-deps_repo="addyosmani/agent-skills"
+# Same repo and tag as apm.yml's dependencies; skills CLI pinned too.
+deps_src="https://github.com/addyosmani/agent-skills/tree/0.6.13/skills"
 deps=(interview-me security-and-hardening performance-optimization)
 # Installed per project by `specify init --integration claude`.
 speckit_skills=(speckit-specify speckit-clarify speckit-plan speckit-tasks speckit-analyze speckit-implement)
@@ -113,7 +114,7 @@ case "$cmd" in
 
   deps)
     command -v npx >/dev/null || { echo "npx not found: install Node.js first" >&2; exit 1; }
-    npx -y skills add "$deps_repo" --skill "${deps[@]}" --agent claude-code --global --yes
+    npx -y skills@1.7.6 add "$deps_src" --skill "${deps[@]}" --agent claude-code --global --yes
     ;;
 
   check)

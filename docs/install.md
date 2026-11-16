@@ -59,7 +59,7 @@ can't install the third-party skills, so add them with the [skills
 CLI](https://github.com/vercel-labs/skills):
 
 ```sh
-npx skills add addyosmani/agent-skills -s interview-me security-and-hardening performance-optimization -a claude-code -g -y
+npx -y skills@1.7.6 add https://github.com/addyosmani/agent-skills/tree/0.6.13/skills -s interview-me security-and-hardening performance-optimization -a claude-code -g -y
 ```
 
 Update with `/plugin update feat-agent`.
