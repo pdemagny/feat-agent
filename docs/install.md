@@ -1,3 +1,8 @@
+---
+title: Install
+weight: 10
+---
+
 # Installing feat-agent
 
 Claude Code only. Three ways to install; the design behind them:
@@ -19,7 +24,7 @@ isn't found afterwards, run `uv tool update-shell` and open a new shell.
 
 In a clone of this repo, `mise install` installs all of these except git
 and the bug extension (plus the linters) at the versions the release was
-tested with; see [`mise.toml`](../mise.toml).
+tested with; see [`mise.toml`](https://github.com/pdemagny/feat-agent/blob/main/mise.toml).
 
 The workflow uses Opus and Sonnet, and Haiku to ship. Your plan must give
 access to them; if one isn't available, change the size table (see [usage.md](usage.md#tuning)).

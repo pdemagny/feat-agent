@@ -1,3 +1,8 @@
+---
+title: Design notes
+weight: 40
+---
+
 # Design notes
 
 Why the workflow is built as one orchestrating skill plus phase subagents,
@@ -106,10 +111,10 @@ offered. Its hooks (`before_bug_*`, `after_bug_*` in
 refused at setup, like the other Spec Kit hooks. And the commands a report
 asks to run are not run blindly: nothing from an untrusted author runs
 without your approval. The rules are in
-[`.apm/skills/fix/SKILL.md`](../.apm/skills/fix/SKILL.md) and
-[`.apm/agents/feat-bug-assessor.agent.md`](../.apm/agents/feat-bug-assessor.agent.md);
+[`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/skills/fix/SKILL.md) and
+[`.apm/agents/feat-bug-assessor.agent.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/agents/feat-bug-assessor.agent.md);
 what both skills share is in
-[`.apm/skills/feat/references/harness.md`](../.apm/skills/feat/references/harness.md).
+[`.apm/skills/feat/references/harness.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/skills/feat/references/harness.md).
 
 Rule for new dependencies: read the whole skill first, look for asking,
 committing, editing, branching, handing off and turn-ending instructions,

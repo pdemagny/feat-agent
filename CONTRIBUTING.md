@@ -43,8 +43,9 @@ apm.yml                       APM package: metadata and the third-party skill de
 install.sh                    developer install (symlinks), deps, check, uninstall
 tests/                        offline tests for the two scripts (stub gh, fake GraphQL endpoint)
 specs/, .specify/bugs/        records of the /feat and /fix runs that built this repo
-mise.toml                     pinned tools and tasks (lint, check, test:*, dev:*)
-docs/                         the user documentation
+mise.toml                     pinned tools and tasks (lint, check, test:*, docs, dev:*)
+docs/                         the user documentation, published with README.md as the website
+hugo.toml, go.mod             the website's Hugo config and theme (`mise run docs:serve` previews it)
 ```
 
 The rules for changing the skills and agents are in

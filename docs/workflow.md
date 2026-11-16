@@ -1,7 +1,12 @@
+---
+title: Workflow
+weight: 30
+---
+
 # The workflow in detail
 
 What runs at each phase, on which model, for which size, and where it stops
-for you. The size table in [`.apm/skills/feat/SKILL.md`](../.apm/skills/feat/SKILL.md)
+for you. The size table in [`.apm/skills/feat/SKILL.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/skills/feat/SKILL.md)
 is authoritative; this page mirrors it with explanations.
 
 ## Roles
@@ -312,9 +317,9 @@ starts from it; the PR links to it. It's updated at each gate.
 bug report to a reviewed PR with Spec Kit's bug extension (`specify
 extension add bug`): assess, fix and test, each in a subagent, then the
 code review and the ship of `/feat`. It reads the same harness as `/feat`
-([`.apm/skills/feat/references/harness.md`](../.apm/skills/feat/references/harness.md):
+([`.apm/skills/feat/references/harness.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/skills/feat/references/harness.md):
 thin orchestrator, gate shape, state file, board moves, resume); its own
-values and size table are in [`.apm/skills/fix/SKILL.md`](../.apm/skills/fix/SKILL.md),
+values and size table are in [`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/skills/fix/SKILL.md),
 which is authoritative for this section.
 
 ### Roles
