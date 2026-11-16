@@ -122,7 +122,7 @@ Every phase, gate and model: [docs/workflow.md](docs/workflow.md).
 
 ## Status
 
-Version 0.8.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli) <!-- x-release-please-version -->
+Version 0.9.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli) <!-- x-release-please-version -->
 1.2.x. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
