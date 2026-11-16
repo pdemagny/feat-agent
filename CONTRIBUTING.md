@@ -29,6 +29,24 @@ mise run dev:install    # symlink the skills and agents into ~/.claude, add the 
 Edits apply in the next Claude Code session. `mise run dev:uninstall`
 removes the links. `mise tasks` lists the rest.
 
+Where things are:
+
+```
+.apm/skills/feat/             the orchestrator: phases, gates, size table (source of truth)
+.apm/skills/feat/scripts/     tracker.sh (board moves), spec-number.sh (numbers the spec dir)
+.apm/skills/feat/references/  harness.md: the rules /feat and /fix share (gates, state file, board, resume)
+.apm/skills/fix/              the bugfix orchestrator: assess, fix, test, review, ship; its own size table
+.apm/skills/brief/            phase 1: interview, size, brief or capability map
+.apm/agents/*.agent.md        one subagent per phase role
+apm.yml                       APM package: metadata and the third-party skill dependencies
+.claude-plugin/               Claude Code plugin and marketplace manifests
+install.sh                    developer install (symlinks), deps, check, uninstall
+tests/                        offline tests for the two scripts (stub gh, fake GraphQL endpoint)
+specs/, .specify/bugs/        records of the /feat and /fix runs that built this repo
+mise.toml                     pinned tools and tasks (lint, check, test:*, dev:*)
+docs/                         the user documentation
+```
+
 The rules for changing the skills and agents are in
 [`.claude/CLAUDE.md`](.claude/CLAUDE.md), which Claude Code loads when you
 work in this repo. The ones that bite most:
