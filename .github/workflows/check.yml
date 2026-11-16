@@ -1,0 +1,34 @@
+# Lint and the offline tests, as CONTRIBUTING asks before a pull request.
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      MISE_AUTO_INSTALL: "false"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          install_args: shellcheck actionlint claude apm
+      - run: mise run lint
+      - run: mise run test:tracker
+      - run: mise run test:spec-number
+      - run: mise run test:apm
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
