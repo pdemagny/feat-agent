@@ -31,19 +31,23 @@ When changing it:
   or edit artifacts; new work goes into an agent, not the coordinator.
 - Adding or removing an agent: list it in `.claude-plugin/plugin.json`
   (`agents` is an explicit list).
-- `version` in `apm.yml` and `.claude-plugin/plugin.json` must match;
-  `mise run release` bumps both (plugin users stay on the version they
-  have until it changes).
+- Releases are made by release-please (`.github/workflows/release.yml`,
+  `release-please-config.json`): it keeps a release PR open; merging it bumps
+  `apm.yml`, `.claude-plugin/plugin.json` and the README's version line
+  (each marked for it), tags and publishes the GitHub Release. Never edit
+  those versions or `.release-please-manifest.json` by hand (plugin users
+  stay on the version they have until it changes).
 - Shell: `shellcheck` must stay clean on `install.sh`, the tracker script
   (`.apm/skills/feat/scripts/`) and its bash tests (`tests/tracker/`);
-  `mise run lint` runs all three, `mise run test:tracker` the offline tests.
-- Record user-visible changes in CHANGELOG.md.
+  `mise run lint` runs all three and `actionlint` on `.github/workflows/`,
+  `mise run test:tracker` the offline tests.
+- CHANGELOG.md is generated from commit messages: `feat` and `fix`
+  subjects become its entries, so write them for users; `!` marks a
+  breaking change. Don't edit it by hand.
 - The roadmap is the GitHub Project https://github.com/users/pdemagny/projects/2:
   one issue per item, label `feat` or `bug`, fields Priority (P1/P2/P3), Size
   (small/medium/large), Status. A PR says `Closes #N`; follow-ups are new
   issues.
 - Tools and tasks are in `mise.toml`: `mise run lint` and `mise run
-  test:apm` before committing, `mise run release <version>` to release (it
-  dates the CHANGELOG's `## Unreleased` section and opens a new one, so
-  keep entries there). Bump the tool pins there when you test on newer
-  versions.
+  test:apm` before committing. Bump the tool pins there when you test on
+  newer versions.

@@ -1,49 +1,5 @@
 # Changelog
 
-## Unreleased
-
-- Two `/feat` runs shipped at the same time no longer give their specs the
-  same number (#21). The shipper numbers the spec dir with a new script,
-  `.apm/skills/feat/scripts/spec-number.sh`, which fetches the default
-  branch first and also counts the `specs/NNN-*` paths in every open PR's
-  files (all pages, so PRs with more than 100 files count), and a PR's
-  branch name only when it has no spec files (issue branches like
-  `370-foo` no longer count); fork PRs and numbers longer than four digits
-  are ignored. It checks the number again just before pushing and
-  renumbers the unpushed commits if another PR took it (needs git 2.44 or
-  later). If the script fails, `/feat` shows its error and leaves the run
-  at phase 8 for `/feat resume`. Feature branches now keep their
-  `<short-name>`: the shipper no longer renames them to
-  `<NNN>-<short-name>`. Tests: `mise run test:spec-number`.
-
-- The shipper no longer reruns every check after the rebase whatever it
-  brought: a suite the project's conventions scope to some changes (a slow
-  emulator or integration suite) runs only when the feature or the rebased
-  commits are in its scope. The implementer follows the same scoping, and
-  both rerun only the failing tests after a red run, then the check once.
-
-- New `/fix` skill (`/feat-agent:fix` as a plugin): `/fix #N`, an issue
-  URL, `/fix "<symptom>"` or `/fix resume` takes a bug to a PR. It runs Spec
-  Kit's bug extension (assess, fix, test) in subagents, in a worktree on
-  branch `fix-<slug>`: a new `feat-bug-assessor` agent assesses the report
-  and, in a fresh spawn, verifies the fix; `feat-implementer` gains a bug
-  mode and `feat-shipper` a fix mode (one `fix(<scope>)` commit with the
-  `.specify/bugs/<slug>/` trail, `Fixes #N` when there is an issue). The
-  assess gate is hard unless the fix is small, confident and reproduced,
-  from a trusted author and not a security bug; nothing from a report runs
-  without your approval, and secret-looking values are redacted from the
-  reports and block the commit when found in the staged diff. New prerequisite for `/fix` only: `specify
-  extension add bug` in each project; `install.sh check <project>` lists
-  its skills (`note`/`warn`, not counted as missing).
-- `/brief` and `/feat` point bugs to `/fix` (`/fix #N` for a bug-labelled
-  issue, `/fix "<symptom>"` for a bug described as an idea).
-- The rules `/feat` and `/fix` share (thin orchestrator, gates, state
-  file, board moves, resume) moved from `feat/SKILL.md` to
-  `.apm/skills/feat/references/harness.md`; `/feat` behaves the same.
-  `tracker.sh create-issue` can now create a `bug` issue from an
-  assessment (`/fix "<symptom>"` with board tracking, after the assess
-  gate).
-
 ## 0.8.0 — 2026-11-02
 
 - Renamed the project from feat-agents to feat-agent. The repository, APM

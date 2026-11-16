@@ -112,13 +112,13 @@ apm.yml                  APM package: metadata and the third-party skill depende
 .claude-plugin/          Claude Code plugin and marketplace manifests
 install.sh               developer install (symlinks), deps, check, uninstall
 tests/tracker/           offline tests for tracker.sh (stub gh, fake GraphQL endpoint)
-mise.toml                pinned tools and tasks (lint, check, test:apm, test:tracker, cost, release, pin)
+mise.toml                pinned tools and tasks (lint, check, test:apm, test:tracker, pin)
 docs/                    the documentation above
 ```
 
 ## Status
 
-Version 0.8.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli)
+Version 0.8.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli) <!-- x-release-please-version -->
 1.2.x. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
