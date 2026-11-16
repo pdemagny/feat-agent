@@ -50,8 +50,9 @@ rules this skill follows. The values it refers to are below.
 - *Artifacts the orchestrator reads*: the brief and the state file. Open
   spec.md or plan.md only to quote a line the user must decide on.
 - *Commands besides the tracker*: git for the worktree and the diff.
-- *Artifact owners*: specifier: spec.md; planner: plan.md and accepted
-  design findings; tasker: tasks.md; implementer: code.
+- *Artifact owners*: specifier: spec.md; planner: plan.md, accepted
+  design findings, and spec changes asked at the plan or the design review
+  gate; tasker: tasks.md; implementer: code.
 - *Agents that may be continued*: specifier, planner, tasker. Implementer:
   always a fresh spawn, one per story and one for fixes; never continue one
   into the next story.
@@ -65,7 +66,8 @@ rules this skill follows. The values it refers to are below.
 - *Building move*: at setup (step 5, phases 2–6); on resume in phases 2–6;
   going back from 7 or 8 to 2–6.
 - *Review move*: when phase 7 starts; on resume in phases 7–8.
-- *Resume search*: the most recent `specs/*/feat-state.md` not marked done.
+- *Resume search*: the most recent `specs/*/feat-state.md` not marked done;
+  section 2 says how a soft phase 2 shows up on resume.
 
 ## Size table
 
@@ -104,9 +106,9 @@ the phase 6 row.
 | # | Phase         | Runs in                                 | Gate                                                                                                                                   |
 | - | ------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | 0 | Setup         | you                                     | hard only if a Spec Kit hook would branch or commit                                                                                    |
-| 2 | Specify       | `feat-specifier`                        | **hard**: spec.md, the only place questions are asked                                                                                  |
+| 2 | Specify       | `feat-specifier`                        | **hard** only on an open marker or blocker; else soft                                                                                  |
 | 3 | Plan          | `feat-planner`                          | none for small and medium (merged with 4); **hard** for large                                                                          |
-| 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3 | small and medium: one gate for 3+4, hard only on a real finding, a user-call assumption, a blocker or a size increase; large: **hard** |
+| 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3 | small/medium: one gate for 3+4, hard on a finding, a user-call assumption, a blocker, size increase or checklist item; large: **hard** |
 | 5 | Tasks         | `feat-tasker`                           | **hard** on CRITICAL/HIGH findings, a size increase or an unanswered checklist item, and always for large; else soft                   |
 | 6 | Implement     | `feat-implementer`, one per user story  | soft unless checks fail; **hard after each story** for large                                                                           |
 | 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5   | **hard**: user picks the fixes                                                                                                         |
@@ -163,13 +165,44 @@ claude`) and the `feat-*` agents are installed (plain or
 3. Create the state file (move the brief into it; delete
    `specs/briefs/<short-name>.md`).
 
-**Hard gate**: stories and requirements in a few lines, the open markers
+**Gate**: hard only when the specifier's report lists an open
+`[NEEDS CLARIFICATION]` marker or a blocker, the same at every size, large
+included; anything else surprising makes it hard. Otherwise it is soft. A
+blocker: the report has no `Spec:` path, or its Assumptions or Open markers
+say the brief can't be specified as written. A size remark makes it hard
+too; sizes are checked at phases 3 and 5.
+
+**Hard**: stories and requirements in a few lines, the open markers
 each with its recommended answer, the specifier's assumptions, and the
 unchecked items of `checklists/` (`speckit-implement` stops on them: ask now
-whether to proceed, and log the answer). This is the only place questions
-are asked, so later phases don't need to stop to ask. Answers and edits go
+whether to proceed, and log the answer). Put the reason under "What you
+should know" and log it as `2 Specify — hard (<why>)`. Answers and edits go
 back to the specifier (amend mode). A spec with open markers isn't
-approvable.
+approvable. After a hard phase 2 the next gate is as today, with no spec
+summary.
+
+**Soft**: print one line, `Phase 2 Specify — soft: spec.md written (<n>
+stories, <m> requirements, no open question); summary at the next gate.
+Next: phase 3 Plan`, and go on to phase 3. Log it as `2 Specify — soft`
+followed by four indented lines: Stories (`US1 <title> (P1); …`),
+Requirements (the count and a few notable ones), Spec assumptions
+(numbered, each with "(recommended: keep as written)") and Unchecked
+checklist items (file: item with a recommendation, or none). Copy them from
+the specifier's report, never from spec.md. The next gate shows them, and
+its Log line records what became of the spec assumptions and the checklist
+answer.
+
+Every phase 2 run, "back to 2" and reruns included, writes its own soft or
+hard line, and the latest phase 2 line decides. A phase 2 line with neither
+word counts as hard.
+
+On `/feat resume`, read the latest phase 2 line. If it says `soft` and the
+gate that carries the summary is not yet `[x]`, open that gate with the
+summary from the Log. That gate is phase 4 on small and medium (the
+`[x] 3 Plan` line does not close it) and phase 3 on large.
+
+Questions are asked at phase 2 or at the gate that shows its summary, so
+later phases don't stop to ask.
 
 ## 3. Plan
 
@@ -181,8 +214,14 @@ permissions, exposure or dependency); on a small feature, that is a size
 increase to ask about.
 
 Small and medium: no gate, go straight to phase 4. **Hard gate for large**:
-approach, what it touches, new dependencies or services with reasons,
-constitution check, assumptions.
+after a soft phase 2 it opens with the spec block (`**The spec (phase 2
+didn't stop):** …`, read from the Log: stories, requirements, numbered spec
+assumptions each with its recommendation, then the checklist question),
+then approach, what it touches, new dependencies or services with reasons,
+constitution check, the planner's assumptions. "ok" accepts the
+recommendations. Here a spec change goes to `feat-planner` in amend mode
+right away (as in the amend pass below), and phase 4's reviewers are
+spawned after it reports, with no second stop for the amend.
 
 ## 4. Design review
 
@@ -196,15 +235,26 @@ contradicts the brief, the gate is hard.
 
 **Large**: hard gate, the user accepts or rejects each finding. **Small and
 medium**: one gate for phases 3 and 4, headed "Plan and design review":
+after a soft phase 2 the spec summary first (the `**The spec …**` block
+read from the Log: stories, requirements, numbered spec assumptions each
+with its recommendation, then the checklist question), then
 the paraphrase, approach, what it touches, assumptions, any size increase
 (asked first), the findings with their recommendations. It is hard if there
 is a finding above nice-to-have, an assumption with `needs user: yes`, a
-constitution violation, a blocker or a size increase; otherwise soft, and the
-recommendations are applied. "ok" accepts all recommendations.
+constitution violation, a blocker, a size increase or an unchecked checklist
+item carried from a soft phase 2 (ask now; phase 5 would otherwise stop on
+it); otherwise soft, and the recommendations are applied. "ok" accepts all
+recommendations. After a soft phase 2, a soft gate's report still carries
+the spec summary, and the spec assumptions are logged as kept at their
+recommendations.
 
-Accepted findings go to `feat-planner` in amend mode (continued after a
-soft gate, spawned fresh after a hard one) to be written into spec.md as
-requirements and into plan.md.
+Accepted findings and the spec changes asked at this gate (an overturned
+assumption, a reworded requirement) go to `feat-planner` in one amend pass
+(continued after a soft gate, spawned fresh after a hard one), written into
+spec.md and plan.md, quoting each change (the user's answer, or the new
+wording). A change that rewrites stories is "back to 2". On large, when the
+planner amended the plan after the phase 3 gate, say so under "What you
+should know" (one line: what the amend changed).
 
 ## 5. Tasks
 
@@ -212,8 +262,9 @@ Spawn `feat-tasker`. It returns task counts per story, the MVP slice, the
 stories' task IDs, open findings with proposed fixes, and unchecked
 checklist items. **Hard gate** on CRITICAL/HIGH findings (accepted fixes go
 back to the tasker, which reruns analyze), on a size increase, on unchecked
-checklist items the phase 2 answer doesn't cover (`speckit-implement` would
-otherwise stop to ask), and always for large. Otherwise soft. Check the size against the task count
+checklist items that the answer already given (phase 2, or the spec
+summary) doesn't cover (`speckit-implement` would otherwise stop to ask),
+and always for large. Otherwise soft. Check the size against the task count
 (small up to ~30, medium ~31–60, large over ~60); a new service,
 permissions, exposure or dependency keeps it at least medium. A larger fit
 is a size increase (hard gate, see Size changes); a smaller one is applied

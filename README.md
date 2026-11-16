@@ -22,8 +22,8 @@ idea, or a bug report, to a reviewed pull request, using
   different agent verify the fix, reviews it and opens a PR with
   `Fixes #N`.
 
-You decide at a few gates (the brief, the spec, which review findings to
-fix); everything else runs on its own, and nothing is ever merged for you.
+You decide at a few gates (the brief, the spec when it leaves a question
+open, which review findings to fix); everything else runs on its own, and nothing is ever merged for you.
 Each phase runs in its own subagent on a model and effort sized to the job:
 Sonnet at medium effort for most of a small feature, Opus at higher effort
 where a large one needs it. The session you type in only coordinates, which
