@@ -8,7 +8,7 @@ Claude Code only. Three ways to install; the design behind them:
 | Tool                            | Why                                                                                   | Install                                         |
 | ------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------- |
 | Claude Code (tested on 2.1.308) | runs `/feat` and its agents; older versions may ignore subagent `effort` or `skills`  | <https://code.claude.com/docs/en/setup>         |
-| git                             | branches, worktrees, diffs                                                            | your package manager                            |
+| git ≥ 2.44                      | branches, worktrees, diffs; phase 8 renumbers with `rebase --autosquash`              | your package manager                            |
 | GitHub CLI `gh`, logged in      | phase 8 pushes and opens the PR; board tracking needs the `project` scope ([section 5](#5-board-tracking-optional)) | <https://cli.github.com>, then `gh auth login`  |
 | Spec Kit CLI `specify`          | phases 2–6 are Spec Kit skills                                                        | `uv tool install specify-cli`                   |
 | Spec Kit bug extension, `/fix` only (tested with bug 1.0.1) | `/fix`'s assess, fix and test phases are its skills       | `specify extension add bug` in each project     |

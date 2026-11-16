@@ -150,9 +150,9 @@ put to you before anything runs. With [board tracking](#board-tracking) it
 runs the board check and moves the issue to In progress.
 
 ### 2 Specify (`feat-specifier`)
-The coordinator creates branch `<NNN>-<short-name>` (worktree when possible,
+The coordinator creates branch `<short-name>` (worktree when possible,
 renamed if EnterWorktree picked another name) and enters it, so every agent
-starts there. The specifier runs `speckit-specify` from the brief and
+starts there. The spec dir is `specs/<short-name>/` until phase 8 numbers it. The specifier runs `speckit-specify` from the brief and
 reports stories, requirements, open `[NEEDS CLARIFICATION]` markers with
 recommended answers, assumptions and unchecked checklist items. The
 coordinator moves the brief into `feat-state.md` and gates. This is the only
@@ -260,13 +260,24 @@ green, every attempt logged with its numbers), then readability one change
 at a time with tests after each.
 
 ### 8 Ship (`feat-shipper`)
+Numbers the spec dir with `.apm/skills/feat/scripts/spec-number.sh`: after
+fetching `origin/<default>`, the next number free on it and in every open
+same-repo PR (the `specs/NNN-*` paths among its files, all pages, or its
+branch name when it has no spec files; fork PRs and numbers longer than
+four digits are ignored), so two features shipped at the same time get different numbers
+whatever their branches are called. The branch keeps its `<short-name>`.
+Just before pushing it checks the number again and, if another PR took it
+meanwhile, renumbers and folds the change into the unpushed commits.
 Updates the docs the project asks for, commits by the project's rules
 (default: `docs(specs)` then `feat(scope)` with its docs; `perf` and `refactor`
 only when separable),
 stages only the feature's files, rebases, pushes, opens a non-draft PR with
 the brief, accepted design changes, review results and numbers, and a link
 to the state file. If git is blocked in the session, it returns one `!`
-command for you to run. Never merges.
+command for you to run. If the spec-number script fails (git or gh error),
+nothing is pushed: `/feat` shows its `! spec-number: error: …` line as an
+error and leaves the state file at `8 Ship`, so `/feat resume` picks the
+run up again. Never merges.
 
 ## Board tracking
 

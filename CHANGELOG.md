@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+- Two `/feat` runs shipped at the same time no longer give their specs the
+  same number (#21). The shipper numbers the spec dir with a new script,
+  `.apm/skills/feat/scripts/spec-number.sh`, which fetches the default
+  branch first and also counts the `specs/NNN-*` paths in every open PR's
+  files (all pages, so PRs with more than 100 files count), and a PR's
+  branch name only when it has no spec files (issue branches like
+  `370-foo` no longer count); fork PRs and numbers longer than four digits
+  are ignored. It checks the number again just before pushing and
+  renumbers the unpushed commits if another PR took it (needs git 2.44 or
+  later). If the script fails, `/feat` shows its error and leaves the run
+  at phase 8 for `/feat resume`. Feature branches now keep their
+  `<short-name>`: the shipper no longer renames them to
+  `<NNN>-<short-name>`. Tests: `mise run test:spec-number`.
+
 - The shipper no longer reruns every check after the rebase whatever it
   brought: a suite the project's conventions scope to some changes (a slow
   emulator or integration suite) runs only when the feature or the rebased

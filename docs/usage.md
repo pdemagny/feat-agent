@@ -66,7 +66,8 @@ in a `feat-*` subagent and Claude stops only at gates; see
 link and never merges.
 
 State lives in `specs/<NNN-name>/feat-state.md`, next to the spec, plan and
-tasks. The feature is built on branch `<NNN>-<name>`, in a worktree under
+tasks (`specs/<name>/` until the shipper numbers it). The feature is built
+on branch `<name>`, in a worktree under
 `.claude/worktrees/` when possible, so your checkout stays untouched.
 
 ## Answering a gate

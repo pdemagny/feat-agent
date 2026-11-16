@@ -179,7 +179,9 @@ growing context this workflow exists to avoid.
   worktrees: a fresh worktree would start from committed history and miss the
   uncommitted spec, tasks and earlier stories.
 - **EnterWorktree names its own branch.** The orchestrator renames it to
-  `<NNN>-<short-name>` so it matches the spec directory.
+  `<short-name>`. The spec number is not in it: the shipper picks it last,
+  from the default branch and the open PRs' files, since a branch name says
+  nothing about a PR whose branch was never renamed.
 
 ## Things to verify on first runs
 

@@ -8,7 +8,7 @@ gh = "2.103.3"                  # phase 8 pushes and opens the PR; board trackin
 apm = "0.34.0"                  # installs the package for every harness
 node = "lts"                    # npx, for `install.sh deps` (skills CLI)
 uv = "0.13.4"                   # backend for the pypi: tools
-shellcheck = "0.11.0"           # lints install.sh, the tracker script and tests/tracker
+shellcheck = "0.11.0"           # lints install.sh, the feat scripts and their tests
 
 [tasks.lint]
 description = "shellcheck the shell scripts, compile the Python test stub, validate the Claude Code plugin"
@@ -16,6 +16,7 @@ run = [
   "shellcheck install.sh",
   "shellcheck .apm/skills/feat/scripts/*",
   "shellcheck tests/tracker/run.sh tests/tracker/bin/gh",
+  "shellcheck tests/spec-number/run.sh tests/spec-number/bin/gh",
   "python3 -m py_compile tests/tracker/fake_github.py",
   "claude plugin validate .",
   "! grep -Eiq 'specifier|planner|tasker|spec\\.md|brief|phase [0-9]|/feat' .apm/skills/feat/references/harness.md",
@@ -39,6 +40,7 @@ for d in .claude/agents .claude/skills; do
   printf '%-18s %s\n' "$d" "$(ls "$d" | wc -l)"
 done
 test -f .claude/skills/feat/scripts/tracker.sh
+test -f .claude/skills/feat/scripts/spec-number.sh
 test -f .claude/skills/feat/references/harness.md
 test -f .claude/skills/fix/SKILL.md
 '''
@@ -46,6 +48,10 @@ test -f .claude/skills/fix/SKILL.md
 [tasks."test:tracker"]
 description = "Run the board tracker script's offline tests (stub gh, fake GraphQL endpoint)"
 run = "bash tests/tracker/run.sh"
+
+[tasks."test:spec-number"]
+description = "Run the spec-number script's offline tests (local origin repo, stub gh)"
+run = "bash tests/spec-number/run.sh"
 
 [tasks."dev:install"]
 description = "Symlink the skills and agents into ~/.claude and add the third-party skills (instead of APM)"

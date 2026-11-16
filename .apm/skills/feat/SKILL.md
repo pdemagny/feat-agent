@@ -148,8 +148,10 @@ claude`) and the `feat-*` agents are installed (plain or
 
 1. Create branch `<short-name>` and tell the specifier the feature dir is
    `specs/<short-name>/`: no `NNN` yet, because a worktree can't see the
-   numbers other in-flight features take. The shipper numbers it in phase 8,
-   on top of the fetched `origin/<default>`. Prefer a worktree
+   numbers other in-flight features take. The shipper numbers it in phase 8
+   with the spec-number script (free on the fetched `origin/<default>` and
+   in every open PR's files), checks it again before pushing, and leaves
+   the branch name as is. Prefer a worktree
    (EnterWorktree). EnterWorktree picks its own
    branch name: check `git branch --show-current` and `git branch -m` it if
    needed. Enter it before spawning anything: agents start in your
@@ -257,11 +259,18 @@ report, performance numbers included.
 ## 8. Ship
 
 Spawn `feat-shipper` with the state file, the conventions, the worktree, the
-default branch and the issue, if any. It updates the docs the conventions call for, commits
+default branch, the spec-number script (`<this skill's base
+dir>/scripts/spec-number.sh`) and the issue, if any. It numbers the spec
+dir, updates the docs the conventions call for, commits
 (default: `docs(specs)` then `feat(scope)` with its docs; `perf` and `refactor` only when separable),
-pushes and opens the PR, or returns a single `!` command when git is
-blocked in the session: give that line to the user as is. Mark the state
-file done. Never merge.
+pushes and opens the PR, or returns `PR: blocked` with a single `!` line.
+When that line is a command for the user to run (`! cd <worktree> && git
+…`: git or gh blocked in the session), give it to the user as is and mark
+the state file done. When it is an error, not a command (`! spec-number:
+error: …` or another hard failure: nothing pushed), show it to the user as
+an error, don't mark the state file done and leave `Current phase: 8 Ship`
+so `/feat resume` finds the run. Otherwise mark the state file done. Never
+merge.
 
 Final message: the PR link, the branch/worktree, the two or three things
 you'd look at first in review, and for a capability from a map, the next

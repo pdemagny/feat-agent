@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Stub gh for tests/spec-number: logs its argv and answers from case files,
+# printing what the script's --jq filter would print.
+#   prs          `pr list`: "<number> <isCrossRepository> <branch>" lines
+#                (missing: no open PR)
+#   files-<n>    `api .../pulls/<n>/files`: one filename per line; without
+#                --paginate only the first 100 lines, like GitHub's first page
+#   fail-<verb>  `pr list` (fail-pr) or `api` (fail-api) exits 1
+set -euo pipefail
+case_dir="${SPECNUM_CASE:?SPECNUM_CASE not set}"
+printf '%s\n' "$*" >>"$case_dir/calls"
+
+case "${1:-} ${2:-}" in
+  "pr list")
+    if [ -e "$case_dir/fail-pr" ]; then echo "HTTP 502" >&2; exit 1; fi
+    if [ -e "$case_dir/prs" ]; then cat "$case_dir/prs"; fi
+    ;;
+  api\ *)
+    if [ -e "$case_dir/fail-api" ]; then echo "HTTP 502" >&2; exit 1; fi
+    paginate=no n=""
+    for a in "$@"; do
+      case "$a" in
+        --paginate) paginate=yes ;;
+        repos/\{owner\}/\{repo\}/pulls/*/files)
+          n="${a#repos/\{owner\}/\{repo\}/pulls/}"
+          n="${n%/files}"
+          ;;
+      esac
+    done
+    [ -n "$n" ] || { echo "stub gh: unexpected api call: $*" >&2; exit 1; }
+    [ -e "$case_dir/files-$n" ] || exit 0
+    if [ "$paginate" = yes ]; then cat "$case_dir/files-$n"; else head -n 100 "$case_dir/files-$n"; fi
+    ;;
+  *)
+    echo "stub gh: unexpected call: $*" >&2
+    exit 1
+    ;;
+esac

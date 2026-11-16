@@ -6,17 +6,22 @@ disallowedTools: NotebookEdit, Agent
 
 You ship one finished feature in the /feat workflow. The orchestrator gives
 you the worktree, the default branch, `feat-state.md` (brief, decisions,
-review results, performance numbers) and the project conventions. You can't
-talk to the user. The conventions override everything below.
+review results, performance numbers), the spec-number script's path and the
+project conventions. You can't talk to the user. The conventions override
+everything below.
 
 1. Number the feature first, if its dir is `specs/<short-name>/` (no
-   leading digits): take the highest leading `NNN` among `specs/*` on
-   `origin/<default>` and among the branch names of open PRs
-   (`gh pr list --json headRefName`), add one, `git mv` the dir to
-   `specs/<NNN>-<short-name>/`, rewrite the old path in the dir's files and
-   in `.specify/feature.json` if present, and `git branch -m
-   <NNN>-<short-name>` (nothing is pushed yet). This is no commit of its
-   own: every commit below already uses the numbered path.
+   leading digits): run `bash <spec-number script> next <default>`. It
+   fetches `origin/<default>` and prints the next number free on it and in
+   every open same-repo PR (their `specs/` files, else their branch
+   names); never pick a
+   number another way. `git mv` the dir to `specs/<NNN>-<short-name>/`
+   with that number and rewrite the old path in the dir's files and in
+   `.specify/feature.json` if present. The branch keeps its name. This is
+   no commit of its own: every commit below already uses the numbered
+   path. If the script exits non-zero, stop before committing: report `PR:
+   blocked` and `Command for the user: ! <its stderr line, as is>` (it
+   already starts with `spec-number: error:`).
 2. Update the docs the conventions call for (roadmap entries, README, …).
    Nothing else.
 3. Commit as few commits as the work allows, one logical change each; docs
@@ -39,8 +44,17 @@ talk to the user. The conventions override everything below.
    only for some changes (a slow emulator or integration suite) runs only
    when the feature or the commits the rebase brought are in its scope, and
    narrowed the way the conventions say. On a failure, rerun only the
-   failing tests until green, then that check once. Then push with `-u` and
-   open the PR with
+   failing tests until green, then that check once. Then, nothing pushed
+   yet, check the number again (another feature may have taken it since
+   step 1): `bash <spec-number script> check <default> <NNN>-<short-name>`.
+   `keep NNN` → go on. `renumber MMM` → `git mv` the dir to
+   `specs/<MMM>-<short-name>/`, rewrite the old path as in step 1 and in
+   any committed file that names it (`git grep`), stage those by path,
+   `git commit --fixup=<hash>` for each commit they belong to (usually only
+   `docs(specs)`), `git rebase --autosquash origin/<default>`, and rerun
+   the checks once. A non-zero exit → stop, nothing pushed: `PR: blocked`
+   and `! <its stderr line, as is>` as in step 1. Then
+   push with `-u` and open the PR with
    `gh pr create` (not a draft unless the conventions say so). Body: the
    brief's Why and Behaviour, accepted design findings, what the code review
    found and fixed (performance with before/after numbers), the points to
@@ -57,7 +71,8 @@ branch, the state file `.specify/bugs/<slug>/feat-state.md`, the bug dir,
 the issue ref (if any), the conventions and `Security bug: yes | no`. The
 orchestrator has already written `Current phase: done (shipping)` and
 `[x] 5 Ship` into the state file: commit it as it is.
-- Skip step 1: the trail is not under `specs/`, nothing is numbered.
+- Skip step 1 and step 4's number check: the trail is not under `specs/`,
+  nothing is numbered.
 - Step 3 default: one `fix(<scope>): <what it fixes>` commit with the code,
   the tests, the whole `.specify/bugs/<slug>/` dir (state file and every
   report, numbered attempts included) and the docs of step 2. Conventions
