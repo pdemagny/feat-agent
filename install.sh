@@ -27,7 +27,7 @@ speckit_skills=(speckit-specify speckit-clarify speckit-plan speckit-tasks speck
 # Spec Kit's bug extension, per project by `specify extension add bug`; /fix only.
 # The headings and verdict words /fix relies on, as recorded for this version
 # (specs/002-fix-workflow/contracts/bug-extension.md).
-bug_version="1.0.1"
+bug_version="1.0.1 and 1.0.2"
 bug_skills=(speckit-bug-assess speckit-bug-fix speckit-bug-test)
 bug_words_assess=("# Bug Assessment:" "**Verdict**" "**Severity**" "## Symptom" "## Reproduction"
   "## Suspected Code Paths" "## Root Cause Hypothesis" "## Proposed Remediation" "## Open Questions"
@@ -140,7 +140,7 @@ case "$cmd" in
       done
     fi
     for skill in "${deps[@]}"; do
-      expect "skill $skill" "apm install -g pdemagny/feat-agent, or ./install.sh deps" has_skill "$skill"
+      expect "skill $skill" "APM installs it; plugin or clone: docs/install.md section 2" has_skill "$skill"
     done
     if [ -n "$project" ]; then
       fix="specify init --here --integration claude"
