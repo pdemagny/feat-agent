@@ -4,7 +4,7 @@
 - Size: medium
 - Agents: specifier a6bdd95367686cd60, planner a8d5d89fcf9686b05
 - Current phase: done (PR #14)
-- Conventions: conventional commits `type(scope): msg`, one logical change per commit, no co-author; `mise run lint` + `mise run test:apm` before committing; CHANGELOG under `## Unreleased`; update docs/workflow.md and docs/install.md; /feat stays thin; no change to the size table, apm.yml, plugin.json or install.sh install logic; shellcheck clean; git via `/usr/bin/git` in the worktree, one plain command per call; PR says `Closes #11`
+- Conventions: conventional commits `type(scope): msg`, one logical change per commit, no co-author; `mise run lint` + `mise run test:apm` before committing; CHANGELOG under `## Unreleased`; update docs/workflow.md and docs/install.md; /feat stays thin; no change to the size table, apm.yml, plugin.json or install.sh install logic; shellcheck clean; PR says `Closes #11`
 - Allowed Spec Kit hooks: none (no .specify/extensions.yml)
 - Map: none
 - Issue: #11
@@ -168,12 +168,6 @@ inconsistently.
     `gh issue view` today).
   - Docs state that the feature needs the broad `project` scope (read and
     write on every board the user can reach) and is off unless configured.
-- Already done during the interview (2026-11-02): the "In review"
-  description on both another project's board and the feat-agent board now reads "Code
-  review: from /feat phase 7 until merged" (was "PR open"). Still to do
-  by hand: enable "Item closed" on the feat-agent board. It is currently
-  off, as are "Item added to project" and "Pull request linked to issue".
-  The other board already has "Item closed" on.
 - Conventions: conventional commits, `mise run lint` and `mise run
   test:apm` before committing, CHANGELOG under `## Unreleased`, PR says
   `Closes #11`.

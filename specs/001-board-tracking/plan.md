@@ -36,7 +36,7 @@ on a unix socket, so the real `--jq` filters run (`mise run test:tracker`).
 
 **Performance Goals**: `check` is 1 GraphQL call; `set-status` is 1 read (plus 1 `gh repo view` for a `#N` ref) and 0–2 mutations (0 when nothing changes); `create-issue` is 2 calls. No call at all without the config.
 
-**Constraints**: `/feat` stays thin (FR-023); a budget of 12 lines in `/feat`'s SKILL.md and 10 in `/brief`'s, judged by the token cost of the additions with prose wrapped at ~76 columns, not raw line count (FR-034); the config is untrusted (FR-019–FR-022, FR-033); a mid-run move never stops the build (FR-017); SKILL.md size table and its format untouched (a cost script (since moved out) parses it).
+**Constraints**: `/feat` stays thin (FR-023); a budget of 12 lines in `/feat`'s SKILL.md and 10 in `/brief`'s, judged by the token cost of the additions with prose wrapped at ~76 columns, not raw line count (FR-034); the config is untrusted (FR-019–FR-022, FR-033); a mid-run move never stops the build (FR-017); SKILL.md size table and its format untouched.
 
 **Scale/Scope**: one board, one issue, three statuses per feature.
 

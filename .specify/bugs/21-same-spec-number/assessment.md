@@ -11,10 +11,10 @@
 > **Parallel /feat runs can ship the same spec number** (issue 21 of the pre-release repo)
 >
 > Two parallel `/feat` runs can give their specs the same number. On a private project,
-> `specs/088-typed-config-value` (PR <owner>/<repo>#363) and
-> `specs/088-split-entry-lock` (<owner>/<repo>#364) both shipped as 088 on
+> `specs/088-typed-config-value` (PR 363) and
+> `specs/088-split-entry-lock` (PR 364) both shipped as 088 on
 > 2026-11-13. Lint failed on main and broke every PR's CI until
-> <owner>/<repo>#370 renumbered one of them.
+> PR 370 renumbered one of them.
 >
 > Cause: `feat-shipper` step 1 finds the next number from the `specs/*`
 > folders on `origin/<default>` and from the **branch names** of open PRs. The
@@ -34,7 +34,7 @@
 > when neither branch is renamed, and the script's test covers an open PR whose
 > branch has no number but whose files include `specs/NNN-*`.
 
-Evidence checked (read-only `gh` against <owner>/<repo>):
+Evidence checked (read-only `gh` against the private project's repository):
 
 - #363: head `typed-config-value`, created 2026-11-13T18:48:23Z, merged 19:03:42Z, 141 changed files, spec dir `specs/088-typed-config-value/` (from the paginated REST `pulls/363/files`).
 - #364: head `088-split-entry-lock`, created 18:51:02Z, merged 19:05:29Z, spec dir `specs/088-split-entry-lock/`.
@@ -50,7 +50,7 @@ Two `/feat` runs shipping minutes apart both numbered their spec dir 088, so mai
 
 The faulty logic is a prompt rule (shipper step 1), not code, so it was reproduced by applying the rule to that project's recorded state:
 
-1. Read its `main` at the last commit before #364's PR (41218bc): highest spec `087-describe-protocol-window`.
+1. Read its `main` at the last commit before PR 364 (41218bc): highest spec `087-describe-protocol-window`.
 2. Read open PR #363's head branch name: `typed-config-value` (no leading number).
 3. Apply step 1's rule (highest leading `NNN` among `specs/*` on main and open PR branch names, plus one) with a scratch script (`bash /tmp/fix21-step1-sim.sh`). Output:
 
@@ -61,7 +61,7 @@ The faulty logic is a prompt rule (shipper step 1), not code, so it was reproduc
 
 4. Result: the rule yields 088, the number #363 already used. Reproduced.
 
-Additional finding while checking the proposed fix: `gh pr view 363 -R <owner>/<repo> --json files` returns only 100 of the PR's 141 files (`changedFiles: 141`, `files | length: 100`), and none of those 100 is under `specs/`. The same cap applies to `gh pr list --json files`. The issue's proposed source (`gh pr list --state open --json files`) would therefore also have missed #363's 088 in this very incident. The paginated REST endpoint (`gh api --paginate repos/<o>/<r>/pulls/<n>/files`) does list `specs/088-typed-config-value/…`.
+Additional finding while checking the proposed fix: `gh pr view 363 -R <owner>/<repo> --json files` returns only 100 of the PR's 141 files (`changedFiles: 141`, `files | length: 100`), and none of those 100 is under `specs/`. The same cap applies to `gh pr list --json files`. The issue's proposed source (`gh pr list --state open --json files`) would therefore also have missed PR 363's 088 in this very incident. The paginated REST endpoint (`gh api --paginate repos/<o>/<r>/pulls/<n>/files`) does list `specs/088-typed-config-value/…`.
 
 ## Suspected Code Paths
 

@@ -4,7 +4,7 @@
 - Size: medium
 - Agents: none (every spawn is fresh)
 - Current phase: done (shipping)
-- Conventions: conventional commits `type(scope): short message`, one logical change per commit, concise, no co-author/attribution lines; stage only this task's files by path. Sources live in `.apm/` (skills `.apm/skills/*/SKILL.md`, agents `.apm/agents/*.agent.md`, tracker script `.apm/skills/feat/scripts/`, bash tests `tests/tracker/`). Checks: `mise run lint` (shellcheck on install.sh, scripts, tests/tracker; harness grep), `mise run test:tracker`, `mise run test:apm`. Agent report formats are coupled to `/feat`/`/fix`: change both sides together; `/feat`/`/fix` stay thin. User-visible changes go in CHANGELOG.md `## Unreleased`. Shell is zsh; `rm/cp/mv` are interactive aliases (use `command rm -f` etc.); in worktrees call `/usr/bin/git` directly, one plain command per call.
+- Conventions: conventional commits `type(scope): short message`, one logical change per commit, concise, no co-author/attribution lines; stage only this task's files by path. Sources live in `.apm/` (skills `.apm/skills/*/SKILL.md`, agents `.apm/agents/*.agent.md`, tracker script `.apm/skills/feat/scripts/`, bash tests `tests/tracker/`). Checks: `mise run lint` (shellcheck on install.sh, scripts, tests/tracker; harness grep), `mise run test:tracker`, `mise run test:apm`. Agent report formats are coupled to `/feat`/`/fix`: change both sides together; `/feat`/`/fix` stay thin. User-visible changes go in CHANGELOG.md `## Unreleased`.
 - Allowed Spec Kit hooks: none (extensions.yml has `hooks: {}`)
 - Map: none
 - Issue: issue 21 of the pre-release repo

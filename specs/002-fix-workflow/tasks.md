@@ -6,7 +6,7 @@
 
 **Tests**: Requested by the spec for the tracker (FR-023: offline cases 13-15 in `tests/tracker/run.sh`, written first). Everything else is checked by `mise run lint`, `mise run test:apm`, `mise run test:tracker` and the quickstart; the live runs are marked `[USER]`.
 
-**Organization**: by user story (US1-US6 of spec.md). Paths are relative to the worktree root `.claude/worktrees/fix-workflow`.
+**Organization**: by user story (US1-US6 of spec.md). Paths are relative to the repository root.
 
 ## Format: `- [ ] T### [P?] [Story?] Description with file path`
 
@@ -157,7 +157,7 @@
 
 ## Phase 10: Live validation (needs the user; at most four `/fix` runs, FR-043)
 
-**Purpose**: the scenarios that need a scratch project, GitHub and real Claude sessions (quickstart "Live"). **The implementer reports each task below as pending for the user and must never simulate its result.**
+**Purpose**: the scenarios that need a scratch project, GitHub and real Claude sessions (quickstart "Live"). Not run as scripted: since the merge, `/fix` has been used on real bugs instead (e.g. #21). **The implementer reports each task below as pending for the user and must never simulate its result.**
 
 - [ ] T043 [USER] Run 1, small bug end to end (quickstart S6; US1, US3, SC-001, SC-002, SC-006): `/fix #N` on a real small bug, no board tracking; expect `report author OWNER`, soft assess and fix gates, test `verified` by a different agent id than the fix, review `7a+7b+7d` clean and soft, `done (shipping)` and `[x] 5 Ship` in the state file before the shipper starts, one `fix(scope)` commit with the trail and a PR body with `Fixes #N`, zero hard gates; after merging, `/fix resume` on the default branch finds nothing.
 - [ ] T045 [USER] Run 2, symptom with board tracking to the end (S9, S12; US4, US5, SC-005): `/fix "<symptom>"` with board tracking; no issue before the assess gate, the gate names the repo and is hard, one `bug` issue after "ok" with title, Symptom, Root cause and `Trail:` line, In progress then In review, `Fixes #N`; stop after the fix phase, `/clear`, `/fix resume` from the main checkout finds the run in the sibling worktree and resumes without redoing phases; with two unfinished runs it asks which.
