@@ -96,12 +96,14 @@ for any of them: [docs/install.md](docs/install.md).
 | [docs/workflow.md](docs/workflow.md) | Every phase, gate and agent: the size × phase matrix, what runs when and how |
 | [docs/design.md](docs/design.md) | Why it is built this way: Claude Code mechanics, rejected alternatives |
 | [Roadmap](https://github.com/users/pdemagny/projects/2) | Known bugs and what is planned |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Reporting bugs, proposing changes, working on feat-agent |
+| [SECURITY.md](SECURITY.md) | Reporting a vulnerability privately |
 
 ## Layout
 
 ```
 .apm/skills/feat/        the orchestrator: phases, gates, size table (source of truth)
-.apm/skills/feat/scripts/  tracker.sh: optional GitHub Projects board moves; spec-number.sh: the shipper's spec numbers
+.apm/skills/feat/scripts/  tracker.sh: optional GitHub Projects board moves
 .apm/skills/feat/references/  harness.md: the rules /feat and /fix share (gates, state file, board, resume)
 .apm/skills/fix/         the bugfix orchestrator: assess, fix, test, review, ship; its own size table
 .apm/skills/brief/  phase 1: interview, size, brief or capability map
@@ -110,8 +112,7 @@ apm.yml                  APM package: metadata and the third-party skill depende
 .claude-plugin/          Claude Code plugin and marketplace manifests
 install.sh               developer install (symlinks), deps, check, uninstall
 tests/tracker/           offline tests for tracker.sh (stub gh, fake GraphQL endpoint)
-tests/spec-number/       offline tests for spec-number.sh (local origin repo, stub gh)
-mise.toml                pinned tools and tasks (lint, check, test:apm, test:tracker, test:spec-number, cost, release, pin)
+mise.toml                pinned tools and tasks (lint, check, test:apm, test:tracker, cost, release, pin)
 docs/                    the documentation above
 ```
 
