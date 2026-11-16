@@ -1,0 +1,71 @@
+# What gets checked before the next step builds on it (medium and large features).
+# Render with `mise run diagrams`; the SVG is docs/img/chain.svg.
+direction: down
+
+classes: {
+  doc: {shape: page; style.font: mono}
+  check: {style: {border-radius: 16; font-size: 14}}
+  # always stops
+  gate: {shape: hexagon; style: {stroke: "#d17a00"; stroke-width: 3; font-color: "#d17a00"; bold: true}}
+  # stops only when something needs your call
+  maybe: {shape: hexagon; style: {stroke: "#d17a00"; stroke-width: 2; stroke-dash: 4; font-color: "#d17a00"}}
+  par: {label.near: top-left; style: {stroke-dash: 3; fill: transparent; font-size: 14}}
+}
+
+idea: your idea {shape: oval}
+map: capability map {class: doc}
+brief: brief.md {class: doc}
+fresh: fresh reader {class: check}
+g1: you confirm {class: gate}
+spec: spec.md {class: doc}
+g2: you answer\nits questions {class: maybe}
+plan: plan.md {class: doc}
+
+design: design review, in parallel {
+  class: par
+  sec: security {class: check}
+  cost: cost {class: check}
+  fit: clarity and fit {class: check}
+}
+
+g4: you check the spec,\ndecide on findings {class: maybe}
+tasks: tasks.md {class: doc}
+analyze: consistency check {class: check}
+g5: you fix\nserious gaps {class: maybe}
+code: code {class: doc; style.multiple: true}
+
+review: code review, in parallel {
+  class: par
+  corr: correctness {class: check}
+  sec: security {class: check}
+  perf: performance {class: check}
+  over: over-engineering {class: check}
+  read: readability {class: check}
+  over -> read: its cuts
+}
+
+g7: you pick fixes {class: gate}
+pr: pull request {shape: oval}
+
+idea -> brief: interview
+idea -> map: too big for one {style.stroke-dash: 3}
+map -> brief: one per capability {style.stroke-dash: 3}
+brief -> fresh -> g1 -> spec -> g2 -> plan
+plan -> design.sec
+plan -> design.cost
+plan -> design.fit
+design.sec -> g4
+design.cost -> g4
+design.fit -> g4
+g4 -> tasks: spec + plan amended
+tasks -> analyze -> g5
+g5 -> code: one agent per story, in turn
+code -> review.corr
+code -> review.sec
+code -> review.perf
+code -> review.over
+review.corr -> g7
+review.sec -> g7
+review.perf -> g7
+review.read -> g7
+g7 -> pr: fix + ship

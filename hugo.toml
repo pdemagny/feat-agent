@@ -13,6 +13,11 @@ disableKinds = ["taxonomy", "term", "RSS"]
   [[module.mounts]]
     source = "docs"
     target = "content/docs"
+  # Diagrams: docs/*.md link img/<name>.svg, which the image render hook below
+  # finds here; the README's <img> tags reach the copy under content/docs.
+  [[module.mounts]]
+    source = "docs/img"
+    target = "assets/img"
 
 [markup.goldmark.renderer]
   unsafe = true
@@ -31,4 +36,7 @@ disableKinds = ["taxonomy", "term", "RSS"]
   BookSearch = true
 
 [markup.goldmark.renderHooks.link]
+  useEmbedded = "always"
+
+[markup.goldmark.renderHooks.image]
   useEmbedded = "always"

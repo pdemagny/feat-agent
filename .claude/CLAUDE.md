@@ -18,6 +18,12 @@ When changing it:
   (`/feat` and `/fix` pass model and effort per spawn); use `disallowedTools`.
   Reviewer groups (`/feat` phases 4 and 7, `/fix` phase 4) live under each
   table.
+- The diagrams are D2 sources in `docs/diagrams/`, rendered to `docs/img/`
+  by `mise run diagrams`; commit both. `models.svg` is drawn from `/feat`'s
+  size table (its reviewer groups are in `docs/diagrams/models.py`), so a
+  change to the table needs a re-render. A change to `/feat`'s phases or
+  gates updates `gates.d2` and `chain.d2`. The `check` workflow fails when
+  `docs/img` differs from a fresh render.
 - The rules `/feat` and `/fix` share live in
   `.apm/skills/feat/references/harness.md`, written with named values that
   each skill's `## Harness values` block fills. Keep `/feat`-only words out
