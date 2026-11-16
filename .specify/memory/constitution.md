@@ -3,55 +3,83 @@
 ## Core Principles
 
 ### I. Thin coordinators
-`/feat` and `/fix` only coordinate: they spawn the phase agents, hold the
-gates and keep the state file. They never read code or edit artifacts. New
-work goes into an agent (`.apm/agents/*.agent.md`), not into a coordinator.
+`/feat` and `/fix` MUST only coordinate: spawn the phase agents, hold the
+gates and keep the state file. They MUST NOT read code or edit artifacts.
+New work MUST go into an agent (`.apm/agents/*.agent.md`), not into a
+coordinator.
+
+*Rationale*: the coordinator's context lasts the whole run; anything it
+reads or does is paid for at every later phase.
 
 ### II. The user decides at gates
 Nothing is merged, and nothing is called done, without the user. A phase
-that needs a decision stops at a hard gate; a soft gate only reports. A
-fix is called fixed only after an agent that did not write it has
+that needs a decision MUST stop at a hard gate; a soft gate only reports.
+A fix MUST NOT be called fixed until an agent that did not write it has
 verified it.
+
+*Rationale*: agents report their own work in the same confident tone
+whether it is right or not; a fresh verifier and a human gate are the
+checks.
 
 ### III. One source of truth per fact
 The size tables in `.apm/skills/feat/SKILL.md` and `.apm/skills/fix/SKILL.md`
-set every agent's model, effort and loaded skills; agent frontmatter
-carries no `model`, `effort`, `tools` or `color`. Rules both skills share
-live once, in `.apm/skills/feat/references/harness.md`. Anything that
-mirrors them (`docs/workflow.md`, `.apm/skills/brief/SKILL.md`) changes in
-the same commit.
+MUST set every agent's model, effort and loaded skills; agent frontmatter
+MUST NOT carry `model`, `effort`, `tools` or `color`. Rules both skills
+share MUST live once, in `.apm/skills/feat/references/harness.md`.
+Anything that mirrors them (`docs/workflow.md`, `.apm/skills/brief/SKILL.md`)
+MUST change in the same commit.
+
+*Rationale*: a value written twice drifts, and a drifted model or effort
+silently changes cost and quality.
 
 ### IV. Fixed report formats
-Every agent prompt ends with a fixed report format that the coordinators
-parse. A change to a format changes both sides together.
+Every agent prompt MUST end with a fixed report format that the
+coordinators parse. A change to a format MUST change both sides in the
+same commit.
+
+*Rationale*: the coordinators never read artifacts (principle I), so the
+report is their only input.
 
 ### V. Small and plain
-Prompts are prose, read by a model on every run: each added line has to
-earn its tokens. Prefer a rule in an existing file to a new file, and a
-shell one-liner to a script. Scripts are bash, `shellcheck`-clean, and
-tested offline (`tests/`).
+Prompts are read by a model on every run, so each added line MUST earn its
+tokens. A rule in an existing file SHOULD be preferred to a new file, and a
+shell one-liner to a script. Scripts MUST be bash, `shellcheck`-clean and
+covered by offline tests under `tests/`.
+
+*Rationale*: prompt size is a cost on every spawn, and untested shell
+breaks on the first unusual input.
 
 ## Distribution
 
-One source (`.apm/`), shipped three ways: an APM package (`apm.yml`), a
+One source (`.apm/`) MUST ship three ways: an APM package (`apm.yml`), a
 Claude Code plugin (`.claude-plugin/`, whose `agents` list names every
-agent) and `install.sh` for development. A third-party skill is added or
-removed in all of them at once (see `.claude/CLAUDE.md`).
+agent) and `install.sh` for development. A third-party skill MUST be added
+or removed in all of them at once, with the same pinned version (see
+`.claude/CLAUDE.md`).
 
 ## Development Workflow
 
 - Conventional commits, one logical change per commit; `feat` and `fix`
-  subjects become the CHANGELOG, so they are written for users.
-- Every change reaches `main` through a PR. `mise run lint`,
-  `mise run test:apm` and `mise run test:tracker` pass before committing.
+  subjects become the CHANGELOG, so they MUST be written for users.
+- Every change MUST reach `main` through a PR, with `mise run lint` and
+  the `mise run test:*` tasks passing.
 - Releases are cut by release-please when its release PR is merged;
-  versions and the CHANGELOG are never edited by hand.
+  versions and the CHANGELOG MUST NOT be edited by hand.
 
 ## Governance
 
 This constitution sums up `.claude/CLAUDE.md`, which holds the detailed
 rules; when they disagree, `.claude/CLAUDE.md` wins and this file is
-updated. A plan that breaks a principle says so in its constitution check,
-with the reason, and stops at the design gate.
+amended to match.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-16 | **Last Amended**: 2026-11-16
+- **Amendments**: through a PR that changes this file, bumps its version
+  and updates `.claude/CLAUDE.md` in the same PR when a rule changes.
+- **Versioning**: MAJOR when a principle is removed or redefined, MINOR
+  when one is added or its guidance materially expanded, PATCH for
+  wording.
+- **Compliance**: every plan's constitution check names any principle it
+  breaks, with the reason; a violation makes `/feat`'s plan and design
+  review gate hard. Changes made without a plan (`/fix`, direct PRs) are
+  held to these principles in PR review.
+
+**Version**: 1.1.0 | **Ratified**: 2026-11-16 | **Last Amended**: 2026-11-16
