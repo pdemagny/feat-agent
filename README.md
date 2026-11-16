@@ -95,7 +95,6 @@ for any of them: [docs/install.md](docs/install.md).
 | [docs/usage.md](docs/usage.md) | Brief, build, fixing a bug, answering gates, resuming, changing size, tuning models and effort |
 | [docs/workflow.md](docs/workflow.md) | Every phase, gate and agent: the size × phase matrix, what runs when and how |
 | [docs/design.md](docs/design.md) | Why it is built this way: Claude Code mechanics, rejected alternatives |
-| the cost notes (since moved out) | Measuring a run's tokens and cost with a cost script (since moved out); the baseline to compare against |
 | [Roadmap](https://github.com/users/pdemagny/projects/2) | Known bugs and what is planned |
 
 ## Layout
@@ -110,7 +109,6 @@ for any of them: [docs/install.md](docs/install.md).
 apm.yml                  APM package: metadata and the third-party skill dependencies
 .claude-plugin/          Claude Code plugin and marketplace manifests
 install.sh               developer install (symlinks), deps, check, uninstall
-a cost script (since moved out)            tokens and $ of a run, per phase and model, from transcripts
 tests/tracker/           offline tests for tracker.sh (stub gh, fake GraphQL endpoint)
 mise.toml                pinned tools and tasks (lint, check, test:apm, test:tracker, cost, release, pin)
 docs/                    the documentation above

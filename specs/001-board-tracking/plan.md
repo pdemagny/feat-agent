@@ -54,7 +54,6 @@ on a unix socket, so the real `--jq` filters run (`mise run test:tracker`).
 | New agent listed in plugin.json | pass: no new agent |
 | `version` in apm.yml and plugin.json match | pass: untouched |
 | `shellcheck install.sh` stays clean | pass: lint extends shellcheck to the script and the bash test files |
-| a cost script (since moved out) parses SKILL.md's size table | pass: table untouched; SKILL.md grows by about 12 lines' worth of tokens (the cost script's coordinator estimate reads its size; negligible) |
 | Record user-visible changes in CHANGELOG.md (`## Unreleased`) | pass: planned |
 | `mise run lint` and `mise run test:apm` before committing | pass: both stay green; `test:tracker` added |
 | Bump the tool pins in mise.toml when testing on newer versions | pass: gh 2.102.1 → 2.103.3 (FR-035) |

@@ -17,7 +17,7 @@ When changing it:
   Agent frontmatter carries no `model`, `effort`, `tools` or `color`
   (`/feat` and `/fix` pass model and effort per spawn); use `disallowedTools`.
   Reviewer groups (`/feat` phases 4 and 7, `/fix` phase 4) live under each
-  table and in `REVIEW_GROUPS` in a cost script (since moved out), keyed by skill.
+  table.
 - The rules `/feat` and `/fix` share live in
   `.apm/skills/feat/references/harness.md`, written with named values that
   each skill's `## Harness values` block fills. Keep `/feat`-only words out
@@ -37,11 +37,6 @@ When changing it:
 - Shell: `shellcheck` must stay clean on `install.sh`, the tracker script
   (`.apm/skills/feat/scripts/`) and its bash tests (`tests/tracker/`);
   `mise run lint` runs all three, `mise run test:tracker` the offline tests.
-- a cost script (since moved out) parses both size tables (`| <N><a-e> <name> |
-  \`feat-x\` | <loads> | model · effort | …`); keep that format or update the
-  parser. Run a cost script (since moved out) (`--skill fix` for `/fix`) on a real run
-  after changing models, agents or dependencies, and record notable results
-  in the cost notes (since moved out). Keep `PRICES` current.
 - Record user-visible changes in CHANGELOG.md.
 - The roadmap is the GitHub Project https://github.com/users/pdemagny/projects/2:
   one issue per item, label `feat` or `bug`, fields Priority (P1/P2/P3), Size

@@ -166,9 +166,8 @@ Full matrix in [workflow.md](workflow.md#size--phase-matrix).
 
 The size table in [`.apm/skills/feat/SKILL.md`](../.apm/skills/feat/SKILL.md) is the
 single source of truth: the coordinator passes `model` and `effort` from it
-on every agent call. Edit it, mirror the change in
-[workflow.md](workflow.md), and check the effect with
-a cost script (since moved out).
+on every agent call. Edit it and mirror the change in
+[workflow.md](workflow.md).
 
 Agent files carry no model or effort; outside the workflow an agent runs
 on the session's model unless you name one.
@@ -180,9 +179,8 @@ on the session's model unless you name one.
 | reviewer groups | phase 7 note under the size table                      | fewer reviewers = fewer cold starts                          |
 | gates           | the Phases and gates table                             | more stops where mistakes cost more                          |
 
-Suggested approach: run two or three real features, measure them with
-a cost script (since moved out), note the phase where results were weakest, and raise
-that phase's effort before its model.
+Suggested approach: run two or three real features, note the phase where
+results were weakest, and raise that phase's effort before its model.
 
 ## Using the agents on their own
 

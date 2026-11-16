@@ -20,7 +20,7 @@
   without your approval, and secret-looking values are redacted from the
   reports and block the commit when found in the staged diff. New prerequisite for `/fix` only: `specify
   extension add bug` in each project; `install.sh check <project>` lists
-  its skills (`note`/`warn`, not counted as missing). a cost script (since moved out) measures a run.
+  its skills (`note`/`warn`, not counted as missing).
 - `/brief` and `/feat` point bugs to `/fix` (`/fix #N` for a bug-labelled
   issue, `/fix "<symptom>"` for a bug described as an idea).
 - The rules `/feat` and `/fix` share (thin orchestrator, gates, state
@@ -80,13 +80,6 @@
 
 ## 0.5.0 — 2026-10-29
 
-- a cost script (since moved out) attributes phases correctly again: since the size
-  table was column-aligned, only the 4b and 7 rows parsed, so most runs
-  showed phases 0, 4 and 7 only; and a spawn's phase was applied one call
-  late, so each subagent landed in the previous phase.
-- a cost script (since moved out) prices subagent cache writes at the 5-minute TTL (1.25×
-  input) Claude Code uses for them, not 2×: runs measured ~15% too high.
-- the cost notes (since moved out) records the first measured runs of the current workflow.
 - An agent is continued with `SendMessage` only while it is warm (no stop
   for the user since its report); after a hard gate you answered, it is
   spawned fresh in amend mode. Subagent caches last 5 minutes, and a cold
@@ -105,8 +98,7 @@
   from google/elephant-goldfish-model's review (Apache-2.0).
 - Phase 4 is one agent with lenses, like phase 7: `feat-design-reviewer`
   runs 4a security, 4b cost and 4c clarity and fit. A small feature gets one
-  reviewer with all three lenses (one cold start instead of three; spec 022
-  simulated: phase 4 $0.34 from $0.52, the run $7.93 from $8.10); medium
+  reviewer with all three lenses (one cold start instead of three); medium
   and large keep one per lens in
   parallel. `feat-sec-reviewer` and `feat-cost-reviewer` are removed: after
   `./install.sh`, delete their dangling links in `~/.claude/agents/`.
@@ -165,8 +157,7 @@
   files.
 - `mise.toml`: pinned tools (claude, gh, specify-cli, apm, node, uv,
   shellcheck) and tasks: `lint`, `check`, `test:apm`, `dev:install`,
-  `dev:uninstall`, `cost`, `release <version>`, `pin <tag>`.
-- a cost script (since moved out) for the project's Spec Kit skills.
+  `dev:uninstall`, `release <version>`, `pin <tag>`.
 
 ## 0.2.0 — 2026-10-22
 
@@ -186,8 +177,7 @@
 - Agent frontmatter is harness-neutral: no `model`, `effort` or `color`, and
   `disallowedTools` instead of `tools`. `/feat` already passed model and
   effort on every spawn.
-- `/feat` accepts plugin-namespaced agent names (`feat-agents:feat-planner`);
-  a cost script (since moved out) strips the prefix.
+- `/feat` accepts plugin-namespaced agent names (`feat-agents:feat-planner`).
 - `./install.sh deps` installs the three skills in one `npx skills add`;
   `./install.sh check` recognises a plugin install.
 - The repo's `CLAUDE.md` moved to `.claude/CLAUDE.md` (plugins don't load a
@@ -205,8 +195,7 @@
   checklist is inlined in `feat-code-reviewer` lens 7d (MIT, credited).
 - `install.sh` keeps backups in `~/.claude/feat-agents-backups/`, out of
   `skills/` and `agents/`.
-- Fewer tokens per run (spec 022 simulated: 10.2M on small, from 14.7M in
-  0.1.0 and 28.9M with the old skill):
+- Fewer tokens per run:
   - Phase 1 is a separate `/feat-brief` skill that writes
     `specs/briefs/<name>.md` (or the capability map); `/feat <brief>` then
     starts from a cleared context.
@@ -223,14 +212,11 @@
   - Medium effort on small for design security, implementation and code
     review.
 - `install.sh` installs every skill in `skills/`.
-- a cost script (since moved out) models the new shape (`--stories`).
 - Phase 7 correctness review uses Matt Pocock's `code-review` (standards and
   spec axes) instead of the built-in one; `feat-bug-reviewer` adds its own
   bug pass. `install.sh deps` saves it outside `skills/` so it doesn't
   replace `/code-review`.
 - README: mermaid flow diagram.
-- a cost script (since moved out) (find, measure, simulate) and the cost notes (since moved out), with the spec
-  022 run as baseline ($14.24 measured; split simulated at $11.21 small).
 - Huge features: the capability-map rules are inlined in `SKILL.md`
   (adapted from addyosmani/agent-skills' `spec-driven-development`, MIT);
   that skill is no longer a dependency.

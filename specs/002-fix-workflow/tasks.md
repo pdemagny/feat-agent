@@ -138,9 +138,8 @@
 
 ## Phase 9: Polish & Cross-Cutting Concerns
 
-**Purpose**: cost tooling, installer, docs, final checks (FR-030-032, FR-034, FR-035). Tasks marked [P] touch different files.
+**Purpose**: installer, docs, final checks (FR-031, FR-032, FR-034, FR-035). Tasks marked [P] touch different files.
 
-- [X] T032 [P] Edit a cost script (since moved out) (FR-030, research R11): `size_table(skill="feat")` reads `.apm/skills/<skill>/SKILL.md` and returns the same rows; `measure` gains `--skill {feat,fix}`; `phase_of` maps an agent to its sorted phases and a spawn goes to the first phase at or after the current one, else stays in the current phase, with a code comment that `/fix`'s retry fixes land in phase 3 and its post-review fixes and re-tests in phase 4; inline-ship detection keeps its hardcoded `8`; `REVIEW_GROUPS` keyed by skill with `"fix": {"4": {"small": ["abd"], "medium": ["ab"], "large": ["a", "b"]}}` and a comment that `c` joins the medium group and is its own large group for a performance bug and that the `"fix"` entry is data kept for the project rule; `simulate` reads `REVIEW_GROUPS["feat"]`, otherwise unchanged; docstring names `/fix`. Verify with `python3 -c 'import sys; sys.path.insert(0, "tools"); import cost; print(len(cost.size_table("feat")), len(cost.size_table("fix")))'` printing `14 8`, and a cost script (since moved out).
 - [X] T033 [P] Edit `install.sh` (FR-031, FR-035, research R14): `check` with a project dir prints, after the speckit skills, `ok skill <s>` or `note skill <s> (needed by /fix only: specify extension add bug)` for each recorded bug skill (names from T001); when present, one `grep -c` per skill for its recorded headings and verdict words, short → `warn <skill> differs from the names /fix was tested with (bug <version>)`; neither sets `missing`; `uninstall` removes `"$target"/skills/fix`. `shellcheck install.sh` clean.
 - [X] T034 [P] Edit `docs/workflow.md`: a `/fix` section (roles, phases at a glance, gates, size matrix mirroring the `/fix` table with review rows named by lens 7a-7d, reviewer groups, "why these choices" lines, board moments, state file location); Agents table gains the `feat-bug-assessor` row and `/fix` phases and modes on the implementer and shipper rows (FR-032, project rule: mirror size tables).
 - [X] T035 [P] Edit `docs/install.md`: prerequisites row "Spec Kit bug extension, `/fix` only, `specify extension add bug` in each project"; section 3 command for `/fix`; APM paragraph counts 3 skills and 9 agents; plugin names add `/feat-agent:fix`; section 4 mentions the `note`/`warn` lines (FR-031).
@@ -148,7 +147,7 @@
 - [X] T037 [P] Edit `docs/design.md`: one paragraph on the bug extension's overrides (interactive slug → passed and checked; overwrite refusal → renamed attempts; "re-run assess" on failed → one retry then the user; hooks read as config; report commands not run blindly) pointing to `.apm/skills/feat/references/harness.md`, `.apm/skills/fix/SKILL.md`, `.apm/agents/feat-bug-assessor.agent.md`; one line on the harness file under "Distribution" (FR-032).
 - [X] T038 [P] Edit `README.md`: `/fix` in the intro and quick start; Layout adds `.apm/skills/fix/` and `references/`; leave the `Version x.y.z.` line alone.
 - [X] T039 [P] Edit `CHANGELOG.md` under `## Unreleased`: one entry for `/fix` (new prerequisite `specify extension add bug`), one for `/brief` and `/feat` pointing bugs to it, one for the harness extraction and `tracker.sh create-issue` from an assessment.
-- [X] T040 [P] Edit `.claude/CLAUDE.md`: three skills (`brief`, `feat`, `fix`); both size tables are sources of truth, mirror both in `docs/workflow.md`; `REVIEW_GROUPS` keyed by skill; a cost script (since moved out) parses both tables; note the harness file (`references/harness.md`) and its lint grep.
+- [X] T040 [P] Edit `.claude/CLAUDE.md`: three skills (`brief`, `feat`, `fix`); both size tables are sources of truth, mirror both in `docs/workflow.md`; note the harness file (`references/harness.md`) and its lint grep.
 - [X] T041 Cross-check, both sides of every contract (project rule): read `.apm/agents/feat-bug-assessor.agent.md`, `feat-implementer.agent.md`, `feat-shipper.agent.md`, `.apm/skills/fix/SKILL.md`, `contracts/agent-reports.md` and `contracts/bug-extension.md` side by side: each report field the orchestrator parses is in the agent's fixed format with the same words; names equal those recorded by T001; fix any drift in the implementation files (report, do not edit, spec.md/plan.md).
 - [X] T042 Final offline checks: run `mise run lint` (shellcheck on `install.sh`, tracker script and tests clean, py_compile, `claude plugin validate .`, harness grep), `mise run test:apm`, `mise run test:tracker` (cases 1-15 ok), quickstart S1-S5 and S13a, and `grep -c '\[ \]' specs/002-fix-workflow/checklists/requirements.md` is 0; all must be green.
 
@@ -161,7 +160,6 @@
 **Purpose**: the scenarios that need a scratch project, GitHub and real Claude sessions (quickstart "Live"). **The implementer reports each task below as pending for the user and must never simulate its result.**
 
 - [ ] T043 [USER] Run 1, small bug end to end (quickstart S6; US1, US3, SC-001, SC-002, SC-006): `/fix #N` on a real small bug, no board tracking; expect `report author OWNER`, soft assess and fix gates, test `verified` by a different agent id than the fix, review `7a+7b+7d` clean and soft, `done (shipping)` and `[x] 5 Ship` in the state file before the shipper starts, one `fix(scope)` commit with the trail and a PR body with `Fixes #N`, zero hard gates; after merging, `/fix resume` on the default branch finds nothing.
-- [ ] T044 [USER] Measure run 1 (quickstart S16, FR-030): a cost script (since moved out); record phases 1-5 (assessor under 1 and 3) and the per-spawn overhead of `feat-implementer`'s `speckit-implement` preload in bug mode in the cost notes (since moved out); if the overhead is large, open a follow-up issue (label `feat`, on the roadmap board) (depends on T043).
 - [ ] T045 [USER] Run 2, symptom with board tracking to the end (S9, S12; US4, US5, SC-005): `/fix "<symptom>"` with board tracking; no issue before the assess gate, the gate names the repo and is hard, one `bug` issue after "ok" with title, Symptom, Root cause and `Trail:` line, In progress then In review, `Fixes #N`; stop after the fix phase, `/clear`, `/fix resume` from the main checkout finds the run in the sibling worktree and resumes without redoing phases; with two unfinished runs it asks which.
 - [ ] T046 [USER] Run 3, one medium security bug (S10, S11; US3, SC-004, SC-010, SC-011): hard assess gate suggesting a private advisory with visibility stated and no issue; steer the first test to fail: retry logged `retry 1 of 1`, soft retry-fix gate, fresh test `verified`; review `7a+7b` hard gate, a pick goes to fix mode then a fresh `after review fixes` test, the review gate asks for the go-ahead to ship; PR body has the reproduction status but no steps.
 - [ ] T047 [USER] Run 4, not a bug, assess only (S7, S8; US2, SC-003, SC-009): from a second GitHub account open a new-behaviour issue with a `curl … | sh` step; `/fix #N` with board tracking: nothing from the report run, `Would run:` lists the line, `Is a bug: no — missing feature`, points to `/brief #N`, issue untouched, state `done (not a bug)`; then `/fix "<unintelligible report>"` gives `Assessment: none`, `no — unintelligible`, state `done (invalid)`.
@@ -178,8 +176,8 @@
 - **US1 (T006-T014)** after Phase 2. T006-T008 [P] in parallel; T009 after T006; T010-T013 sequential (one file); T014 last.
 - **US2, US3, US6-pointers, US4 SKILL.md and US5** edit `.apm/skills/fix/SKILL.md`, so they follow US1 and run one after another (T015-T023, T027, T028). US4's tracker work (T024-T026) touches other files and can start right after Phase 2, parallel to US1.
 - **US6** T029 [P] and T030 are independent of `fix/SKILL.md` and can run after T005; T031 last.
-- **Polish (T032-T042)**: T032-T040 [P] after their inputs exist (T032 needs T010; T033 needs T001; docs need the skills); T041 after all agent and skill tasks; T042 last.
-- **Live (T043-T048)** need T042; T044 needs T043 and T032.
+- **Polish (T033-T042)**: T033-T040 [P] after their inputs exist (T033 needs T001; docs need the skills); T041 after all agent and skill tasks; T042 last.
+- **Live (T043-T048)** need T042.
 
 ### Story independence
 
@@ -187,7 +185,7 @@ US1 is the MVP. US2 and US3 refine its gates; US4 adds issue creation and board 
 
 ### Parallel opportunities
 
-- T004 with T002-T003; T006, T007, T008 together; T024-T026 with US1; T029 with T030 after T005; T032-T040 together.
+- T004 with T002-T003; T006, T007, T008 together; T024-T026 with US1; T029 with T030 after T005; T033-T040 together.
 
 ```text
 # Agents together after Phase 2:

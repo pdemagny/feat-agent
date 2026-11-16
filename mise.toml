@@ -11,12 +11,11 @@ uv = "0.13.4"                   # backend for the pypi: tools
 shellcheck = "0.11.0"           # lints install.sh, the tracker script and tests/tracker
 
 [tasks.lint]
-description = "shellcheck the shell scripts, compile the Python tools, validate the Claude Code plugin"
+description = "shellcheck the shell scripts, compile the Python test stub, validate the Claude Code plugin"
 run = [
   "shellcheck install.sh",
   "shellcheck .apm/skills/feat/scripts/*",
   "shellcheck tests/tracker/run.sh tests/tracker/bin/gh",
-  "python3 -m py_compile a cost script (since moved out)",
   "python3 -m py_compile tests/tracker/fake_github.py",
   "claude plugin validate .",
   "! grep -Eiq 'specifier|planner|tasker|spec\\.md|brief|phase [0-9]|/feat' .apm/skills/feat/references/harness.md",
@@ -55,10 +54,6 @@ run = ["./install.sh", "./install.sh deps"]
 [tasks."dev:uninstall"]
 description = "Remove the symlinks dev:install created"
 run = "./install.sh uninstall"
-
-[tasks.cost]
-description = "a cost script (since moved out) find|measure|simulate ... (simulate: add --project DIR for its Spec Kit skills)"
-run = "python3 a cost script (since moved out)"
 
 [tasks.release]
 description = "Date the CHANGELOG's Unreleased entries (refuses if none) under a new empty Unreleased, bump apm.yml, plugin.json and the README version, commit, tag v<version> and push"

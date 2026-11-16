@@ -38,9 +38,7 @@ Claude integration. Recorded names live in
   (`specs/<short-name>/`, phase numbers 2–8, specifier/planner/tasker) become
   harness values declared in `feat/SKILL.md`. `/feat` reads the harness as
   its first step, so its context holds the same rules as before (one extra
-  Read call, about the same tokens). a cost script (since moved out) is left as is
-  (design review D17): the harness is moved text, and the estimate's error
-  from one extra Read is below its noise.
+  Read call, about the same tokens).
 - **Verification** (design review D8): a task diffs old and new text (every
   removed sentence is in the harness or still in SKILL.md), the lint grep
   of contracts/harness.md keeps `/feat`-only words out of the harness, and
@@ -65,9 +63,8 @@ Claude integration. Recorded names live in
   mode it also invokes `speckit-bug-fix`. Row 2's `Loads` lists both.
 - **Rationale**: removing the preload would change `/feat`'s phase 6
   (FR-027). The cost is the preloaded skill's size per fix spawn, a few k
-  tokens. The measured run (quickstart S6) records that overhead per
-  bug-mode spawn in the cost notes (since moved out); if it is large, a follow-up issue
-  proposes a lighter preload (design review D16, FR-030).
+  tokens; if it proves large, a follow-up issue proposes a lighter
+  preload (design review D16).
 
 ## R5. Re-running a stage whose report already exists
 
@@ -198,34 +195,6 @@ a non-bug on the board as In progress.
   gh's reason (no fallback without the label).
 - **Alternative**: a separate `create-bug-issue` subcommand: same code,
   one more usage line; the path already says what it is.
-
-## R11. the cost script and /fix
-
-- **Decision** (design review D17): keep `size_table(skill)` reading
-  `.apm/skills/<skill>/SKILL.md`; `measure` takes `--skill feat|fix`
-  (default `feat`). `REVIEW_GROUPS` is keyed by skill: `{"feat": {"4": …,
-  "7": …}, "fix": {"4": {"small": ["abd"], "medium": ["ab"], "large": ["a",
-  "b"]}}}`; a comment says `c` joins the medium group (`abc`) and runs as a
-  third group for large when the bug is a performance bug (D7). Phase
-  attribution: an agent may sit on several rows (`feat-bug-assessor` on 1
-  and 3), so a spawn goes to the agent's first phase at or after the
-  current one, else stays in the current phase. For single-row agents this
-  equals today's `max` rule, so `/feat` numbers don't change. `simulate`
-  stays `/feat`-only and unchanged (no harness-size addition). The
-  pre-0.1.0 "ship" detection keeps its hardcoded `8`: it fires only on an
-  inline `git commit` or `gh pr create` in the main transcript, which
-  `/fix`'s orchestrator never runs (the shipper does, in its own
-  transcript), so it cannot misplace a `/fix` call; the shipper row is
-  left alone.
-- **Where `/fix` calls land** (D22): with that rule, the retry fix
-  (`feat-implementer`, row 2, spawned during phase 3) counts under phase 3;
-  post-review fixes (row 2) and re-tests (`feat-bug-assessor`, rows 1 and 3,
-  spawned during phase 4) count under phase 4. A code comment at
-  `phase_of` says so, and that `REVIEW_GROUPS["fix"]` is data kept for the
-  project rule (the groups live under the table and in `REVIEW_GROUPS`):
-  `measure` doesn't read it and `simulate` is `/feat`-only.
-- **Alternative**: auto-detecting the skill from the transcript (a
-  `feat-bug-assessor` spawn): one more pass for a choice the user knows.
 
 ## R12. Models and efforts for /fix's size table
 

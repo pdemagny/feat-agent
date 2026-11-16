@@ -136,8 +136,6 @@ keeping contexts small:
 - **Fewer, cheaper agents where the feature is small**: one design reviewer
   instead of three, two code reviewers instead of five, medium effort.
 
-Measured and simulated numbers: the cost notes (since moved out).
-
 ## Distribution: one source, three installers
 
 The repo keeps one copy of everything in APM's layout and lets each
@@ -202,5 +200,3 @@ growing context this workflow exists to avoid.
   every agent start writes ~36k tokens before working. Left for later.
 - **`autoCompactWindow` on implementers** for very long task lists. Large
   features split by story instead.
-
-Cost of these choices, measured and simulated: the cost notes (since moved out).

@@ -24,18 +24,16 @@ with Spec Kit, the bug extension and a GitHub repo you can push to.
 | S1 | `mise run lint` | shellcheck clean (install.sh, tracker.sh, tests), py_compile ok, `claude plugin validate .` ok, and the harness grep (contracts/harness.md, Invariants) finds none of `specifier`, `planner`, `tasker`, `spec.md`, `brief`, `phase [0-9]`, `/feat` |
 | S2 | `mise run test:apm` | `.claude/agents 9`, `.claude/skills` counts `brief`, `feat`, `fix` plus deps; `test -f` on `skills/feat/scripts/tracker.sh`, `skills/feat/references/harness.md`, `skills/fix/SKILL.md` pass |
 | S3 | `mise run test:tracker` | cases 1–15 print `ok …` (13–15 from [contracts/tracker-cli.md](contracts/tracker-cli.md)) |
-| S4 | `python3 -c 'import sys; sys.path.insert(0, "tools"); import cost; print(len(cost.size_table("feat")), len(cost.size_table("fix")))'` | `14 8` |
 | S5 | `./install.sh check <scratch project>` | `ok` lines for the three `speckit-bug-*` skills; in a project without the extension, `note … needed by /fix only: specify extension add bug` lines and the exit code unchanged |
 | S13a | Text diff of `feat/SKILL.md` before and after the extraction (research R2) | every removed sentence is in `references/harness.md` (with the value names of contracts/harness.md in place of `/feat`'s nouns) or still in SKILL.md; the `/feat` column of the values table holds the replaced words |
 
 ## Live (at most four `/fix` runs, FR-043)
 
-**Run 1 — small bug end to end (S6, S16).**
+**Run 1 — small bug end to end (S6).**
 
 | # | Scenario | Expect |
 |---|---|---|
 | S6 | `/fix #N` on a real, small bug in an issue you opened, no board tracking (US1, US3) | worktree `fix-<N>-…`; setup Log line has `report author OWNER`; assess soft (small, high, `reproduced` by the project's tests or a temp-dir scratch test, 1 remediation, no public change, not security); fix soft; test `verified` by a different agent id than the fix; one reviewer `7a+7b+7d`, clean → soft; the state file shows `done (shipping)` and `[x] 5 Ship` before the shipper starts; PR with one `fix(scope)` commit, the trail incl. state file, body with root cause, verdict, reproduction and `Fixes #N`; zero hard gates (SC-002). After merging the PR: `/fix resume` on the default branch says there is nothing to resume (SC-006) |
-| S16 | a cost script (since moved out) | phases 1–5 with `feat-bug-assessor` under 1 and 3; record in the cost notes (since moved out) with the per-spawn overhead of `speckit-implement` in the bug-mode spawn (FR-030) |
 
 **Run 2 — symptom with board tracking, to the end (S9, S12).**
 

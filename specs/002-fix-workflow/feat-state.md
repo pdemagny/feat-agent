@@ -12,7 +12,7 @@
 ## Brief
 
 # Brief: /fix — a bugfix workflow that wraps Spec Kit's bug extension in the /feat harness
-- Size: medium — ~40 tasks expected: a new skill and agent, a shared harness extracted from /feat, modes in three existing agents, a tracker variant with tests, the cost script and docs
+- Size: medium — ~40 tasks expected: a new skill and agent, a shared harness extracted from /feat, modes in three existing agents, a tracker variant with tests and docs
 - Short name: fix-workflow
 - Issue: #15
 
@@ -81,8 +81,7 @@ it has no assess step, and spec/plan/tasks is the wrong shape for a fix.
 - **State beside the artifacts**: `.specify/bugs/<slug>/feat-state.md`, `/feat`'s format.
 - `/fix` stays thin like `/feat`: never reads code or edits artifacts; work goes into agents.
 - Agent frontmatter carries no `model`/`effort`/`tools`/`color`; new agent listed in `.claude-plugin/plugin.json`; agent reports keep a fixed format the orchestrator depends on.
-- a cost script (since moved out) parses size tables in the `| <N><a-e> <name> | \`feat-x\` | … |` format; it must learn `/fix`'s table and review groups. `/fix`'s review groups live under its size table in `fix/SKILL.md` and in `REVIEW_GROUPS`, keyed as a separate skill.
-- Existing agents that change: `feat-implementer` (`bug` mode) and `feat-shipper` (`fix` mode); `feat-code-reviewer` is unchanged. Run a cost script (since moved out) on a real `/fix` run and record it in the cost notes (since moved out).
+- Existing agents that change: `feat-implementer` (`bug` mode) and `feat-shipper` (`fix` mode); `feat-code-reviewer` is unchanged.
 - `tracker.sh` gains an issue-creation variant from `assessment.md`: title from the assessment's symptom summary, body from the symptom, root cause and a link to the trail, label `bug` hardcoded (exact section names from the spike); `shellcheck` clean, offline tests in `tests/tracker/`.
 - `install.sh check` reports the bug extension's skills (needed by `/fix` only); docs/install.md lists the extension as a `/fix` prerequisite.
 - First task: install the bug extension in a scratch project, record the exact skill names the Claude integration generates, the artifact sections, verdict words, hooks and what each stage prints; build the assessor's report on that. The spike's findings override the names used in this brief; the specifier writes them into spec.md.
@@ -101,8 +100,8 @@ it has no assess step, and spec/plan/tasks is the wrong shape for a fix.
 - [x] 6 US3 — T017–T023 done; lint, test:apm pass; choices: re-test after `partial` evidence or Sections/Slug error = same cycle, not logged as `back to 3`; phase 4 always logs its line before going back to 3 (data-model silent on this — note for review)
 - [x] 6 US4 — T024–T027 done; lint, test:tracker (1–15, 13–15 red first), test:apm, shellcheck pass; `brief_parts` → `doc_parts`; found: shipper fix mode could write `Fixes none` (Issue: none) → shipper wording fixed with US5
 - [x] 6 US5 — T028 + shipper `Issue: none` fix done; lint, test:apm pass; notes for review: a session dying after `done (shipping)` before the shipper returns is not found by resume (per FR-024); resume with `Issue: none` and no creation log line asks the user for the ref instead of re-creating
-- [x] 6 US6+polish — T029–T042 done; lint, test:apm, test:tracker (15 ok), shellcheck pass; the cost script size tables 14/8; install.sh check note/warn verified on a scratch project; /feat text diff ok; the cost notes (since moved out) has an unmeasured placeholder for T044
+- [x] 6 US6+polish — T029–T042 done; lint, test:apm, test:tracker (15 ok), shellcheck pass; install.sh check note/warn verified on a scratch project; /feat text diff ok
 - [x] 6 Implement — soft gate: T001–T042 done, all checks green; T043–T048 [USER] live runs pending (not run)
 - [x] tracker: #15 set to "In review"
-- [~] 7 Code review — diff base origin/main e957175 (local main is stale at b07ada5); 7a/7b opus·medium, 7c/7d/7e sonnet·medium done; B1–B9, S1–S7, P1, C1–C7, R1–R9; user "ok": fix B1–B8, S1–S7, C1–C7, R1–R8; skipped P1 (measure on T044 first) and R9 (optional). Applied all picks; lint, test:apm, test:tracker (1–17; new 16 missing label, 17 secret in body), shellcheck, cost tables 14/8 pass; /feat untouched. Adaptations: C7 → security row widened so a security bug with findings still asks the ship go-ahead; S7 pattern `(password|token|secret)["']?\s*[:=]` can falsely block ship on ordinary code (`token = …`) — fails closed, `!` names the file; `sk-` bounded. Spec text of FR-005/025/036/037/038/042 updated (IDs unchanged)
+- [~] 7 Code review — diff base origin/main e957175 (local main is stale at b07ada5); 7a/7b opus·medium, 7c/7d/7e sonnet·medium done; B1–B9, S1–S7, P1, C1–C7, R1–R9; user "ok": fix B1–B8, S1–S7, C1–C7, R1–R8; skipped P1 and R9 (optional). Applied all picks; lint, test:apm, test:tracker (1–17; new 16 missing label, 17 secret in body), shellcheck pass; /feat untouched. Adaptations: C7 → security row widened so a security bug with findings still asks the ship go-ahead; S7 pattern `(password|token|secret)["']?\s*[:=]` can falsely block ship on ordinary code (`token = …`) — fails closed, `!` names the file; `sk-` bounded. Spec text of FR-005/025/036/037/038/042 updated (IDs unchanged)
 - [ ] 8 Ship

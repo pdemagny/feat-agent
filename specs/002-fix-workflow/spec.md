@@ -146,7 +146,7 @@ The rules `/feat` and `/fix` share (thin orchestrator, gate message shape and se
 
 **Phases**
 
-- **FR-006**: Each phase MUST run in a subagent whose model and effort come from `/fix`'s own size table, in the format a cost script (since moved out) parses. The assess row MUST be `opus · medium` in every column: the first assess costs the same whatever the size, and a deeper look comes only from "back to 1", a re-assess after which the later phases run at the larger size set at that gate.
+- **FR-006**: Each phase MUST run in a subagent whose model and effort come from `/fix`'s own size table. The assess row MUST be `opus · medium` in every column: the first assess costs the same whatever the size, and a deeper look comes only from "back to 1", a re-assess after which the later phases run at the larger size set at that gate.
 - **FR-007**: The assess phase MUST run the bug extension's assess stage in a new `feat-bug-assessor` agent, read-only on source, producing `assessment.md`. Its fixed-format report MUST give: whether it is a bug (FR-039), root cause, confidence, files in scope, remediation(s), reproduction status (`reproduced` / `not reproduced` / `not reproducible here`, `reproduced` only when the assessor actually ran the reproduction under FR-036), public-behaviour impact, the report author's association (FR-036), the slug check (FR-041), and a proposed size (small/medium/large from scope, confidence and risk area: security, data, concurrency). The report is built on the spike's recorded sections and verdict words.
 - **FR-008**: The fix phase MUST run the extension's fix stage in `feat-implementer` in a new `bug` mode, producing `fix.md`.
 - **FR-009**: The test phase MUST run the extension's test stage in `feat-bug-assessor` in a test mode, producing `test.md` with a verdict. Every test run (first, retry, re-test after review fixes) MUST be a fresh spawn, never the agent that wrote the fix.
@@ -182,10 +182,9 @@ The rules `/feat` and `/fix` share (thin orchestrator, gate message shape and se
 - **FR-027**: After the extraction `/feat` MUST behave identically: same phases, gates, state file, board moves.
 - **FR-028**: `/brief` and `/feat` MUST point bugs to `/fix`.
 
-**Packaging, cost, docs**
+**Packaging, docs**
 
 - **FR-029**: New and changed agents MUST carry no `model`, `effort`, `tools` or `color` in frontmatter (use `disallowedTools`); `feat-bug-assessor` MUST carry `disallowedTools: Edit, NotebookEdit, Agent` and be listed in `.claude-plugin/plugin.json`; every agent report keeps a fixed format and the orchestrator and agent change together.
-- **FR-030**: a cost script (since moved out) MUST parse `/fix`'s size table (`size_table(skill)`, `measure --skill feat|fix`) and its review groups, which live under the table in `fix/SKILL.md` and in `REVIEW_GROUPS` keyed by skill (`"fix"` is data kept for the project rule; `simulate` stays `/feat`-only and unchanged). An agent on several rows is attributed to its first phase at or after the current one, else stays in the current phase, so retry fixes count under phase 3 and post-review fixes and re-tests under phase 4 (said in a code comment). A real `/fix` run (the small end-to-end run of FR-043) MUST be measured with a cost script (since moved out) and recorded in the cost notes (since moved out), with the per-spawn overhead of `feat-implementer`'s unused `speckit-implement` preload in bug mode; a follow-up issue is opened if that overhead is large.
 - **FR-031**: `install.sh check` MUST report the bug extension's skills (needed by `/fix` only), and `docs/install.md` MUST list the extension as a `/fix` prerequisite.
 - **FR-032**: `docs/workflow.md`, the README and `CHANGELOG.md` (`## Unreleased`) MUST describe `/fix`, mirroring size-table changes as the project rules require; `docs/workflow.md` names `/fix`'s review rows by lens (7a–7d). `docs/usage.md`'s `/fix` section is limited to arguments, the gates the user sees and resume, and links `docs/workflow.md`; `docs/design.md` states the bug-extension overrides in one paragraph pointing to the harness and `/fix` files.
 - **FR-033**: The first task MUST be the spike (install the bug extension in a scratch project; record skill names, artifact sections, verdict words, hooks, and what each stage prints). The spike MUST record its findings in contracts/bug-extension.md before dependent work; where they differ from this spec, the planner amends spec.md (and the design docs) to the recorded names.
@@ -207,7 +206,7 @@ The rules `/feat` and `/fix` share (thin orchestrator, gate message shape and se
 
 **Validation budget**
 
-- **FR-043**: Live validation MUST stay within four `/fix` runs: (1) a small bug end to end, also the measured run of FR-030; (2) `/fix "<symptom>"` with board tracking to the end (issue creation, board moves, `Fixes #N`); (3) one medium run with a first `failed` test, the retry, review picks and the re-test; (4) the not-a-bug and unintelligible reports, assess only. `/feat`'s regression is checked by the text diff (every sentence removed from `feat/SKILL.md` is in the harness or still in SKILL.md) and one `/feat resume` on an existing state file.
+- **FR-043**: Live validation MUST stay within four `/fix` runs: (1) a small bug end to end; (2) `/fix "<symptom>"` with board tracking to the end (issue creation, board moves, `Fixes #N`); (3) one medium run with a first `failed` test, the retry, review picks and the re-test; (4) the not-a-bug and unintelligible reports, assess only. `/feat`'s regression is checked by the text diff (every sentence removed from `feat/SKILL.md` is in the harness or still in SKILL.md) and one `/feat resume` on an existing state file.
 
 ### Key Entities
 

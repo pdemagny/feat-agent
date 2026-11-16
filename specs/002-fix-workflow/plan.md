@@ -17,13 +17,13 @@ mode. The stages themselves are Spec Kit's bug extension
 and `/fix` share move verbatim from `feat/SKILL.md` into
 `.apm/skills/feat/references/harness.md`, which both read. `tracker.sh
 create-issue` learns to build a `bug` issue from `assessment.md`;
-a cost script (since moved out) learns `/fix`'s table; `install.sh check` reports the
+`install.sh check` reports the
 extension. A spike in a scratch project confirms the extension's names
 first.
 
 ## Technical Context
 
-**Language/Version**: Markdown prompts (skills, agents); bash 4+ (`tracker.sh`, `install.sh`, tests); Python 3 standard library (a cost script (since moved out)).
+**Language/Version**: Markdown prompts (skills, agents); bash 4+ (`tracker.sh`, `install.sh`, tests).
 
 **Primary Dependencies**: Spec Kit's bundled bug extension (`specify extension add bug`, v1.0.1 with the pinned specify-cli 1.2.1), a new **prerequisite for `/fix` only**, installed per project, no network; nothing else new. `gh` and `git` as today.
 
@@ -35,9 +35,9 @@ first.
 
 **Project Type**: Claude Code skills/agents package.
 
-**Performance Goals**: cost, not speed: `/fix` spawns 4–8 agents per run (assess, fix, test, 1–3 reviewers, ship, plus retries). The orchestrator context gains the harness (moved, not added, for `/feat`). Measured on a real run (FR-030).
+**Performance Goals**: cost, not speed: `/fix` spawns 4–8 agents per run (assess, fix, test, 1–3 reviewers, ship, plus retries). The orchestrator context gains the harness (moved, not added, for `/feat`).
 
-**Constraints**: `/fix` and `/feat` stay thin (FR-005); `/feat` unchanged (FR-027); agent frontmatter without model/effort/tools/color; size tables in the the cost script row format; the extension's guardrails and URL trust policy kept.
+**Constraints**: `/fix` and `/feat` stay thin (FR-005); `/feat` unchanged (FR-027); agent frontmatter without model/effort/tools/color; size tables in `/feat`'s row format; the extension's guardrails and URL trust policy kept.
 
 **Scale/Scope**: one bug per run; ~40 tasks.
 
@@ -49,14 +49,13 @@ first.
 |---|---|
 | Size table in `feat/SKILL.md` is the source of truth; `Loads` column; mirror in docs/workflow.md (matrix and agents table) | pass: `/feat`'s table unchanged; `/fix` gets its own table in the same format and `Loads` column, mirrored in docs/workflow.md (a `/fix` matrix and agents-table rows); CLAUDE.md updated to name both tables |
 | Agent frontmatter: no `model`, `effort`, `tools`, `color`; use `disallowedTools` | pass: `feat-bug-assessor` has `disallowedTools: Edit, NotebookEdit, Agent` only (it writes reports with Write; the spike confirms the bug skills don't need Edit) |
-| Phase 4/7 reviewer groups under the table and in `REVIEW_GROUPS` | pass: `/fix`'s groups under its table and in `REVIEW_GROUPS["fix"]` |
+| Phase 4/7 reviewer groups under the table | pass: `/fix`'s groups under its table |
 | Third-party skill added → apm.yml, install.sh deps, install.md, agent `skills:`, `Loads` | pass: none added. The bug extension is a Spec Kit extension installed per project (like the `speckit-*` skills), so it goes in install.md's prerequisites and `install.sh check`, not `deps`/`apm.yml` |
 | Agent reports keep a fixed format; change both sides | pass: assessor report new (both sides in this change); implementer gains one bug-mode line; shipper report unchanged ([contracts/agent-reports.md](contracts/agent-reports.md)) |
 | `/feat` stays thin; new work goes into an agent | pass: `/fix` reads reports only; its non-agent commands are the harness value "Commands the orchestrator may run besides the tracker": git for the worktree and diff, `gh issue view` (title), `gh api … --jq .author_association` (report author), `gh repo view` (name, visibility), `git ls-remote` (slug); no heading check at setup |
 | New agent in `.claude-plugin/plugin.json` | pass: planned |
 | `version` in apm.yml and plugin.json match | pass: untouched (release bumps) |
 | shellcheck clean on install.sh, tracker, tests | pass: planned, `mise run lint` |
-| a cost script (since moved out) parses the size table format; run `measure` after changing agents; keep `PRICES` | pass: parser generalised to `<skill>`; `measure --skill fix` on a real run, recorded in the cost notes (since moved out); PRICES untouched |
 | CHANGELOG `## Unreleased` | pass: planned |
 | `mise run lint`, `mise run test:apm` before committing | pass: both extended and green |
 | Bump tool pins when tested on newer versions | pass: the spike runs the pinned specify-cli 1.2.1; a newer one bumps the pin |
@@ -72,7 +71,7 @@ specs/002-fix-workflow/
 ├── plan.md                      # this file
 ├── research.md                  # decisions R1–R15 and rejected options
 ├── data-model.md                # bug run, state file, gate rules, test cycle
-├── quickstart.md                # offline checks and live scenarios S1–S16
+├── quickstart.md                # offline checks and live scenarios S1–S15
 ├── contracts/
 │   ├── harness.md               # what moves into the shared reference; values each skill declares
 │   ├── agent-reports.md         # assessor modes and report; implementer bug mode; shipper fix mode; reviewer inputs
@@ -95,7 +94,6 @@ specs/002-fix-workflow/
 ├── feat-implementer.agent.md    # bug mode; report line; description
 └── feat-shipper.agent.md        # fix mode; description
 tests/tracker/run.sh             # cases 13–15
-a cost script (since moved out)                    # size_table(skill), measure --skill, REVIEW_GROUPS by skill, multi-phase attribution (simulate unchanged)
 install.sh                       # check: bug extension skills and headings (non-blocking); uninstall: fix
 mise.toml                        # lint: harness grep; test:apm: test -f harness.md and fix/SKILL.md
 .claude-plugin/plugin.json       # agents += feat-bug-assessor; description
@@ -104,10 +102,9 @@ docs/workflow.md                 # /fix section: phases, gates, size matrix, rev
 docs/install.md                  # prerequisite row for the bug extension; counts (3 skills, 9 agents); section 3 line; plugin names
 docs/usage.md                    # a /fix section; "not for bugfixes" → /fix; resume
 docs/design.md                   # third-party table: bug extension overrides (slug, re-run, retry, hooks)
-the cost notes (since moved out)                     # measure --skill; a measured /fix run
 README.md                        # /fix in the intro, quick start, layout
 CHANGELOG.md                     # ## Unreleased entry
-.claude/CLAUDE.md                # three skills; both size tables; REVIEW_GROUPS keyed by skill
+.claude/CLAUDE.md                # three skills; both size tables
 ```
 
 **Structure Decision**: `/fix` is a sibling skill directory of `feat`, so
@@ -146,7 +143,7 @@ Body, in order:
 
 1. Intro (two lines) and "read `<this skill's base dir>/../feat/references/harness.md`"; missing → stop with the install hint.
 2. `## Harness values` (contract table, /fix column).
-3. `## Size table`, the format the cost script parses:
+3. `## Size table`, in `/feat`'s format:
 
 | Phase                                     | Agent                | Loads                              | small           | medium          | large           |
 | ----------------------------------------- | -------------------- | ---------------------------------- | --------------- | --------------- | --------------- |
@@ -291,22 +288,6 @@ both sources (title prefix and the two section names as arguments); the
 assessment path gets the same physical-directory check; `--label bug` only
 for assessments. Three new offline cases; the stub `gh` needs no change.
 
-### a cost script (since moved out) (FR-030)
-
-Research R11: `size_table(skill="feat")` reads
-`.apm/skills/<skill>/SKILL.md` and returns the same rows; `measure` gains
-`--skill {feat,fix}`; `phase_of` maps an agent to its sorted phases, and a
-spawn goes to the first at or after the current phase, else stays, with a
-comment that `/fix`'s retry fixes land in phase 3 and its post-review
-fixes and re-tests in phase 4; the inline-ship detection keeps its
-hardcoded `8` (`/fix`'s orchestrator never commits or opens the PR
-itself); `REVIEW_GROUPS` keyed by skill with `"fix": {"4": {"small":
-["abd"], "medium": ["ab"], "large": ["a", "b"]}}`, a comment that `c`
-joins the medium group and runs as its own large group for a performance
-bug, and that the `"fix"` entry is data kept for the project rule;
-`simulate` reads `REVIEW_GROUPS["feat"]`, otherwise unchanged. Docstring
-names `/fix`.
-
 ### install.sh and mise (FR-031, FR-035)
 
 - `check` with a project dir: after the speckit skills, for each recorded
@@ -345,17 +326,12 @@ names `/fix`.
   run blindly), pointing to `.apm/skills/feat/references/harness.md`,
   `.apm/skills/fix/SKILL.md` and `.apm/agents/feat-bug-assessor.agent.md`;
   one line on the harness file in "Distribution".
-- the cost notes (since moved out): `measure --skill fix`; the measured run (quickstart S6),
-  with the per-spawn overhead of `feat-implementer`'s `speckit-implement`
-  preload in bug mode; if large, open a follow-up issue (label `feat`, on
-  the roadmap board).
 - `README.md`: `/fix` in the intro and quick start; Layout adds
   `.apm/skills/fix/` and `references/`.
 - `CHANGELOG.md` `## Unreleased`: one entry for `/fix` (prerequisite
   `specify extension add bug`), one for `/brief`/`/feat` pointing to it.
 - `.claude/CLAUDE.md`: three skills; both size tables are sources of truth
-  (mirror both in docs/workflow.md); `REVIEW_GROUPS` keyed by skill;
-  the cost script parses both tables.
+  (mirror both in docs/workflow.md).
 
 ### Implementation order
 
@@ -372,11 +348,10 @@ names `/fix`.
 3. Tracker variant, test-first (cases 13–15).
 4. `feat-bug-assessor`, implementer bug mode, shipper fix mode, plugin.json.
 5. `fix/SKILL.md`; `/brief` and `/feat` pointers.
-6. the cost script, `install.sh`, `mise.toml`.
+6. `install.sh`, `mise.toml`.
 7. Docs, CLAUDE.md, CHANGELOG.
 8. Live validation, at most four `/fix` runs (FR-043, quickstart "Live"):
-   run 1 small end to end (S6), which is also the measurement S16 into
-   the cost notes (since moved out); run 2 `/fix "<symptom>"` with board tracking to the end
+   run 1 small end to end (S6); run 2 `/fix "<symptom>"` with board tracking to the end
    (S9: issue creation, board moves, `Fixes #N`), with the resume check
    S12; run 3 one medium security bug (S10+S11: first test failed, retry,
    review picks, re-test, disclosure prompts); run 4 the assess-only
