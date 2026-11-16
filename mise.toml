@@ -61,14 +61,3 @@ run = ["./install.sh", "./install.sh deps"]
 [tasks."dev:uninstall"]
 description = "Remove the symlinks dev:install created"
 run = "./install.sh uninstall"
-
-[tasks.pin]
-description = "Pin your user-level APM install of feat-agent to a tag and reinstall"
-usage = 'arg "<tag>" help="e.g. v0.2.1"'
-run = '''
-#!/usr/bin/env bash
-set -euo pipefail
-sed -i -E "s|^(\s*- pdemagny/feat-agent)(#.*)?$|\1#${usage_tag}|" "$HOME/.apm/apm.yml"
-grep -n 'pdemagny/feat-agent' "$HOME/.apm/apm.yml"
-cd "$HOME" && GITHUB_TOKEN="$(gh auth token)" apm install -g
-'''
