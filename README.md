@@ -65,41 +65,19 @@ call, and `EnterWorktree`.
 
 ## How it works
 
-```mermaid
-flowchart TD
-    idea([Feature idea]) --> P1["1 Brief<br/>brief skill · interview-me"]
-    P1 -- huge --> MAP["Capability map<br/>brief skill"]
-    MAP --> GM{{"Gate: map"}}
-    GM -- "one brief per capability" --> P1
-    P1 -- "small · medium · large" --> R1["Brief review<br/>feat-brief-reviewer<br/>fresh reader"]
-    R1 --> G1{{"Gate: brief, size and review"}}
-    G1 --> CLR["clear context, then run feat on the brief"]
-    CLR --> P2["2 Specify<br/>feat-specifier"]
-    P2 --> G2{{"Gate: spec.md"}}
-    G2 --> P3["3 Plan<br/>feat-planner"]
-    P3 --> P4["4 Design review<br/>feat-design-reviewer<br/>security · cost · clarity and fit<br/>1 reviewer on small, 3 otherwise"]
-    P4 --> G4{{"Gate: design findings"}}
-    G4 --> P5["5 Tasks + analyze<br/>feat-tasker"]
-    P5 --> P6["6 Implement<br/>feat-implementer<br/>one per user story, in turn"]
-    P6 --> P7["7 Code review<br/>feat-code-reviewer<br/>2 reviewers on small, 5 otherwise"]
-    P7 --> G7{{"Gate: pick the fixes"}}
-    G7 --> P7f["Apply picks<br/>feat-implementer · fix mode"]
-    P7f --> P8["8 Ship<br/>feat-shipper · haiku"]
-    P8 --> PR([Pull request])
+<p align="center"><img src="docs/img/gates.svg" alt="Sequence diagram of a small or medium feature: you, Claude Code and the agents. You always confirm the brief and pick the code review fixes. The run also stops when the spec has open questions, when the plan and design review need your call (you then check the spec too), and when the consistency check finds serious gaps." width="560"></p>
 
-    classDef you fill:#e8f0fe,stroke:#4a6fd1,color:#1a2b5c
-    classDef agent fill:#eef7ee,stroke:#4a9a4a,color:#1d3d1d
-    classDef gate fill:#fff4e0,stroke:#d18b2a,color:#5c3a0a
-    class P1,MAP,CLR you
-    class P2,P3,P4,P5,P6,P7,P7f,P8 agent
-    class G1,GM,G2,G4,G7 gate
-```
+Agents do the work, each phase in a fresh one. Solid orange arrows are gates
+where the run always waits for you; dashed ones wait only when something
+needs your call. The spec stops only on an open question; otherwise you see
+its summary at the plan and design review gate. A large feature also stops
+after the plan, the design review, the tasks and each story.
 
-Blue runs in your session, green in a subagent, orange hexagons are gates
-where the run waits for you. On a small or medium feature the design gate
-(phases 3 and 4 together) only waits when a finding needs your call; a
-large feature also stops after phases 3 and 5 and after each story of 6.
-Several reviewers on one phase run in parallel.
+<p align="center"><img src="docs/img/chain.svg" alt="From your idea to a pull request: brief, fresh reader, you confirm; spec, you answer its questions; plan; security, cost, and clarity and fit reviewed in parallel; you check the spec and decide on findings, then spec and plan are amended; tasks and a consistency check; code written one story at a time; correctness, security, performance and over-engineering reviewed in parallel, readability after over-engineering; you pick fixes; pull request. A huge idea first becomes a capability map, one brief per capability." width="480"></p>
+
+Each artifact is checked before the next one is built from it. Shown for
+medium and large features, with one reviewer per lens; a small feature runs
+one design reviewer and two code reviewers covering the same lenses.
 
 - **Design review** (phase 4) looks at security, cost, and clarity and fit:
   that last lens reads spec and plan as someone new to the project would,
