@@ -1,5 +1,12 @@
 # feat-agent
 
+[![Release](https://img.shields.io/github/v/release/pdemagny/feat-agent)](https://github.com/pdemagny/feat-agent/releases/latest)
+[![check](https://github.com/pdemagny/feat-agent/actions/workflows/check.yml/badge.svg)](https://github.com/pdemagny/feat-agent/actions/workflows/check.yml)
+[![docs](https://github.com/pdemagny/feat-agent/actions/workflows/docs.yml/badge.svg)](https://pdemagny.github.io/feat-agent/)
+[![License: MIT](https://img.shields.io/github/license/pdemagny/feat-agent)](https://github.com/pdemagny/feat-agent/blob/main/LICENSE)
+[![Claude Code plugin](https://img.shields.io/badge/Claude_Code-plugin-D97757)](https://pdemagny.github.io/feat-agent/docs/install/)
+[![Built on Spec Kit](https://img.shields.io/badge/built_on-Spec_Kit-6e40c9)](https://github.com/github/spec-kit)
+
 ### From idea to merge-ready PR on autopilot: an AI engineering team in your terminal, with spec-driven planning, right-sized models and smart gates that only stop you when it matters.
 
 feat-agent is a set of Claude Code skills and subagents that take a feature
