@@ -44,6 +44,13 @@ summary.
 
 ## Size × phase matrix
 
+![Grid of phases by size, coloured by model: Opus plans at every size and runs most of a large feature, Sonnet most of a small one, Haiku ships. Split cells are reviewers running in parallel (O = Opus, S = Sonnet).](img/models.svg)
+
+Opus where judgment decides, Sonnet for the routine work, Haiku to ship. A
+split cell is a phase whose reviewers run in parallel, one per group of
+lenses (O = Opus, S = Sonnet). The picture is drawn from the size table by
+`mise run diagrams`.
+
 Each cell: model · effort, passed by `/feat` on every spawn.
 
 | #  | Phase                        | Agent                  | small           | medium          | large           | huge                         |
