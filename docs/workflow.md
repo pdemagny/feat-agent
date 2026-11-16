@@ -29,9 +29,9 @@ is authoritative; this page mirrors it with explanations.
 | - | ------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | 1 | Brief         | `/brief` (your session), then `feat-brief-reviewer`                                   | `interview-me`                                                     | `specs/briefs/<name>.md`, or a capability map | **hard** (confirm the brief and the review's findings)                                                                     |
 | 0 | Setup         | coordinator                                                                           | —                                                                  | conventions, hooks checked                    | hard only if a Spec Kit hook would branch or commit                                                                        |
-| 2 | Specify       | `feat-specifier`                                                                      | `speckit-specify`                                                  | branch/worktree, `spec.md`, `feat-state.md`   | **hard** (the only place questions are asked)                                                                              |
-| 3 | Plan          | `feat-planner`                                                                        | `speckit-plan`                                                     | `plan.md` and design docs                     | none (hard for large)                                                                                                      |
-| 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3, then `feat-planner` writes accepted findings | `security-and-hardening` (cost and design checklists in the agent) | a paraphrase, findings D1…                    | one gate with 3: hard only on a real finding, a user-call assumption, a constitution violation, a blocker, a size increase or a paraphrase that contradicts the brief (always hard for large) |
+| 2 | Specify       | `feat-specifier`                                                                      | `speckit-specify`                                                  | branch/worktree, `spec.md`, `feat-state.md`   | **hard** only on an open question or a blocker; else soft, and its summary opens the next gate                              |
+| 3 | Plan          | `feat-planner`                                                                        | `speckit-plan`                                                     | `plan.md` and design docs                     | none (hard for large, opening with the spec summary after a soft phase 2)                                                  |
+| 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3, then `feat-planner` writes accepted findings | `security-and-hardening` (cost and design checklists in the agent) | a paraphrase, findings D1…                    | one gate with 3: hard only on a real finding, a user-call assumption, a constitution violation, a blocker, a size increase, a paraphrase that contradicts the brief or an unchecked checklist item after a soft phase 2 (always hard for large) |
 | 5 | Tasks         | `feat-tasker`                                                                         | `speckit-tasks`, `speckit-analyze`                                 | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, a size increase or an unanswered checklist item; always for large                                   |
 | 6 | Implement     | `feat-implementer` ×1 per user story, in turn                                         | `speckit-implement`                                                | the code, tasks ticked, checks green          | soft (hard per story for large; hard on a design problem)                                                                  |
 | 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks          | `security-and-hardening`, `performance-optimization`               | findings B, S, P, C, R; picked fixes applied  | **hard**                                                                                                                   |
@@ -39,6 +39,8 @@ is authoritative; this page mirrors it with explanations.
 
 **Hard gate**: Claude stops and waits for your answer. **Soft gate**: Claude
 reports and continues; anything surprising turns it into a hard gate.
+After a soft phase 2, the next gate (3/4, or 3 on large) opens with the spec
+summary.
 
 ## Size × phase matrix
 
@@ -77,7 +79,7 @@ gets its own brief and size column.
 |                      | small                                                                                        | medium                                           | large                                                       | huge                                       |
 | -------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------ |
 | **When**             | up to ~30 tasks; no new service, permissions, network exposure or dependency; docs-only work | ~31–60 tasks, or a small one adding any of those | more than ~60 tasks                                         | capabilities that could ship independently |
-| **Hard gates**       | brief, 2, 7 (+3/4 on a real finding, +5 on CRITICAL/HIGH)                                    | brief, 2, 7 (+3/4 and +5 as for small)           | brief, 2, 3, 4, 5, each story in 6, 7                       | the map                                    |
+| **Hard gates**       | brief, 7 (+2 on a question, +3/4 on a finding or checklist item, +5 on CRITICAL/HIGH)        | brief, 7 (+2, +3/4 and +5 as for small)          | brief, 3, 4, 5, each story in 6, 7 (+2 on a question)       | the map                                    |
 | **Design reviewers** | 1                                                                                            | 3                                                | 3                                                           | per capability                             |
 | **Code reviewers**   | 2                                                                                            | 5                                                | 5                                                           | per capability                             |
 | **PRs**              | 1                                                                                            | 1                                                | 1                                                           | 1 per capability                           |
@@ -160,11 +162,19 @@ renamed if EnterWorktree picked another name) and enters it, so every agent
 starts there. The spec dir is `specs/<short-name>/` until phase 8 numbers it. The specifier runs `speckit-specify` from the brief and
 reports stories, requirements, open `[NEEDS CLARIFICATION]` markers with
 recommended answers, assumptions and unchecked checklist items. The
-coordinator moves the brief into `feat-state.md` and gates. This is the only
-place questions are asked, the checklist question included; your answers and
-edits go back to the specifier in amend mode, spawned fresh (a subagent's
-cache lasts 5 minutes, so after you answer it would rewrite its whole
-context).
+coordinator moves the brief into `feat-state.md` and gates. The gate is hard
+only when the spec has an open marker or the specifier reports a blocker (or
+the report holds something surprising, such as a remark about size), at
+every size. Otherwise it is soft: one line, `Phase 2 Specify — soft`, and
+the run goes on. The summary (stories, requirements, the specifier's
+assumptions, unchecked checklist items) is kept in the state file's Log and
+opens the next gate, so questions are asked at phase 2 or at the gate that
+shows that summary, and later phases don't stop to ask. A hard phase 2 shows
+the summary, each marker with a recommended answer, the assumptions and the
+checklist question; your answers and edits go back to the specifier in amend
+mode, spawned fresh (a subagent's cache lasts 5 minutes, so after you answer
+it would rewrite its whole context). The Log keeps the summary, so
+`/feat resume` shows it too.
 
 ### 3 Plan (`feat-planner`)
 Runs `speckit-plan`, kept to what the spec requires; it never asks you
@@ -173,7 +183,8 @@ services with reasons, constitution check, a size trigger (new service,
 permissions, exposure or dependency), and the decisions the spec didn't
 call for as assumptions with a recommendation and whether they need your
 call. Only a blocker stops the run. Small and medium go straight to phase 4;
-large stops here.
+large stops here, and after a soft phase 2 that gate opens with the spec
+summary; "ok" accepts its recommendations.
 
 ### 4 Design review (`feat-design-reviewer`)
 One reviewer with all three lenses on small, one per lens in parallel on
@@ -202,11 +213,17 @@ and implementation-readiness reviewers of the
 what you meant; one that contradicts the brief makes the gate hard.
 
 Each `D…` gets a recommendation. Large: you accept or
-reject each. Small and medium: one gate for phases 3 and 4 ("Plan and design
-review"), hard only on a finding above nice-to-have, an assumption that needs
-your call, a constitution violation, a blocker or a size increase; otherwise
-the recommendations are applied, and "ok" accepts them all. The planner
-writes the accepted ones into spec.md (as requirements) and plan.md;
+reject each; if the planner amended the plan after the phase 3 gate, this
+gate says so under "What you should know". Small and medium: one gate for
+phases 3 and 4 ("Plan and design review"); after a soft phase 2 it opens with
+the spec summary, before the paraphrase. It is hard only on a finding above
+nice-to-have, an assumption that needs your call, a constitution violation, a
+blocker, a size increase or an unchecked checklist item carried from a soft
+phase 2; otherwise the recommendations are applied, the soft report carries
+the spec summary, and "ok" accepts them all. The planner writes the accepted
+ones, and any spec change you asked for at this gate (an overturned
+assumption, a reworded requirement), in one amend pass, into spec.md (as
+requirements) and plan.md;
 `[design]` findings are corrections applied where they point. It is the
 same one, continued with `SendMessage`, after a soft gate (still warm); a
 fresh one after a hard gate.
@@ -216,7 +233,8 @@ Runs `speckit-tasks` then `speckit-analyze`, fixes MEDIUM/LOW findings that
 don't change meaning, and reports CRITICAL/HIGH with proposed fixes, task
 IDs per story, the MVP slice, and unchecked checklist items. The gate is
 hard only on CRITICAL/HIGH findings, a size increase, or checklist items
-your phase 2 answer doesn't cover (`speckit-implement` would stop on them).
+the checklist answer you already gave doesn't cover (`speckit-implement`
+would stop on them).
 Last cheap moment to change direction.
 
 **Size changes** are checked at the plan (size trigger) and here (task

@@ -110,6 +110,12 @@ On small and medium features, plan and design review share one gate, and
 "ok" accepts every recommendation. A size increase is always asked on its
 own; a decrease is applied and logged.
 
+When the spec leaves no question open, phase 2 doesn't stop. The next gate
+(phase 3 on large) opens with the spec, the specifier's assumptions and the
+checklist question, and "ok" accepts those too. A spec change you ask for
+there is written by the planner together with the findings; "back to 2" is
+for a rewrite.
+
 Answer in plain words ("accept D1, reject D2: behind the VPN"). Rejections
 are logged with your reason and never proposed again. You can also say:
 
