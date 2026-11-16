@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/pdemagny/feat-agent/compare/v0.9.0...v0.10.0) (2026-11-16)
+
+
+### Features
+
+* **feat:** stop at the spec gate only when the spec leaves a question open ([c34dcd9](https://github.com/pdemagny/feat-agent/commit/c34dcd9b093d6c4ec52c9ddb10ca87c663a8b91d))
+
 ## [0.9.0](https://github.com/pdemagny/feat-agent/compare/v0.8.0...v0.9.0) (2026-11-16)
 
 
