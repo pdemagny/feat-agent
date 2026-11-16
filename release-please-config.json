@@ -12,6 +12,7 @@
           "path": "apm.yml"
         },
         "README.md",
+        "docs/install.md",
         {
           "type": "json",
           "path": ".claude-plugin/plugin.json",

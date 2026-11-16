@@ -11,15 +11,18 @@ Claude Code only. Three ways to install; the design behind them:
 | git ≥ 2.44                      | branches, worktrees, diffs; phase 8 renumbers with `rebase --autosquash`              | your package manager                            |
 | GitHub CLI `gh`, logged in      | phase 8 pushes and opens the PR; board tracking needs the `project` scope ([section 5](#5-board-tracking-optional)) | <https://cli.github.com>, then `gh auth login`  |
 | Spec Kit CLI `specify`          | phases 2–6 are Spec Kit skills                                                        | `uv tool install specify-cli`                   |
-| Spec Kit bug extension, `/fix` only (tested with bug 1.0.1) | `/fix`'s assess, fix and test phases are its skills       | `specify extension add bug` in each project     |
+| Spec Kit bug extension, `/fix` only (tested with bug 1.0.1 and 1.0.2) | `/fix`'s assess, fix and test phases are its skills       | `specify extension add bug` in each project     |
 | APM (`apm`) or Node.js (`npx`)  | APM installs everything; `npx` installs the third-party skills for the other two ways | `uv tool install apm-cli`; <https://nodejs.org> |
 
-In a clone of this repo, `mise install` installs all of these (and
-`shellcheck`) at the versions the release was tested with; see
-[`mise.toml`](../mise.toml).
+`uv tool install` puts commands in `~/.local/bin`; if `apm` or `specify`
+isn't found afterwards, run `uv tool update-shell` and open a new shell.
 
-The workflow uses Opus and Sonnet. Your plan must give access to both; if one
-isn't available, change the size table (see [usage.md](usage.md#tuning)).
+In a clone of this repo, `mise install` installs all of these except git
+and the bug extension (plus the linters) at the versions the release was
+tested with; see [`mise.toml`](../mise.toml).
+
+The workflow uses Opus and Sonnet, and Haiku to ship. Your plan must give
+access to them; if one isn't available, change the size table (see [usage.md](usage.md#tuning)).
 
 ## 1. Install the skills and agents
 
@@ -36,16 +39,30 @@ uv tool install apm-cli          # or: pipx install apm-cli
 apm install -g pdemagny/feat-agent -t claude
 ```
 
-`-g` installs for your user (all projects) into `~/.claude/`; drop it
-inside a project to install there only.
+`-g` installs for your user (all projects) into `~/.claude/`. Without it,
+inside a project, it installs there only and adds `apm.yml`,
+`apm.lock.yaml` and `apm_modules/` to the project.
+
+This installs the latest `main`. To stay on a release instead, name its tag
+([releases](https://github.com/pdemagny/feat-agent/releases)); running it
+again with another tag, or none, moves you:
+
+<!-- x-release-please-start-version -->
+```sh
+apm install -g pdemagny/feat-agent#v0.8.0 -t claude
+```
+<!-- x-release-please-end -->
 
 ### As a Claude Code plugin
+
+In Claude Code:
 
 ```
 /plugin install feat-agent --marketplace pdemagny/feat-agent
 ```
 
-On Claude Code before 2.1.275, use two commands:
+or from a shell, `claude plugin install feat-agent --marketplace
+pdemagny/feat-agent`. On Claude Code before 2.1.275, use two commands:
 
 ```sh
 claude plugin marketplace add pdemagny/feat-agent
@@ -67,14 +84,14 @@ Update with `/plugin update feat-agent`.
 ### From a clone (to work on the workflow)
 
 ```sh
-git clone https://github.com/pdemagny/feat-agent ~/Projects/feat-agent
-cd ~/Projects/feat-agent
+git clone https://github.com/pdemagny/feat-agent
+cd feat-agent
 ./install.sh             # symlinks into ~/.claude, so edits apply at once
 ./install.sh deps        # the three third-party skills (skills CLI)
 ```
 
 `--copy` copies instead of linking; `--target ~/proj/.claude` installs for
-one project. Anything already at a destination that isn't a link into this
+one project (pass it again to `check`, `uninstall` and any rerun). Anything already at a destination that isn't a link into this
 repo (for example an older hand-written `feat` skill) is moved to
 `~/.claude/feat-agent-backups/<name>.<timestamp>` first, never deleted.
 Backups stay out of `skills/` and `agents/`, where Claude Code would load
@@ -109,7 +126,8 @@ cd ~/your-project
 specify init --here --integration claude
 ```
 
-This adds `.specify/` and the `speckit-*` skills in `.claude/skills/`
+In a directory that already has files it asks to confirm (`y`). This adds
+`.specify/` and the `speckit-*` skills in `.claude/skills/`
 (`/brief` doesn't need them). The workflow uses `speckit-specify`, `speckit-clarify`, `speckit-plan`,
 `speckit-tasks`, `speckit-analyze` and `speckit-implement`. Writing a
 constitution (`/speckit-constitution`) is optional but makes phase 3's
@@ -132,15 +150,15 @@ git clone https://github.com/pdemagny/feat-agent
 ./feat-agent/install.sh check ~/your-project
 ```
 
-It only reads, and works whichever way you installed. Every
-line should say `ok`; each `MISSING` line names the command that fixes it.
-Exit code 0 means ready.
+It only reads, and works whichever way you installed. Each `MISSING` line
+says how to fix it; without a project dir, the Spec Kit lines say
+`skipped`. Exit code 0 means ready.
 
 With a project dir it also lists the bug extension's skills. They are
 needed by `/fix` only, so neither of these lines changes the exit code:
 - `note skill <name> (needed by /fix only: specify extension add bug)`:
   the skill is not installed;
-- `warn <name> differs from the names /fix was tested with (bug 1.0.1)`:
+- `warn <name> differs from the names /fix was tested with (bug 1.0.1 and 1.0.2)`:
   an installed skill lacks a section heading or verdict word `/fix`
   relies on, usually a newer extension. `/fix` may still work; its assessor
   reports a missing section as an error.
@@ -201,7 +219,8 @@ printing the board it will write to (`tracker: ok users/<login>/projects/<n>
 ## Updating
 
 - APM: `apm update -g`. Plugin: `/plugin update feat-agent`. Clone:
-  `git pull` (with `--copy`, rerun `./install.sh --copy`).
+  `git pull` (with `--copy`, rerun `./install.sh --copy`; each rerun moves
+  the previous copies to the backups dir).
 - Third-party skills installed with the skills CLI: `npx skills update -g`.
 - Spec Kit: upgrade the CLI, then rerun `specify init --here --integration
   claude --force` in each project to refresh its templates and skills.
@@ -215,6 +234,7 @@ feat-agent`. Clone:
 ./install.sh uninstall               # or --target <dir>
 ```
 
-Removes only the links that point into this repo. Copies and backups are
-listed and left for you to remove. Third-party skills stay: `npx skills
+Removes only the links that point into this repo. Copies are listed as
+`kept` for you to remove; backups in `~/.claude/feat-agent-backups/` are
+left as they are. Third-party skills stay: `npx skills
 remove <name> --global` if you no longer want them.
