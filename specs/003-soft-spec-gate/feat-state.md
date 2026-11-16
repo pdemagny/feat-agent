@@ -3,7 +3,7 @@
 - Branch: soft-spec-gate Worktree: /home/pierre/Projects/feat-agent/.claude/worktrees/brief-soft-spec-gate
 - Size: small
 - Agents: specifier a4217177ddc56e5b2, planner a628add7bf414985e, tasker afead892a875aae98 (for SendMessage)
-- Current phase: 8 Ship
+- Current phase: done
 - Conventions: conventional commits `type(scope): msg`, one logical change per commit, no co-author; only the shipper commits (phase 8). `feat` subjects become CHANGELOG entries (write for users); never edit CHANGELOG.md, version lines or `.release-please-manifest.json`. Size tables in `.apm/skills/feat/SKILL.md` / `.apm/skills/fix/SKILL.md` are the source of truth; mirror gate/size changes in `docs/workflow.md`. `.apm/skills/feat/references/harness.md` holds shared /feat+/fix rules, no /feat-only words (`mise run lint` greps it). `/feat` stays thin (never reads code, never edits artifacts). Agent prompts end with a fixed report format the orchestrator depends on. Checks: `mise run lint` and `mise run test:apm`. Never name the user's private project anywhere. Shell zsh; `rm/cp/mv` are `-i` aliases: use `command rm -f` etc. The branch carries a pushed brief commit (629d4d9, adds specs/briefs/soft-spec-gate.md); drop it when shipping.
 - Allowed Spec Kit hooks: none (no hooks enabled)
 - Map: none
@@ -77,4 +77,4 @@ Phase 2 is a hard gate at every size: stories and requirements, open `[NEEDS CLA
 - [x] 6 Implement — US6 (T014): resume paragraph end of section 2, *Resume search* points to it; lint, test:apm pass
 - [x] 6 Implement — US7 + polish (T015–T022): docs/workflow.md, usage.md, design.md, README gate sentence; SKILL.md table re-padded; Q3/Q4/Q4b/Q1/Q6/Q7 pass; lint, test:apm pass; private-name grep 0; soft gate
 - [x] 7 Code review — #6 set to "In review"; diff base a31d5b0 (release 0.9.0; local main is stale), `git diff a31d5b0`, 15 files; 7c+7d+7e reported: P1 table padding, C1–C9 (~-21 lines), R1–R8 (R9 keep); 7a+7b: B1 workflow.md:37 'first stop is 3/4 gate' false when 3/4 soft (FR-009), note: multi-line soft Log entry untested at runtime; no sec, no spec gaps, no hard std; std judgement = rewraps (folded into R6/R7). Picked (user: "ok"): B1, C1–C4, C6, C7 partial (keep soft-report-carries-summary), C8, P1, R1–R8; rejected C5 (keeps the 'later phases don't stop to ask' principle), C9 (planner clause is the exact D8 sentence the user approved; rewrap only). Fixes applied: all picked; P1 table width 250 → 200 (= a31d5b0); size table verified unchanged; lint, test:apm, Q checks, private-name grep pass. Note: FR-021 says the Log-line sentence verbatim in §3 and §4; C2 states it once in §2 Soft covering both (mention in PR).
-- [ ] 8 Ship
+- [x] 8 Ship — specs/003-soft-spec-gate; commits c998c1e docs(specs), 41812d2 feat(feat); rebased on origin/main; PR https://github.com/pdemagny/feat-agent/pull/7 (Closes #6); brief commit 629d4d9 dropped; old remote branch worktree-brief-soft-spec-gate left in place. Marked done.
