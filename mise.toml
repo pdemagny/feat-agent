@@ -12,6 +12,7 @@ shellcheck = "0.11.0"           # lints install.sh, the tracker script and tests
 actionlint = "1.7.12"           # lints .github/workflows
 hugo-extended = "0.167.0"       # builds the documentation website
 go = "1.27.1"                   # Hugo fetches its theme as a Go module
+d2 = "0.9.0"                    # renders the diagrams in docs/img (`mise run diagrams`)
 
 [tasks.lint]
 description = "shellcheck the shell scripts and their tests, actionlint the workflows, compile the Python test stub, validate the Claude Code plugin"
@@ -21,7 +22,7 @@ run = [
   "shellcheck tests/tracker/run.sh tests/tracker/bin/gh",
   "shellcheck tests/spec-number/run.sh tests/spec-number/bin/gh",
   "actionlint",
-  "python3 -m py_compile tests/tracker/fake_github.py",
+  "python3 -m py_compile tests/tracker/fake_github.py docs/diagrams/models.py",
   "claude plugin validate .",
   "! grep -Eiq 'specifier|planner|tasker|spec\\.md|brief|phase [0-9]|/feat' .apm/skills/feat/references/harness.md",
 ]
@@ -59,6 +60,17 @@ run = "bash tests/spec-number/run.sh"
 [tasks.docs]
 description = "Build the documentation website (README.md and docs/, see hugo.toml) into public/"
 run = "hugo --gc --minify"
+
+[tasks.diagrams]
+description = "Render docs/diagrams to docs/img (the model grid is read from the size table); CI fails if they differ"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+flags=(--pad 24 --theme 0 --dark-theme 200 --omit-version)
+d2 "${flags[@]}" --sketch docs/diagrams/gates.d2 docs/img/gates.svg
+d2 "${flags[@]}" --sketch --layout elk docs/diagrams/chain.d2 docs/img/chain.svg
+python3 docs/diagrams/models.py | d2 "${flags[@]}" - docs/img/models.svg
+'''
 
 [tasks."docs:serve"]
 description = "Serve the documentation website with live reload"

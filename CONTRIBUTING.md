@@ -43,7 +43,7 @@ apm.yml                       APM package: metadata and the third-party skill de
 install.sh                    developer install (symlinks), deps, check, uninstall
 tests/                        offline tests for the two scripts (stub gh, fake GraphQL endpoint)
 specs/, .specify/bugs/        records of the /feat and /fix runs that built this repo
-mise.toml                     pinned tools and tasks (lint, check, test:*, docs, dev:*)
+mise.toml                     pinned tools and tasks (lint, check, test:*, docs, diagrams, dev:*)
 docs/                         the user documentation, published with README.md as the website
 hugo.toml, go.mod             the website's Hugo config and theme (`mise run docs:serve` previews it)
 ```
@@ -55,6 +55,9 @@ work in this repo. The ones that bite most:
 - The size tables in `.apm/skills/feat/SKILL.md` and
   `.apm/skills/fix/SKILL.md` are the source of truth for models and
   efforts; mirror any change in [docs/workflow.md](docs/workflow.md).
+- The diagrams in the README and docs are drawn from `docs/diagrams/` by
+  `mise run diagrams` (the model grid from `/feat`'s size table): re-render
+  and commit `docs/img` when you change the table, the phases or the gates.
 - Every agent prompt ends with a fixed report format that `/feat` or `/fix`
   parses: change both sides together.
 - `/feat` and `/fix` only coordinate. New work goes into an agent, not the
