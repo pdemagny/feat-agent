@@ -3,12 +3,14 @@
   "release-type": "simple",
   "include-component-in-tag": false,
   "bump-minor-pre-major": true,
-  "pull-request-title-pattern": "chore(release): ${version}",
   "packages": {
     ".": {
       "package-name": "feat-agent",
       "extra-files": [
-        "apm.yml",
+        {
+          "type": "generic",
+          "path": "apm.yml"
+        },
         "README.md",
         {
           "type": "json",
