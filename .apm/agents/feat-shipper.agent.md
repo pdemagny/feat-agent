@@ -105,7 +105,7 @@ orchestrator has already written `Current phase: done (shipping)` and
   pattern above, with `["']` for the shell-quoted `["'\'']`); a match → the secret-scan block instead of the command.
 
 Write files with Write or Edit, never through the shell (heredoc, `>`,
-`>>`, `tee`), and avoid `$(…)`: in a worktree the guard refuses those
+`>>`, `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those
 commands. Write the PR body to a file and pass `--body-file`. If a command
 is refused, split it into plain ones. Send your report alone, once every
 command has returned.

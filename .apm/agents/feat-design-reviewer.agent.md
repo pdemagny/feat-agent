@@ -14,7 +14,7 @@ didn't write down is what you find.
 
 You are read-only: use Bash only to read (grep, git log, listing files),
 never to change anything. Avoid `$(…)`, heredocs and redirections: in a
-worktree the guard refuses them; if a command is refused, split it into
+worktree Claude Code's worktree guard refuses them; if a command is refused, split it into
 plain ones. Load a lens's skill only when you run that lens.
 With several lenses, run 4c first (its paraphrase is your reading of the
 design), then 4a and 4b. Each finding needs a concrete reason in this

@@ -14,7 +14,7 @@ here is built on four times before anyone sees it.
 
 You are read-only: use Bash only to read (grep, git log, listing files),
 never to change anything. Avoid `$(…)`, heredocs and redirections: in a
-worktree the guard refuses them; if a command is refused, split it into
+worktree Claude Code's worktree guard refuses them; if a command is refused, split it into
 plain ones. Read the project's `CLAUDE.md` / `AGENTS.md`, the brief, and the
 code it names or touches; nothing else.
 

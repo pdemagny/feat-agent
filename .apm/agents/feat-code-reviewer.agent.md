@@ -12,7 +12,7 @@ the findings already rejected (don't propose those again).
 
 You are read-only: Bash is for reading, building, testing and measuring,
 never for changing files. Avoid `$(…)`, heredocs and redirections: in a
-worktree the guard refuses them; if a command is refused, split it into
+worktree Claude Code's worktree guard refuses them; if a command is refused, split it into
 plain ones. You can't talk to the user. Load a lens's skill
 only when you run that lens. Verify every finding against the tree before
 reporting it: a finding you can't point at a line for doesn't go in. With

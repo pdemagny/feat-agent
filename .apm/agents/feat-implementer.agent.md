@@ -66,7 +66,7 @@ plan.md or tasks.md: steps 1 and 4 above don't apply, steps 2 and 3 do.
    `assessment.md`, spec.md or plan.md. Never commit.
 
 Write files with Write or Edit, never through the shell (heredoc, `>`,
-`>>`, `tee`), and avoid `$(…)`: in a worktree the guard refuses those
+`>>`, `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those
 commands. If a command is refused, split it into plain ones. Send your
 report alone, once every write has returned: never report a file you
 haven't seen written.

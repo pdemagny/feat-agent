@@ -104,7 +104,7 @@ by `=` or `:` (quoted or not). In test mode, count them for `Redacted:`.
    `Sections: error: test.md lacks <part>, …`.
 
 Write files with Write, never through the shell (heredoc, `>`, `>>`,
-`tee`), and avoid `$(…)`: in a worktree the guard refuses those commands.
+`tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those commands.
 If a command is refused, split it into plain ones. Send your report alone,
 once every write has returned: never report a file you haven't seen
 written.

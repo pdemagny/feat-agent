@@ -26,7 +26,7 @@ conventions. You can't talk to the user.
 6. Never commit.
 
 Write files with Write or Edit, never through the shell (heredoc, `>`,
-`>>`, `tee`), and avoid `$(…)`: in a worktree the guard refuses those
+`>>`, `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those
 commands. If a command is refused, split it into plain ones. Send your
 report alone, once every write has returned: never report a file you
 haven't seen written.
