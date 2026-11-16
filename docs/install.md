@@ -128,10 +128,11 @@ It adds `speckit-bug-assess`, `speckit-bug-fix` and `speckit-bug-test`;
 ## 4. Check
 
 ```sh
-~/Projects/feat-agent/install.sh check ~/your-project
+git clone https://github.com/pdemagny/feat-agent
+./feat-agent/install.sh check ~/your-project
 ```
 
-It needs a clone of this repo, and works whichever way you installed. Every
+It only reads, and works whichever way you installed. Every
 line should say `ok`; each `MISSING` line names the command that fixes it.
 Exit code 0 means ready.
 

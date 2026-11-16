@@ -186,7 +186,7 @@ growing context this workflow exists to avoid.
 ## Things to verify on first runs
 
 - That `git diff <merge-base>` after `git add -N` shows every new file in
-  your setup (some hooks or rtk-style wrappers may filter git output).
+  your setup (some hooks or command-output filters may hide parts of git's output).
 - The `small` column: whether Sonnet at medium effort is enough for spec
   and tasks in your codebase.
 

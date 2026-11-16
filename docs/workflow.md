@@ -299,7 +299,8 @@ state file and flagged at the next gate. A failed `check` stops it.
 
 ## The state file
 
-`specs/<NNN-name>/feat-state.md` is the memory of the run: branch,
+`specs/<short-name>/feat-state.md` (`specs/<NNN>-<short-name>/` once the
+shipper numbers it) is the memory of the run: branch,
 worktree, size, current phase, conventions, allowed hooks, the issue if any, the brief, and a
 log of every gate with what you accepted and rejected (and why) and every
 performance attempt with its numbers. Every agent reads it; `/feat resume`

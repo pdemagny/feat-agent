@@ -83,9 +83,11 @@ For a bug, once per project `specify extension add bug`, then:
 ```
 
 Claude Code only: `/feat` relies on its subagents with a model and effort
-per call, and on `EnterWorktree`. Besides APM there are two other ways to
-install (a Claude Code plugin, or `install.sh` from a clone), and a check
-for any of them: [docs/install.md](docs/install.md).
+per call, and on `EnterWorktree`. Prefer a Claude Code plugin? In Claude
+Code run `/plugin install feat-agent --marketplace pdemagny/feat-agent`
+(the commands become `/feat-agent:feat` and so on), then add the
+third-party skills as shown in [docs/install.md](docs/install.md), which
+also covers `install.sh` from a clone and a check for every way.
 
 ## Documentation
 
@@ -102,18 +104,19 @@ for any of them: [docs/install.md](docs/install.md).
 ## Layout
 
 ```
-.apm/skills/feat/        the orchestrator: phases, gates, size table (source of truth)
-.apm/skills/feat/scripts/  tracker.sh: optional GitHub Projects board moves
+.apm/skills/feat/             the orchestrator: phases, gates, size table (source of truth)
+.apm/skills/feat/scripts/     tracker.sh (board moves), spec-number.sh (numbers the spec dir)
 .apm/skills/feat/references/  harness.md: the rules /feat and /fix share (gates, state file, board, resume)
-.apm/skills/fix/         the bugfix orchestrator: assess, fix, test, review, ship; its own size table
-.apm/skills/brief/  phase 1: interview, size, brief or capability map
-.apm/agents/*.agent.md   one subagent per phase role
-apm.yml                  APM package: metadata and the third-party skill dependencies
-.claude-plugin/          Claude Code plugin and marketplace manifests
-install.sh               developer install (symlinks), deps, check, uninstall
-tests/tracker/           offline tests for tracker.sh (stub gh, fake GraphQL endpoint)
-mise.toml                pinned tools and tasks (lint, check, test:apm, test:tracker, pin)
-docs/                    the documentation above
+.apm/skills/fix/              the bugfix orchestrator: assess, fix, test, review, ship; its own size table
+.apm/skills/brief/            phase 1: interview, size, brief or capability map
+.apm/agents/*.agent.md        one subagent per phase role
+apm.yml                       APM package: metadata and the third-party skill dependencies
+.claude-plugin/               Claude Code plugin and marketplace manifests
+install.sh                    developer install (symlinks), deps, check, uninstall
+tests/                        offline tests for the two scripts (stub gh, fake GraphQL endpoint)
+specs/, .specify/bugs/        records of the /feat and /fix runs that built this repo
+mise.toml                     pinned tools and tasks (lint, check, test:*, dev:*, pin)
+docs/                         the documentation above
 ```
 
 ## Status
@@ -133,5 +136,7 @@ Osmani, itself inspired by Anthropic's code-simplifier plugin). The passes of
 `.apm/agents/feat-design-reviewer.agent.md` and
 `.apm/agents/feat-brief-reviewer.agent.md` are adapted, condensed and
 changed, from the reviewer prompts, brainstorm lenses and document
-standards of google/elephant-goldfish-model (Apache-2.0). Third-party skills installed
-by `install.sh deps` keep their own licenses.
+standards of google/elephant-goldfish-model (Apache-2.0). The `.specify/` and
+`.claude/skills/speckit-*` files come from Spec Kit (MIT). Their license
+texts are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Third-party
+skills installed by `apm install` or `install.sh deps` keep their own licenses.
