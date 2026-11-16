@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.9.0](https://github.com/pdemagny/feat-agent/compare/v0.8.0...v0.9.0) (2026-11-16)
+
+
+### Features
+
+* **fix:** add the /fix bugfix workflow on Spec Kit's bug extension ([1cf7e50](https://github.com/pdemagny/feat-agent/commit/1cf7e5082676b4cb1301f38021c1c3718eca0959))
+
+
+### Bug Fixes
+
+* **agents:** scope slow suites and rerun only failing tests ([a4177b7](https://github.com/pdemagny/feat-agent/commit/a4177b767bb093605861976477d4f4a4c7e92130))
+* **install:** install the same agent-skills version as APM ([92fae1d](https://github.com/pdemagny/feat-agent/commit/92fae1d78f0bdd9eed0e43e27601242fc34b8136))
+* **install:** point check at the right fix for plugin and clone installs ([6b7bd4a](https://github.com/pdemagny/feat-agent/commit/6b7bd4a8b7b41be2c0552b74d40ad0f93bc6f0fb))
+* **shipper:** number specs from open PRs' files, not branch names ([d11e1ac](https://github.com/pdemagny/feat-agent/commit/d11e1ac6ebe801fd07155d736743d55710914bfb))
+
 ## 0.8.0 — 2026-11-02
 
 - Renamed the project from feat-agents to feat-agent. The repository, APM
