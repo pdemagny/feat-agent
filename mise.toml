@@ -10,6 +10,8 @@ node = "24.22.1"                # npx, for `install.sh deps` (skills CLI)
 uv = "0.13.4"                   # backend for the pypi: tools
 shellcheck = "0.11.0"           # lints install.sh, the tracker script and tests/tracker
 actionlint = "1.7.12"           # lints .github/workflows
+hugo-extended = "0.167.0"       # builds the documentation website
+go = "1.27.1"                   # Hugo fetches its theme as a Go module
 
 [tasks.lint]
 description = "shellcheck the shell scripts and their tests, actionlint the workflows, compile the Python test stub, validate the Claude Code plugin"
@@ -53,6 +55,14 @@ run = "bash tests/tracker/run.sh"
 [tasks."test:spec-number"]
 description = "Run the spec-number script's offline tests (local git remote, stub gh)"
 run = "bash tests/spec-number/run.sh"
+
+[tasks.docs]
+description = "Build the documentation website (README.md and docs/, see hugo.toml) into public/"
+run = "hugo --gc --minify"
+
+[tasks."docs:serve"]
+description = "Serve the documentation website with live reload"
+run = "hugo server"
 
 [tasks."dev:install"]
 description = "Symlink the skills and agents into ~/.claude and add the third-party skills (instead of APM)"

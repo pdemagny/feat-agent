@@ -1,3 +1,8 @@
+---
+title: Usage
+weight: 20
+---
+
 # Using the workflow
 
 Everything here runs in Claude Code. A feature takes two commands, in two
@@ -183,8 +188,8 @@ Full matrix in [workflow.md](workflow.md#size--phase-matrix).
 
 ## Tuning
 
-The size tables in [`.apm/skills/feat/SKILL.md`](../.apm/skills/feat/SKILL.md) and
-[`.apm/skills/fix/SKILL.md`](../.apm/skills/fix/SKILL.md) are the single source
+The size tables in [`.apm/skills/feat/SKILL.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/skills/feat/SKILL.md) and
+[`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/skills/fix/SKILL.md) are the single source
 of truth: the coordinator passes `model` and `effort` from them on every
 agent call. Edit them and mirror the change in [workflow.md](workflow.md).
 

@@ -110,6 +110,8 @@ Every phase, gate and model: [docs/workflow.md](docs/workflow.md).
 
 ## Documentation
 
+Also on the website: [pdemagny.github.io/feat-agent](https://pdemagny.github.io/feat-agent/).
+
 | Doc | What's in it |
 |---|---|
 | [docs/install.md](docs/install.md) | Prerequisites, the three ways to install, the setup check, board tracking, update, uninstall |
@@ -117,19 +119,19 @@ Every phase, gate and model: [docs/workflow.md](docs/workflow.md).
 | [docs/workflow.md](docs/workflow.md) | Every phase, gate and agent: the size × phase matrix, what runs when and how |
 | [docs/design.md](docs/design.md) | Why it is built this way: Claude Code mechanics, rejected alternatives |
 | [Roadmap](https://github.com/users/pdemagny/projects/2) | Known bugs and what is planned |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Reporting bugs, proposing changes, working on feat-agent |
-| [SECURITY.md](SECURITY.md) | Reporting a vulnerability privately |
+| [CONTRIBUTING.md](https://github.com/pdemagny/feat-agent/blob/main/CONTRIBUTING.md) | Reporting bugs, proposing changes, working on feat-agent |
+| [SECURITY.md](https://github.com/pdemagny/feat-agent/blob/main/SECURITY.md) | Reporting a vulnerability privately |
 
 ## Status
 
 Version 0.9.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli) <!-- x-release-please-version -->
-1.2.x. See [CHANGELOG.md](CHANGELOG.md).
+1.2.x. See [CHANGELOG.md](https://github.com/pdemagny/feat-agent/blob/main/CHANGELOG.md).
 
 ## License
 
-MIT, see [LICENSE](LICENSE). Some review checklists and prompts are adapted
+MIT, see [LICENSE](https://github.com/pdemagny/feat-agent/blob/main/LICENSE). Some review checklists and prompts are adapted
 from addyosmani/agent-skills, mattpocock/skills, dietrichgebert/ponytail
 (MIT) and google/elephant-goldfish-model (Apache-2.0), and the `.specify/`
 files come from Spec Kit (MIT). Credits and license texts are in
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The third-party skills
+[THIRD_PARTY_NOTICES.md](https://github.com/pdemagny/feat-agent/blob/main/THIRD_PARTY_NOTICES.md). The third-party skills
 that get installed keep their own licenses.

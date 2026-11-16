@@ -1,0 +1,51 @@
+# Build the documentation website (README.md and docs/, see hugo.toml) and publish it to GitHub
+# Pages from main. Pull requests only build it.
+name: docs
+
+on:
+  pull_request:
+    paths: [README.md, docs/**, hugo.toml, go.mod, go.sum, mise.toml, .github/workflows/docs.yml]
+  push:
+    branches: [main]
+    paths: [README.md, docs/**, hugo.toml, go.mod, go.sum, mise.toml, .github/workflows/docs.yml]
+  workflow_dispatch:
+
+permissions: {}
+
+env:
+  MISE_AUTO_INSTALL: "false"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Hugo fetches its theme as a Go module.
+      - uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          install_args: go hugo-extended
+      - run: mise run docs
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
