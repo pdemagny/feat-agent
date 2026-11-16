@@ -43,7 +43,8 @@ work in this repo. The ones that bite most:
 
 ## Before you open a pull request
 
-- `mise run lint`, `mise run test:apm` and `mise run test:tracker` pass.
+- `mise run lint`, `mise run test:apm`, `mise run test:tracker` and
+  `mise run test:spec-number` pass.
 - For a change to a skill or agent prompt, run it on a scratch project and
   say in the PR what you ran and what happened. There is no automated test
   for prompts.

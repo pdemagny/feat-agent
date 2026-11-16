@@ -37,10 +37,10 @@ When changing it:
   (each marked for it), tags and publishes the GitHub Release. Never edit
   those versions or `.release-please-manifest.json` by hand (plugin users
   stay on the version they have until it changes).
-- Shell: `shellcheck` must stay clean on `install.sh`, the tracker script
-  (`.apm/skills/feat/scripts/`) and its bash tests (`tests/tracker/`);
-  `mise run lint` runs all three and `actionlint` on `.github/workflows/`,
-  `mise run test:tracker` the offline tests.
+- Shell: `shellcheck` must stay clean on `install.sh`, the scripts
+  (`.apm/skills/feat/scripts/`) and their bash tests (`tests/`);
+  `mise run lint` runs them all and `actionlint` on `.github/workflows/`,
+  `mise run test:tracker` and `mise run test:spec-number` the offline tests.
 - CHANGELOG.md is generated from commit messages: `feat` and `fix`
   subjects become its entries, so write them for users; `!` marks a
   breaking change. Don't edit it by hand.

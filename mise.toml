@@ -5,18 +5,19 @@
 claude = "2.1.308"              # runs /feat and its agents
 gh = "2.103.3"                  # phase 8 pushes and opens the PR; board tracking
 "pypi:specify-cli" = "1.2.1"    # Spec Kit: `specify init` in each project
-apm = "0.34.0"                  # installs the package for every harness
-node = "lts"                    # npx, for `install.sh deps` (skills CLI)
+apm = "0.34.0"                  # installs the package (`apm install`, `mise run test:apm`)
+node = "24.22.1"                # npx, for `install.sh deps` (skills CLI)
 uv = "0.13.4"                   # backend for the pypi: tools
 shellcheck = "0.11.0"           # lints install.sh, the tracker script and tests/tracker
 actionlint = "1.7.12"           # lints .github/workflows
 
 [tasks.lint]
-description = "shellcheck the shell scripts, actionlint the workflows, compile the Python test stub, validate the Claude Code plugin"
+description = "shellcheck the shell scripts and their tests, actionlint the workflows, compile the Python test stub, validate the Claude Code plugin"
 run = [
   "shellcheck install.sh",
   "shellcheck .apm/skills/feat/scripts/*",
   "shellcheck tests/tracker/run.sh tests/tracker/bin/gh",
+  "shellcheck tests/spec-number/run.sh tests/spec-number/bin/gh",
   "actionlint",
   "python3 -m py_compile tests/tracker/fake_github.py",
   "claude plugin validate .",
@@ -48,6 +49,10 @@ test -f .claude/skills/fix/SKILL.md
 [tasks."test:tracker"]
 description = "Run the board tracker script's offline tests (stub gh, fake GraphQL endpoint)"
 run = "bash tests/tracker/run.sh"
+
+[tasks."test:spec-number"]
+description = "Run the spec-number script's offline tests (local git remote, stub gh)"
+run = "bash tests/spec-number/run.sh"
 
 [tasks."dev:install"]
 description = "Symlink the skills and agents into ~/.claude and add the third-party skills (instead of APM)"
