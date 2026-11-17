@@ -65,12 +65,24 @@ everything below.
    and `! <its stderr line, as is>` as in step 1. Then
    push with `-u` and open the PR with
    `gh pr create` (not a draft unless the conventions say so). Body: the
-   brief's Why and Behaviour, accepted design findings, what the code review
-   found and fixed (performance with before/after numbers), the points to
-   look at in review, check results, a `Not verified` section (each item
+   brief's Why and Behaviour, accepted design findings, a `### Code review`
+   part, the points to look at in review, check results, a `Not verified` section (each item
    you were given, as given, then your own, one per line as
    `<task or n/a> → <check> → <why>`, or `none`), a link to feat-state.md (numbered path),
    and `Closes <issue>` when the state file names one, so merging closes it.
+   The code-review part has three groups, built from the latest
+   `7 Code review` line of the Log, its indented finding lines and the
+   `7 review fixes` line after it: **Applied without asking (reviewer's
+   recommendation)** (the `auto-applied` ids), **Picked by the user** (the
+   `picked` ids), **Not applied** (each `skipped` finding with the
+   reviewer's why, each `rejected` finding with the user's words or "as
+   recommended", and any fix the implementer reverted, with why). One
+   line per finding: id, finding, and for an applied performance fix its
+   before → after numbers and command. An empty group reads `none`; a Log
+   with only `picked` (an older run) gives `none` for the first group. An
+   `S` finding left unfixed appears as id, file and title only, never
+   exploit detail. When the gate line has `untested: …`, add **Acceptance
+   criteria not tested** with those criteria as a short list.
 5. If git or gh is blocked in this session (some hooks refuse git inside
    worktrees), don't work around it: build the single command the user can
    run (`! cd <worktree> && git add … && git commit -m … && … && gh pr create
@@ -102,7 +114,9 @@ orchestrator has already written `Current phase: done (shipping)` and
   (assessment.md), the fix (fix.md's summary and any deviations), the
   verdict with the results of test.md's checks table, the reproduction
   status and, unless `Security bug: yes`, its steps (status only for a
-  security bug), the review findings fixed, the points to look at, the
+  security bug), the same three-group `### Code review` part built from all the
+  `4 Code review` Log lines (go-ahead and outcome) and the `4 implementer` Log lines (no `untested` list; the
+  same `S` rule), the points to look at, the
   check results, a `Not verified` section with your own items only, or
   `none`, a link to the state file, and `Fixes <ref>` only when the
   state file has an `Issue:` line other than `none`. The shipped verdict,

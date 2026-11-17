@@ -65,15 +65,15 @@ call, and `EnterWorktree`.
 
 ## How it works
 
-<p align="center"><img src="docs/img/gates.svg" alt="Sequence diagram of a small or medium feature: you, Claude Code and the agents. You always confirm the brief and pick the code review fixes. The run also stops when the spec has open questions, when the plan and design review need your call (you then check the spec too), and when the consistency check finds serious gaps." width="560"></p>
+<p align="center"><img src="docs/img/gates.svg" alt="Sequence diagram of a small or medium feature: you, Claude Code and the agents. You always confirm the brief, and decide when a code review finding needs your call. The run also stops when the spec has open questions, when the plan and design review need your call (you then check the spec too), and when the consistency check finds serious gaps." width="560"></p>
 
 Agents do the work, each phase in a fresh one. Solid orange arrows are gates
 where the run always waits for you; dashed ones wait only when something
 needs your call. The spec stops only on an open question; otherwise you see
 its summary at the plan and design review gate. A large feature also stops
-after the plan, the design review, the tasks and each story.
+after the plan, the design review, the tasks, each story and the code review.
 
-<p align="center"><img src="docs/img/chain.svg" alt="From your idea to a pull request: brief, fresh reader, you confirm; spec, you answer its questions; plan; security, cost, and clarity and fit reviewed in parallel; you check the spec and decide on findings, then spec and plan are amended; tasks and a consistency check; code written one story at a time; correctness, security, performance and over-engineering reviewed in parallel, readability after over-engineering; you pick fixes; pull request. A huge idea first becomes a capability map, one brief per capability." width="480"></p>
+<p align="center"><img src="docs/img/chain.svg" alt="From your idea to a pull request: brief, fresh reader, you confirm; spec, you answer its questions; plan; security, cost, and clarity and fit reviewed in parallel; you check the spec and decide on findings, then spec and plan are amended; tasks and a consistency check; code written one story at a time; correctness, security, performance and over-engineering reviewed in parallel, readability after over-engineering; you decide on findings that need you; pull request. A huge idea first becomes a capability map, one brief per capability." width="480"></p>
 
 Each artifact is checked before the next one is built from it. Shown for
 medium and large features, with one reviewer per lens; a small feature runs
@@ -84,8 +84,9 @@ one design reviewer and two code reviewers covering the same lenses.
   paraphrases them for you to check, and flags what is unclear, what the
   code contradicts and what already exists.
 - **Code review** (phase 7) looks at correctness against the spec,
-  security, performance, over-engineering and readability. You pick which
-  findings get fixed.
+  security, performance, over-engineering and readability. Each finding
+  comes with a recommendation, applied for you; it stops only for a
+  judgement call, a security finding or an unmet criterion (always on large).
 - **A huge idea** is split into a capability map first: one brief, one run
   and one PR per capability.
 - **`/fix`** runs the same way on Spec Kit's bug extension: assess, fix,

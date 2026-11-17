@@ -62,6 +62,7 @@ missing, stop: "/fix needs logistics' `feat` skill
 - *Reviewer context*: the rejected findings and the assessment's
   remediation alternatives not chosen (`**Alternatives**` of Proposed
   Remediation).
+- *Review phase*: 4.
 - *Size triggers*: the assess gate's proposed size (phase 1); deviations
   from the assessment (phase 2): propose one size step up (small → medium,
   medium → large; large stays large), options "back to 1" (re-assess) or
@@ -106,7 +107,7 @@ group of lenses. **small**: one reviewer, lenses `7a+7b+7d`. **medium**:
 one reviewer, `7a+7b`; for a performance bug `7c` joins it (`7a+7b+7c`).
 **large**: `7a` and `7b` in parallel, plus `7c` in parallel for a
 performance bug. A group runs on the strongest model and effort among its
-rows. Applying the picked fixes uses the phase 2 row.
+rows. Applying the review fixes uses the phase 2 row.
 
 ## Phases and gates
 
@@ -116,7 +117,7 @@ rows. Applying the picked fixes uses the phase 2 row.
 | 1 | Assess      | `feat-bug-assessor` (assess mode)               | **stop** if not a bug; hard by default, soft only on the conditions in phase 1                                                               |
 | 2 | Fix         | `feat-implementer` (bug mode)                   | soft unless deviations from the assessment, a failing check or a status other than `applied`                                                 |
 | 3 | Test        | `feat-bug-assessor` (test mode), always fresh   | soft on `verified`; **hard** on `partial` or an item left unaccounted; `failed` goes back to 2 once, then **hard** with "back to 1" offered  |
-| 4 | Code review | `feat-code-reviewer` ×1 (small, medium) or ×2–3 | soft only when clean and small, not a security bug; else **hard**: user picks the fixes                                                      |
+| 4 | Code review | `feat-code-reviewer` ×1 (small, medium) or ×2–3 | **hard** on a security risk area, `Size: large`, or a `user` or `S` finding; else soft (the `apply` findings are fixed, then 3 again)         |
 | 5 | Ship        | `feat-shipper` (fix mode)                       | none: ends with the PR link                                                                                                                  |
 
 Gate message shape and hard/soft semantics are the harness's. Every
@@ -440,25 +441,32 @@ context the rejected findings so far and the assessment's remediation
 alternatives not chosen. Reviewers verify their own findings and list what
 they dismissed. Merge into one list: `B…` bugs and spec mismatches, `S…`
 security, `P…` performance, `C…` cuts and `[std]` standards findings,
-one line each, bugs and security first.
+one line each, bugs and security first; each finding keeps its `rec`.
+Apply the merge rules (harness, Review findings).
 
 **Gate**, first match wins:
 
 | Review and bug | Gate |
 | --- | --- |
-| no finding above nice-to-have, no security finding, `Size: small`, `Risk area` not security | **soft**: log `- [x] 4 Code review — clean; soft`; then phase 5 |
-| `Risk area` includes security | **hard**: list the findings, if any, for the user to pick (or none); restate what becomes public once pushed (the visibility stated at the assess gate: PR, body, committed trail) and ask for the go-ahead to ship; log `- [x] 4 Code review — ship go-ahead (user: "<words>")` |
-| otherwise | **hard**: list the findings; the user picks which to fix (or none) |
+| `Risk area` includes security | **hard**: list the findings, if any, with their `rec`; restate what becomes public once pushed (the visibility stated at the assess gate: PR, body, committed trail) and ask for the go-ahead to ship; log `- [x] 4 Code review — ship go-ahead (user: "<words>")` |
+| `Size: large` | **hard**: list every finding with its `rec` (even when none is `user`) |
+| any `user` or `S` finding | **hard**: list the findings, `user` first, with their `rec` |
+| otherwise | **soft**: one line, `Phase 4 Code review — soft: <n> findings, <a> to apply, <s> skipped; none needs your call. Next: <review fixes, then phase 3 again \| phase 5 Ship>` |
 
-Log the outcome before leaving the phase: `- [x] 4 Code review — picked
-<ids>` (or `none picked`). Picks go to a fresh `feat-implementer` in fix
+At every row, the listing, the "ok" rule and its follow-up, the `S`
+publication notice and the Log words are the harness's (Review findings).
+On the security row the go-ahead is logged as above in addition. Log the
+outcome before leaving the phase, per the harness. The `apply` findings
+(soft) or the picked ones (hard) go to a fresh `feat-implementer` in fix
 mode (row 2), in order: bugs and security, cuts, performance (each
 measured before and after, kept only if it beats the noise with tests
-green). Tell it its `<who>`, `implementer`. Log its report and its `Not
-verified:` list as `4 implementer`; a report without the line makes the
-phase 3 gate that follows hard (harness). Then phase 3 again with a fresh spawn, cycle
-`after review fixes`: `verified` must hold again before ship, and a
-`failed` there is a hard gate, with no retry. No picks: phase 5.
+green), readability (one at a time, existing tests untouched); `skip`
+findings are not applied. Tell it its `<who>`, `implementer`. Log its report
+and its `Not verified:` list as `4 implementer`; a report without the line
+makes the phase 3 gate that follows hard (harness). Then phase 3 again with
+a fresh spawn, cycle `after review fixes`: `verified` must hold again before
+ship, and a `failed` there is a hard gate, with no retry. Nothing to apply
+or picked: phase 5.
 
 ## 5. Ship
 

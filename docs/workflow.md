@@ -34,7 +34,7 @@ is authoritative; this page mirrors it with explanations.
 | 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3, then `feat-planner` writes accepted findings | `security-and-hardening` (cost and design checklists in the agent) | a paraphrase, findings D1…                    | one gate with 3: hard only on a real finding, a user-call assumption, a constitution violation, a blocker, a size increase, a paraphrase that contradicts the brief or an unchecked checklist item after a soft phase 2 (always hard for large) |
 | 5 | Tasks         | `feat-tasker`                                                                         | `speckit-tasks`, `speckit-analyze`                                 | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, a size increase or an unanswered checklist item; always for large                                   |
 | 6 | Implement     | `feat-implementer` ×1 per user story, in turn                                         | `speckit-implement`                                                | the code, tasks ticked when their checks ran, a Not verified list | soft (hard per story for large; hard on a design problem)                                                                  |
-| 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks          | `security-and-hardening`, `performance-optimization`               | findings B, S, P, C, R; picked fixes applied  | **hard**                                                                                                                   |
+| 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies the fixes         | `security-and-hardening`, `performance-optimization`               | findings B, S, P, C, R with recommendations; fixes applied | small/medium: **hard** on a finding that needs you (`user`), an `S` finding or an unmet criterion, else soft; large: **hard** |
 | 8 | Ship          | `feat-shipper`                                                                        | —                                                                  | docs updated, commits, push, PR               | none                                                                                                                       |
 
 **Hard gate**: Claude stops and waits for your answer. **Soft gate**: Claude
@@ -83,7 +83,7 @@ large: one reviewer per lens, in parallel.
 
 **Phase 7 reviewers.** small: two reviewers, lenses 7a+7b and 7c+7d+7e. medium and large: one reviewer per lens, 7a–7d in parallel, then 7e
 with 7d's cuts. A group runs on the strongest model and effort among its lenses.
-Applying the picked fixes uses the phase 6 row.
+Applying the review fixes uses the phase 6 row.
 
 A huge idea never reaches `/feat` as one unit: each capability of its map
 gets its own brief and size column.
@@ -93,7 +93,7 @@ gets its own brief and size column.
 |                      | small                                                                                        | medium                                           | large                                                       | huge                                       |
 | -------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------ |
 | **When**             | up to ~30 tasks; no new service, permissions, network exposure or dependency; docs-only work | ~31–60 tasks, or a small one adding any of those | more than ~60 tasks                                         | capabilities that could ship independently |
-| **Hard gates**       | brief, 7 (+2 on a question, +3/4 on a finding or checklist item, +5 on CRITICAL/HIGH)        | brief, 7 (+2, +3/4 and +5 as for small)          | brief, 3, 4, 5, each story in 6, 7 (+2 on a question)       | the map                                    |
+| **Hard gates**       | brief, 7 (+2 on a question, +3/4 on a finding or checklist item, +5 on CRITICAL/HIGH, +7 on a finding that needs you) | brief, 7 (+2, +3/4, +5 and +7 as for small)    | brief, 3, 4, 5, each story in 6, 7 (+2 on a question)       | the map                                    |
 | **Design reviewers** | 1                                                                                            | 3                                                | 3                                                           | per capability                             |
 | **Code reviewers**   | 2                                                                                            | 5                                                | 5                                                           | per capability                             |
 | **PRs**              | 1                                                                                            | 1                                                | 1                                                           | 1 per capability                           |
@@ -296,11 +296,33 @@ the reviewers with their lenses:
 
 Reviewers verify their findings and list what they dismissed. You get one
 list (`B` bugs and spec mismatches, `S` security, `P` performance, `C` cuts,
-`R` readability and `[std]` standards) and pick. `feat-implementer` in fix
-mode applies the picks: bugs and security, then cuts, then performance
-(each measured before and after, kept only if it beats the noise with tests
-green, every attempt logged with its numbers), then readability one change
-at a time with tests after each.
+`R` readability and `[std]` standards), each ending with the reviewer's
+recommendation: `apply`, `skip (<why>)` or `user (<why>)`. The coordinator
+merges them by fixed rules (cut code drops its performance and readability
+findings; the same spot with different advice, or a high-confidence bug the
+reviewer would skip, becomes `user`; a missing recommendation becomes
+`user`).
+
+On small and medium the gate is soft, and the `apply` findings are
+fixed unasked, unless a finding needs your call (`user`), is a security
+finding (`S`) or an acceptance criterion is not met; criteria that are
+`untested` are listed in the report and the PR but never stop the run. The
+hard gate lists the `user` findings first, as fix or leave; "ok" fixes every
+`apply` and leaves every `skip`, but not a `user` finding, which gets one
+follow-up. Large always stops, with every finding shown with its
+recommendation.
+
+An `S` finding left unfixed is published in the PR body and
+the state file as id, file and title only. If the fixes fail their checks
+twice, or a path on the report's `Wrote:` line is not on disk, or it has no
+`Not verified:` line, the run stops before ship. The PR body groups the
+findings as applied without asking, picked by you, and not applied (with the
+reason).
+
+`feat-implementer` in fix mode applies the fixes: bugs and security, then
+cuts, then performance (each measured before and after, kept only if it beats
+the noise with tests green, every attempt logged with its numbers), then
+readability one change at a time with tests after each.
 
 ### 8 Ship (`feat-shipper`)
 Numbers the spec dir with `.apm/skills/feat/scripts/spec-number.sh`: after
@@ -358,7 +380,7 @@ bug report to a reviewed PR with Spec Kit's bug extension (`specify
 extension add bug`): assess, fix and test, each in a subagent, then the
 code review and the ship of `/feat`. It reads the same harness as `/feat`
 ([`.apm/skills/feat/references/harness.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/references/harness.md):
-thin orchestrator, gate shape, state file, board moves, resume); its own
+thin orchestrator, gate shape, review findings, state file, board moves, resume); its own
 values and size table are in [`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/fix/SKILL.md),
 which is authoritative for this section.
 
@@ -372,7 +394,7 @@ which is authoritative for this section.
   `speckit-bug-test` (phase 3); never edits source. Every test is a fresh
   spawn, never the agent that wrote the fix.
 - **`feat-implementer`** in bug mode runs `speckit-bug-fix` (phase 2); in
-  fix mode it applies the review picks (phase 4).
+  fix mode it applies the review fixes (phase 4).
 - **`feat-code-reviewer`**, unchanged, with a subset of its lenses.
 - **`feat-shipper`** in fix mode commits `fix(<scope>)` with the
   `.specify/bugs/<slug>/` trail and opens the PR, whose `Not verified`
@@ -388,7 +410,7 @@ No agent is continued: every spawn is fresh.
 | 1 | Assess      | `feat-bug-assessor` (assess mode)               | `assessment.md`, the proposed size                | **stop** if not a bug; **hard** by default; soft only when nothing needs your call (below)   |
 | 2 | Fix         | `feat-implementer` (bug mode)                   | the code, `fix.md`                                | soft unless deviations from the assessment, a failing check or a status other than `applied` |
 | 3 | Test        | `feat-bug-assessor` (test mode), always fresh   | `test.md` with `verified`, `partial` or `failed`  | soft on `verified`; **hard** on `partial` or an item left unaccounted; `failed` back to 2 once, then **hard**              |
-| 4 | Code review | `feat-code-reviewer` ×1 (small, medium) or ×2–3 | findings B, S, P, C; picks applied, then 3 again  | soft only when clean, small and not a security bug; else **hard**                            |
+| 4 | Code review | `feat-code-reviewer` ×1 (small, medium) or ×2–3 | findings B, S, P, C with recommendations; fixes applied, then 3 again | **hard** on a security risk area, `Size: large`, or a `user` or `S` finding; else soft |
 | 5 | Ship        | `feat-shipper` (fix mode)                       | one `fix(<scope>)` commit, push, PR               | none                                                                                         |
 
 ### Gates
@@ -415,8 +437,11 @@ No agent is continued: every spawn is fresh.
   log), a second one, or one after review fixes, is hard with "back to 1"
   offered. A verdict other than `verified` reaches ship only on your
   explicit words, logged and copied into the PR body.
-- **Code review**: picked fixes go to the implementer in fix mode, then a
-  fresh test (`after review fixes`) must say `verified` again.
+- **Code review**, first match wins: a security bug is hard (the go-ahead
+  to ship is asked here); `Size: large` is hard; a `user` or `S` finding is
+  hard; otherwise soft, and the reviewers' `apply` findings are fixed
+  unasked. Fixes go to the implementer in fix mode, then a fresh test
+  (`after review fixes`) must say `verified` again.
 - At every phase, a failed check of the agent's `Wrote:` line (assessment.md,
   fix.md or test.md must be on it) makes the gate hard before any other
   rule, as in `/feat`.
