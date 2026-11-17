@@ -134,7 +134,7 @@ or none.
 1. `$ARGUMENTS` must be a brief file (or `resume`). If it is an idea instead,
    stop and point to `/brief "<idea>"`; if it is an issue (`#N` or its
    URL), to `/brief #N`; if it describes a bug, to `/fix "<symptom>"` (or
-   `/fix #N`; `/feat-agent:fix` as a plugin). Read the brief; check it has
+   `/fix #N`; `/logistics:fix` as a plugin). Read the brief; check it has
    size, short name, behaviour and acceptance. Huge isn't a size here.
    Older briefs and state files say "normal" or "big": read them as medium
    and large; older briefs may lack "Today" and "Alternatives rejected".
@@ -143,7 +143,7 @@ or none.
    (commit style, branch rules, where checks live, docs to update).
 3. Check `.specify/` exists (else stop: `specify init --here --integration
 claude`) and the `feat-*` agents are installed (plain or
-   `feat-agent:`-prefixed).
+   `logistics:`-prefixed).
 4. Read `.specify/extensions.yml`. Hooks that create branches or commit (the
    git extension's) clash with this workflow owning git: if any are enabled,
    **hard gate** before phase 2; unless the user says otherwise, agents skip
@@ -163,8 +163,8 @@ claude`) and the `feat-*` agents are installed (plain or
    (EnterWorktree). EnterWorktree picks its own
    branch name: check `git branch --show-current` and `git branch -m` it if
    needed. Enter it before spawning anything: agents start in your
-   directory. If setup found `.feat-agent.yml` and the worktree has none,
-   log `- [!] tracker: .feat-agent.yml is not in the worktree; commit and
+   directory. If setup found `.logistics.yml` and the worktree has none,
+   log `- [!] tracker: .logistics.yml is not in the worktree; commit and
    push it (board moves skipped)` and flag it at the first gate.
 2. Spawn `feat-specifier` with the brief. It returns stories, requirements
    and open `[NEEDS CLARIFICATION]` markers with recommended answers.

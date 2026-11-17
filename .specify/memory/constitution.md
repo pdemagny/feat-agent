@@ -1,4 +1,4 @@
-# feat-agent Constitution
+# logistics Constitution
 
 ## Core Principles
 

@@ -1,13 +1,13 @@
 {
-  "name": "feat-agent",
+  "name": "logistics",
   "version": "0.11.0",
   "description": "From a feature idea or a bug report to a reviewed PR: /brief writes the brief, /feat runs Spec Kit phases in feat-* subagents sized by model and effort, /fix runs Spec Kit's bug extension the same way.",
   "author": {
     "name": "Pierre Demagny",
     "url": "https://github.com/pdemagny"
   },
-  "homepage": "https://github.com/pdemagny/feat-agent",
-  "repository": "https://github.com/pdemagny/feat-agent",
+  "homepage": "https://github.com/pdemagny/logistics",
+  "repository": "https://github.com/pdemagny/logistics",
   "license": "MIT",
   "keywords": [
     "spec-kit",

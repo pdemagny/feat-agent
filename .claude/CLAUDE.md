@@ -1,4 +1,4 @@
-# feat-agent
+# logistics
 
 Three skills (`.apm/skills/brief/SKILL.md` writes the brief,
 `.apm/skills/feat/SKILL.md` coordinates the build, `.apm/skills/fix/SKILL.md`

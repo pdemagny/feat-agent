@@ -1,4 +1,4 @@
-module github.com/pdemagny/feat-agent
+module github.com/pdemagny/logistics
 
 go 1.27.1
 

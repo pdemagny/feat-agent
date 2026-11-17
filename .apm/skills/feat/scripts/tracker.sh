@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Board tracking for /brief, /feat and /fix: moves the feature's issue across the
-# GitHub Projects board named in <repo root>/.feat-agent.yml.
+# GitHub Projects board named in <repo root>/.logistics.yml.
 #
 #   tracker.sh check
 #   tracker.sh read-issue <ref>
@@ -141,7 +141,7 @@ clean() (
 declare -A st=() # statuses.<key> -> board option name
 kind="" login="" number="" board_ref=""
 
-cfg_err() { die ".feat-agent.yml line $1: $2"; }
+cfg_err() { die ".logistics.yml line $1: $2"; }
 
 # parse_value <text after "key:"> <line no> <key path>: sets $val.
 parse_value() {
@@ -218,9 +218,9 @@ parse_config() {
   done <"$config"
   for k in tracker tracker.provider tracker.project tracker.statuses \
     tracker.statuses.brief tracker.statuses.building tracker.statuses.review; do
-    [[ "$seen" == *" $k "* ]] || die ".feat-agent.yml: missing $k"
+    [[ "$seen" == *" $k "* ]] || die ".logistics.yml: missing $k"
   done
-  [[ "$number" =~ ^[0-9]+$ ]] || die ".feat-agent.yml: bad project number"
+  [[ "$number" =~ ^[0-9]+$ ]] || die ".logistics.yml: bad project number"
   board_ref="$kind/$login/projects/$number"
 }
 
@@ -569,12 +569,13 @@ case "$sub" in
 esac
 
 root="$(git rev-parse --show-toplevel 2>/dev/null)" || root="$PWD"
-config="$root/.feat-agent.yml"
+config="$root/.logistics.yml"
 if [ ! -e "$config" ]; then
-  say "off (no .feat-agent.yml)"
+  [ -e "$root/.feat-agent.yml" ] && die ".feat-agent.yml is now .logistics.yml; rename it"
+  say "off (no .logistics.yml)"
   exit 0
 fi
-[ -f "$config" ] && [ -r "$config" ] || die ".feat-agent.yml is not a readable file"
+[ -f "$config" ] && [ -r "$config" ] || die ".logistics.yml is not a readable file"
 parse_config
 
 command -v gh >/dev/null 2>&1 || die "gh not found; install it (https://cli.github.com)"

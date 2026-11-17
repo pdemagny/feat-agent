@@ -3,7 +3,7 @@ title: Install
 weight: 10
 ---
 
-# Installing feat-agent
+# Installing logistics
 
 Claude Code only. Three ways to install; the design behind them:
 [design.md](design.md#distribution-one-source-three-installers).
@@ -24,7 +24,7 @@ isn't found afterwards, run `uv tool update-shell` and open a new shell.
 
 In a clone of this repo, `mise install` installs all of these except git
 and the bug extension (plus the linters) at the versions the release was
-tested with; see [`mise.toml`](https://github.com/pdemagny/feat-agent/blob/main/mise.toml).
+tested with; see [`mise.toml`](https://github.com/pdemagny/logistics/blob/main/mise.toml).
 
 The workflow uses Opus and Sonnet, and Haiku to ship. Your plan must give
 access to them; if one isn't available, change the size table (see [usage.md](usage.md#tuning)).
@@ -41,7 +41,7 @@ in one command:
 
 ```sh
 uv tool install apm-cli          # or: pipx install apm-cli
-apm install -g pdemagny/feat-agent -t claude
+apm install -g pdemagny/logistics -t claude
 ```
 
 `-g` installs for your user (all projects) into `~/.claude/`. Without it,
@@ -49,12 +49,12 @@ inside a project, it installs there only and adds `apm.yml`,
 `apm.lock.yaml` and `apm_modules/` to the project.
 
 This installs the latest `main`. To stay on a release instead, name its tag
-([releases](https://github.com/pdemagny/feat-agent/releases)); running it
+([releases](https://github.com/pdemagny/logistics/releases)); running it
 again with another tag, or none, moves you:
 
 <!-- x-release-please-start-version -->
 ```sh
-apm install -g pdemagny/feat-agent#v0.11.0 -t claude
+apm install -g pdemagny/logistics#v0.11.0 -t claude
 ```
 <!-- x-release-please-end -->
 
@@ -63,20 +63,20 @@ apm install -g pdemagny/feat-agent#v0.11.0 -t claude
 In Claude Code:
 
 ```
-/plugin install feat-agent --marketplace pdemagny/feat-agent
+/plugin install logistics --marketplace pdemagny/logistics
 ```
 
-or from a shell, `claude plugin install feat-agent --marketplace
-pdemagny/feat-agent`. On Claude Code before 2.1.275, use two commands:
+or from a shell, `claude plugin install logistics --marketplace
+pdemagny/logistics`. On Claude Code before 2.1.275, use two commands:
 
 ```sh
-claude plugin marketplace add pdemagny/feat-agent
-claude plugin install feat-agent@feat-agent
+claude plugin marketplace add pdemagny/logistics
+claude plugin install logistics@logistics
 ```
 
 Plugins name everything after the plugin: the commands become
-`/feat-agent:feat`, `/feat-agent:brief` and `/feat-agent:fix`, the agents
-`feat-agent:feat-planner` and so on. The skills handle both names. A plugin
+`/logistics:feat`, `/logistics:brief` and `/logistics:fix`, the agents
+`logistics:feat-planner` and so on. The skills handle both names. A plugin
 can't install the third-party skills, so add them with the [skills
 CLI](https://github.com/vercel-labs/skills):
 
@@ -84,13 +84,13 @@ CLI](https://github.com/vercel-labs/skills):
 npx -y skills@1.7.6 add https://github.com/addyosmani/agent-skills/tree/0.6.13/skills -s interview-me security-and-hardening performance-optimization -a claude-code -g -y
 ```
 
-Update with `/plugin update feat-agent`.
+Update with `/plugin update logistics`.
 
 ### From a clone (to work on the workflow)
 
 ```sh
-git clone https://github.com/pdemagny/feat-agent
-cd feat-agent
+git clone https://github.com/pdemagny/logistics
+cd logistics
 ./install.sh             # symlinks into ~/.claude, so edits apply at once
 ./install.sh deps        # the three third-party skills (skills CLI)
 ```
@@ -98,7 +98,7 @@ cd feat-agent
 `--copy` copies instead of linking; `--target ~/proj/.claude` installs for
 one project (pass it again to `check`, `uninstall` and any rerun). Anything already at a destination that isn't a link into this
 repo (for example an older hand-written `feat` skill) is moved to
-`~/.claude/feat-agent-backups/<name>.<timestamp>` first, never deleted.
+`~/.claude/logistics-backups/<name>.<timestamp>` first, never deleted.
 Backups stay out of `skills/` and `agents/`, where Claude Code would load
 them as a second skill or agent.
 
@@ -151,8 +151,8 @@ It adds `speckit-bug-assess`, `speckit-bug-fix` and `speckit-bug-test`;
 ## 4. Check
 
 ```sh
-git clone https://github.com/pdemagny/feat-agent
-./feat-agent/install.sh check ~/your-project
+git clone https://github.com/pdemagny/logistics
+./logistics/install.sh check ~/your-project
 ```
 
 It only reads, and works whichever way you installed. Each `MISSING` line
@@ -175,7 +175,7 @@ board: Brief when the brief is written, In progress while it is built, In
 review from the code review on (`/fix` moves a bug's issue the same way:
 [workflow.md](workflow.md#board-moments)). Which moment sets which status:
 [workflow.md](workflow.md#board-tracking). It is off unless the repo has a
-`.feat-agent.yml` at its root:
+`.logistics.yml` at its root:
 
 ```yaml
 tracker:
@@ -219,7 +219,7 @@ On the board, in its workflows:
 issue is created without it and the run says so; create the label (`gh
 label create bug`) to keep bug issues labelled.
 
-**Repos you didn't write.** A repo's `.feat-agent.yml` and a brief's
+**Repos you didn't write.** A repo's `.logistics.yml` and a brief's
 `Issue:` line decide where the writes go: they can point at any board your
 account can edit and add any issue you can read to it. Each run starts by
 printing the board it will write to (`tracker: ok users/<login>/projects/<n>
@@ -227,7 +227,7 @@ printing the board it will write to (`tracker: ok users/<login>/projects/<n>
 
 ## Updating
 
-- APM: `apm update -g`. Plugin: `/plugin update feat-agent`. Clone:
+- APM: `apm update -g`. Plugin: `/plugin update logistics`. Clone:
   `git pull` (with `--copy`, rerun `./install.sh --copy`; each rerun moves
   the previous copies to the backups dir).
 - Third-party skills installed with the skills CLI: `npx skills update -g`.
@@ -236,14 +236,14 @@ printing the board it will write to (`tracker: ok users/<login>/projects/<n>
 
 ## Uninstalling
 
-APM: `apm uninstall -g pdemagny/feat-agent`. Plugin: `/plugin uninstall
-feat-agent`. Clone:
+APM: `apm uninstall -g pdemagny/logistics`. Plugin: `/plugin uninstall
+logistics`. Clone:
 
 ```sh
 ./install.sh uninstall               # or --target <dir>
 ```
 
 Removes only the links that point into this repo. Copies are listed as
-`kept` for you to remove; backups in `~/.claude/feat-agent-backups/` are
+`kept` for you to remove; backups in `~/.claude/logistics-backups/` are
 left as they are. Third-party skills stay: `npx skills
 remove <name> --global` if you no longer want them.

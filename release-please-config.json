@@ -5,7 +5,7 @@
   "bump-minor-pre-major": true,
   "packages": {
     ".": {
-      "package-name": "feat-agent",
+      "package-name": "logistics",
       "extra-files": [
         {
           "type": "generic",

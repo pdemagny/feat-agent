@@ -1,6 +1,6 @@
 # Security policy
 
-feat-agent runs Claude Code agents that read your code, run commands, edit
+logistics runs Claude Code agents that read your code, run commands, edit
 files, commit, push and open pull requests. A flaw in its prompts or
 scripts can make an agent do one of those things when it shouldn't, so
 please report it privately.
@@ -44,6 +44,6 @@ Report these upstream instead:
   [anthropics/claude-code](https://github.com/anthropics/claude-code/security/policy).
 - Spec Kit and its bug extension:
   [github/spec-kit](https://github.com/github/spec-kit/security/policy).
-- The third-party skills feat-agent installs (see
+- The third-party skills logistics installs (see
   [docs/install.md](docs/install.md#2-the-third-party-skills)): their own
   repositories.

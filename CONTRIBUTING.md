@@ -1,12 +1,12 @@
 # Contributing
 
-Thanks for your interest. feat-agent is a personal project: issues are
+Thanks for your interest. logistics is a personal project: issues are
 welcome, and pull requests too once we've agreed on the change in an issue.
 
 ## Issues
 
 - **Bug**: use the Bug template. Include the skill or agent, what it did,
-  the smallest brief or run that shows it, and your versions (feat-agent,
+  the smallest brief or run that shows it, and your versions (logistics,
   Claude Code, Spec Kit).
 - **Idea or feature**: use the Feature template. Say what problem it solves
   before how.
@@ -20,8 +20,8 @@ You need Claude Code, [mise](https://mise.jdx.dev) and the
 [prerequisites](docs/install.md#prerequisites).
 
 ```sh
-git clone https://github.com/pdemagny/feat-agent
-cd feat-agent
+git clone https://github.com/pdemagny/logistics
+cd logistics
 mise install            # the pinned tools
 mise run dev:install    # symlink the skills and agents into ~/.claude, add the third-party skills
 ```
