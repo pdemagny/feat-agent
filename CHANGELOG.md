@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.11.0](https://github.com/pdemagny/feat-agent/compare/v0.10.0...v0.11.0) (2026-11-17)
+
+
+### Features
+
+* **feat:** list checks that did not run as Not verified, from the implementer to the PR ([7e09e0a](https://github.com/pdemagny/feat-agent/commit/7e09e0ad8e7c4d36faf0593dab57dd91958cb566)), closes [#11](https://github.com/pdemagny/feat-agent/issues/11)
+
+
+### Bug Fixes
+
+* **agents:** check that reported files exist before accepting a report ([e56bd33](https://github.com/pdemagny/feat-agent/commit/e56bd33f25ce6c7a2d834aa0d81d24a646651e2b)), closes [#10](https://github.com/pdemagny/feat-agent/issues/10)
+* **agents:** keep closing keywords out of commit messages so released issues stay Done ([edc950b](https://github.com/pdemagny/feat-agent/commit/edc950b279e9e163445493504a17418a02851781))
+
 ## [0.10.0](https://github.com/pdemagny/feat-agent/compare/v0.9.0...v0.10.0) (2026-11-16)
 
 

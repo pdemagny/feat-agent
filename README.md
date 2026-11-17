@@ -109,7 +109,7 @@ Also on the website: [pdemagny.github.io/feat-agent](https://pdemagny.github.io/
 
 ## Status
 
-Version 0.10.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli) <!-- x-release-please-version -->
+Version 0.11.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli) <!-- x-release-please-version -->
 1.2.x. See [CHANGELOG.md](https://github.com/pdemagny/feat-agent/blob/main/CHANGELOG.md).
 
 ## License
