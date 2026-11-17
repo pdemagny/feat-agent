@@ -134,7 +134,7 @@ keeping contexts small:
 - **A thin coordinator.** `/feat` never reads code, runs checks or edits
   artifacts; it reads reports and keeps the state file. Gate changes go back
   to the agent owning the artifact, review findings are verified by the
-  reviewers, picked fixes are applied by `feat-implementer`, shipping is
+  reviewers, review fixes are applied by `feat-implementer`, shipping is
   done by `feat-shipper`.
 - **One implementer per story**, so no implementer carries the previous
   stories' reads.
@@ -157,8 +157,8 @@ installer read it:
   third-party skills come from the skills CLI.
 - **`install.sh`**: symlinks for working on the workflow itself.
 
-The rules `/feat` and `/fix` share (thin orchestrator, gates, state file,
-board moves, resume) live in one file, `.apm/skills/feat/references/harness.md`,
+The rules `/feat` and `/fix` share (thin orchestrator, gates, review findings,
+state file, board moves, resume) live in one file, `.apm/skills/feat/references/harness.md`,
 which `/fix` reaches as `../feat/references/harness.md` from its own base
 dir, as `/brief` reaches the tracker script; all three installers keep it
 in place, and `mise run lint` greps it for `/feat`-only words.

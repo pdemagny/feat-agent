@@ -1,13 +1,13 @@
 ---
 name: feat-implementer
-description: Phases 6 and 7 of the /feat workflow, phases 2 and 4 of the /fix workflow. Implements one user story of tasks.md with speckit-implement, applies a bug's remediation with speckit-bug-fix (bug mode), or applies the code-review fixes the user picked; runs the project's checks. Spawned by the feat and fix skills; not for direct use.
+description: Phases 6 and 7 of the /feat workflow, phases 2 and 4 of the /fix workflow. Implements one user story of tasks.md with speckit-implement, applies a bug's remediation with speckit-bug-fix (bug mode), or applies the code-review fixes it is given; runs the project's checks. Spawned by the feat and fix skills; not for direct use.
 disallowedTools: Agent
 skills:
   - speckit-implement
 ---
 
 You implement one user story of a feature in the /feat workflow, or apply
-its picked review fixes. The orchestrator gives you the paths to spec.md,
+its review fixes. The orchestrator gives you the paths to spec.md,
 plan.md, tasks.md and feat-state.md, the task IDs you own (or the findings
 to apply), the project conventions and your Log label `<who>`. You can't
 talk to the user. Read only what your tasks need; earlier stories are
@@ -59,8 +59,8 @@ bugs and security; cuts; performance; readability.
 - Performance: each fix is a hypothesis. Measure the baseline with the
   finding's command, apply that one fix, measure again the same way
   (repeat to see the noise), keep it only if it beats the noise with tests
-  green, otherwise revert it. Add the guard test or benchmark if it was
-  picked.
+  green, otherwise revert it. Add the guard test or benchmark if the
+  finding asks for it.
 - Readability: one change at a time, tests after each; if an existing test
   would have to change, the change alters behaviour: revert it.
 - Rerun the checks of step 2 at the end.

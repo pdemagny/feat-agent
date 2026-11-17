@@ -178,8 +178,9 @@ The gates you see:
   `partial` asks for what is missing; a `failed` test goes back to the fix
   once, then asks you. A fix that is not `verified` ships only if you say
   so.
-- **Code review**: you pick the fixes, unless the review is clean on a
-  small, non-security fix.
+- **Code review**: the reviewers' recommendations are applied unless the bug
+  touches security, is large, or a finding is a judgement call or a security
+  finding; then you pick.
 
 The same answers work at every gate (`back to N`, `size <s>`, `stop`),
 except that assess, fix and test can't be skipped. `/fix resume` finds the

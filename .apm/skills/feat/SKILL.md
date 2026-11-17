@@ -68,6 +68,7 @@ rules this skill follows. The values it refers to are below.
 - *Building move*: at setup (step 5, phases 2–6); on resume in phases 2–6;
   going back from 7 or 8 to 2–6.
 - *Review move*: when phase 7 starts; on resume in phases 7–8.
+- *Review phase*: 7.
 - *Resume search*: the most recent `specs/*/feat-state.md` not marked done;
   section 2 says how a soft phase 2 shows up on resume.
 
@@ -100,7 +101,7 @@ reviewer, lenses `4a+4b+4c`. **medium / large**: one per lens, in parallel.
 Phase 7 runs one `feat-code-reviewer` per group of lenses. **small**: two
 reviewers, lenses `7a+7b` and `7c+7d+7e`. **medium / large**: one per lens,
 `7a`–`7d` in parallel, then `7e` with 7d's cuts. A group runs on the
-strongest model and effort among its rows. Applying the picked fixes uses
+strongest model and effort among its rows. Applying the review fixes uses
 the phase 6 row.
 
 ## Phases and gates
@@ -113,7 +114,7 @@ the phase 6 row.
 | 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3 | small/medium: one gate for 3+4, hard on a finding, a user-call assumption, a blocker, size increase or checklist item; large: **hard** |
 | 5 | Tasks         | `feat-tasker`                           | **hard** on CRITICAL/HIGH findings, a size increase or an unanswered checklist item, and always for large; else soft                   |
 | 6 | Implement     | `feat-implementer`, one per user story  | soft unless checks fail; **hard after each story** for large                                                                           |
-| 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5   | **hard**: user picks the fixes                                                                                                         |
+| 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5   | small/medium: **hard** on a `user` or `S` finding or a `not met` criterion, else soft (the `apply` findings are fixed); large: **hard**, findings shown with their recommendations |
 | 8 | Ship          | `feat-shipper`                          | none: ends with the PR link                                                                                                            |
 
 Phase 1 (the interview, the brief and its fresh-reader review) is
@@ -315,17 +316,50 @@ lenses, the accepted `[sec]` design findings (for 7b) and the rejected
 findings. Reviewers verify their own findings and list what they dismissed.
 Merge into one list: `B…` bugs and spec mismatches, `S…` security, `P…`
 performance, `C…` cuts, `R…` readability and `[std]` standards findings
-(hard vs judgement call), one line each, bugs and security first. Drop
-performance findings on code a cut removes. For large, suggest the user also
-runs `/code-review ultra` before merging.
+(hard vs judgement call), one line each, bugs and security first; each
+finding keeps its `rec`. Apply the merge rules (harness, Review findings).
+For large, suggest the user also runs `/code-review ultra` before merging.
 
-**Hard gate**: the user picks. Spawn `feat-implementer` in fix mode with the
-picked findings, in order: bugs and security, cuts, performance (each
-measured before and after, kept only if it beats the noise with tests
-green), readability (one at a time, existing tests untouched). Tell it its
-`<who>`, `review fixes`. Log its report, performance numbers included, and
-its `Not verified:` list as `7 review fixes`. No gate follows: a report
-without the line is said in the final message (harness).
+**Gate**, first match wins:
+
+| Size         | Condition                                                  | Gate     |
+| ------------ | ---------------------------------------------------------- | -------- |
+| large        | always                                                     | **hard** |
+| small/medium | any `user` or `S` finding, or any criterion `not met`      | **hard** |
+| small/medium | otherwise                                                  | **soft** |
+
+**Soft**: one line,
+`Phase 7 Code review — soft: <n> findings, <a> to apply, <s> skipped; none needs your call[; untested: <criteria>]. Next: <review fixes, then phase 8 Ship | phase 8 Ship>`.
+Spawn `feat-implementer` in fix mode with the `apply` findings, in order:
+bugs and security, cuts, performance (each measured before and after, kept
+only if it beats the noise with tests green), readability (one at a time,
+existing tests untouched); the `skip` findings are not applied. Tell it its
+`<who>`, `review fixes`. Log per the harness (Review findings); log its
+report, performance numbers included, and its `Not verified:` list as
+`7 review fixes`. Then phase 8.
+
+**Hard**: print the gate in the harness shape, titled `Phase 7:
+Code review — needs your call`. What you should know says why it stops
+(`large`, `<ids> need you`, `S<n> security`, `criterion not met: <which>`). Your call lists every finding with its
+`rec` (on large too, even when none is `user`), `user` first, "ok" rule
+and follow-up, `S` publication notice and Log words per the harness (Review
+findings). Next: review fixes, then phase 8 Ship. Spawn `feat-implementer`
+in fix mode with the picked ids (same order and `<who>` as Soft), log its
+report as `7 review fixes`; none picked goes straight to phase 8. A missing
+`Not verified:` line after a hard gate goes to the final message as in
+phase 6.
+
+**After a soft gate**, check the fix report (harness, Reported files). Failing
+checks go back to the implementer once with the failures, as in phase 6; a
+second failure is a hard stop before phase 8. A failed `Wrote:` check or a
+report without a `Not verified:` line is a hard stop at once, recommending a
+fresh implementer with the same findings. Each stop appends
+`- [!] 7 review fixes — <reason>` to the state file's Log without rewriting
+earlier lines.
+
+An `untested` criterion is never a trigger: name it in the soft line, or
+under "What you should know" at a hard gate, and append `; untested: …` to
+the gate's Log line.
 
 ## 8. Ship
 
@@ -348,5 +382,5 @@ merge.
 Final message: the PR link, the branch/worktree, the two or three things
 you'd look at first in review, the shipper's `Not verified:` line when it
 is not `none` (or the shipper report lacking the line), any report logged
-with `Not verified line missing` (the review fixes), and for a capability from a map, the next
+with `Not verified line missing` (the review fixes, from a hard gate), and for a capability from a map, the next
 capability with `/brief <map> <id>`.

@@ -110,6 +110,43 @@ Gate message shape:
 
 Link artifacts instead of pasting them; quote only what needs a decision.
 
+## Review findings
+
+The code review gate (*review phase*) reads the `rec` that ends each
+finding line: `apply`, `skip (<why>)` or `user (<why>)`. Never set `apply`
+or `skip` yourself; compare report text only.
+
+Merge, in order:
+1. Drop a Performance or Readability finding on code a cut removes; don't
+   list it.
+2. Same spot (same file, same or overlapping lines) and same section, same
+   `rec` and same `→ fix` text: keep one.
+3. Same spot and same section, from different reviewers or lenses, with a
+   different `rec` or `→ fix` text: both become `user (reviewers disagree)`.
+4. A Bugs finding with `confidence: high` and `rec: skip` becomes
+   `user (<the reviewer's why>)`, or `user (no valid recommendation)`
+   without one.
+5. A `rec` missing or not one of the three values (a `skip` or `user`
+   without its why included) becomes `user (no valid recommendation)`.
+
+At a hard gate, list each `user` finding first under "Your call", with the
+reviewer's why, as "fix or leave?", then the others with their `rec`.
+"ok" fixes every `apply` and leaves every `skip`, `S` findings included;
+each `user` finding needs its own answer. A bare "ok" while one is
+unanswered gets one follow-up naming the ids; fix nothing until each is
+answered. When an `S` finding is listed, say under "What you should know"
+that an `S` finding left unfixed is published in the PR body and the
+*state file* (id, file and title).
+
+Log, on the `<review phase> Code review` line:
+- soft: `auto-applied <ids | none>; skipped <id> (reviewer: "<why>"), …`;
+- hard: `picked <ids>` or `none picked`; `rejected <id> (user: "<words>")`,
+  or `rejected <id> (as recommended)` for a `skip` left by "ok", never for
+  another finding;
+- one indented line per listed finding: `    - <id> <spot> — <a few
+  words> — rec: <value>`; an `S` finding gives `<id> <file> — <title>`
+  only, no exploit detail.
+
 ## State file
 
 The *state file*, created where the skill says, updated at every gate (not
