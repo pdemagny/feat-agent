@@ -208,7 +208,11 @@ On the board, in its workflows:
   them to Done by hand.
 - **Check what "Pull request linked to issue" sets.** It fires when phase 8
   opens the PR (`Closes #N`) and could move the card back from In review;
-  turn it off or point it at In review.
+  turn it off or point it at In review. It also fires when a release PR
+  built from commits (release-please) copies a `Closes #N` footer, and
+  moves the closed card from Done back to In review: the shipper keeps
+  closing keywords in the PR body for that reason, so keep them out of
+  the commits you write by hand too.
 
 **A `bug` label in the repo.** The issues `/fix` creates are labelled
 `bug` (one of GitHub's default labels). If the repo has no such label, the

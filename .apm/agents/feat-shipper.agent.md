@@ -39,6 +39,10 @@ everything below.
    Usually that is two commits. Stage only this feature's files, by path
    (never `git add -A`); leave anything else in the tree and list it. No
    co-author or attribution lines unless the conventions ask for them.
+   No closing keyword (`Closes #N`, `Fixes #N`) in a commit message: it
+   goes in the PR body only (step 4). A release tool that builds its PR
+   from commits (release-please) copies it, links its PR to the closed
+   issue, and the board moves the card back from Done.
    When the conventions ask for more granular commits, they win.
 4. `git fetch origin && git rebase origin/<default>`, run the project's full
    checks once, and fix or report what fails. A suite the conventions run
