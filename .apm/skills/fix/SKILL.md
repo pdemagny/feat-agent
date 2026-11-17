@@ -110,14 +110,14 @@ rows. Applying the picked fixes uses the phase 2 row.
 
 ## Phases and gates
 
-| # | Phase       | Runs in                                         | Gate                                                                                                                          |
-| - | ----------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| 0 | Setup       | you                                             | hard only if a bug-extension hook would branch or commit                                                                      |
-| 1 | Assess      | `feat-bug-assessor` (assess mode)               | **stop** if not a bug; hard by default, soft only on the conditions in phase 1                                                |
-| 2 | Fix         | `feat-implementer` (bug mode)                   | soft unless deviations from the assessment, a failing check or a status other than `applied`                                  |
-| 3 | Test        | `feat-bug-assessor` (test mode), always fresh   | soft on `verified`; **hard** on `partial`; `failed` goes back to 2 once, then **hard** with "back to 1" offered              |
-| 4 | Code review | `feat-code-reviewer` ×1 (small, medium) or ×2–3 | soft only when clean and small, not a security bug; else **hard**: user picks the fixes                                       |
-| 5 | Ship        | `feat-shipper` (fix mode)                       | none: ends with the PR link                                                                                                   |
+| # | Phase       | Runs in                                         | Gate                                                                                                                                         |
+| - | ----------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0 | Setup       | you                                             | hard only if a bug-extension hook would branch or commit                                                                                     |
+| 1 | Assess      | `feat-bug-assessor` (assess mode)               | **stop** if not a bug; hard by default, soft only on the conditions in phase 1                                                               |
+| 2 | Fix         | `feat-implementer` (bug mode)                   | soft unless deviations from the assessment, a failing check or a status other than `applied`                                                 |
+| 3 | Test        | `feat-bug-assessor` (test mode), always fresh   | soft on `verified`; **hard** on `partial` or an item left unaccounted; `failed` goes back to 2 once, then **hard** with "back to 1" offered  |
+| 4 | Code review | `feat-code-reviewer` ×1 (small, medium) or ×2–3 | soft only when clean and small, not a security bug; else **hard**: user picks the fixes                                                      |
+| 5 | Ship        | `feat-shipper` (fix mode)                       | none: ends with the PR link                                                                                                                  |
 
 Gate message shape and hard/soft semantics are the harness's. Every
 report's `Wrote:` line is checked first (harness, Reported files): a failed
@@ -365,13 +365,16 @@ Spawn a fresh `feat-implementer` (bug mode, row 2) with the report
 author's association, the approved commands, the user's answers to the
 assessment's open questions and, on a retry, the failed test
 report's path (`test.md`, the assessor's `Test report:`) and its `Still
-failing` line. Its report is
-the implementer's format with the `Bug fix (bug mode)` line.
+failing` line, and its `<who>`, `implementer` (the same for every
+implementer of the run: the fix, its retry, phase 4's review fixes). Its
+report is the implementer's format with the `Bug fix (bug mode)` line. Log
+its `Not verified:` list (harness, State file) as `2 implementer`. The gate
+does not show it, and an item is not a failing check: phase 3 settles it.
 
 **Gate**, the same for the first fix and for the retry fix after a first
 `failed` test. Soft when `status: applied`, `deviations: none`, `slug:
-ok`, every check passes and the report passes its check (harness, Reported
-files; fix.md on `Wrote:`): log `- [x] 2 Fix — applied; no deviations;
+ok`, every check passes, the report passes its check (harness, Reported
+files; fix.md on `Wrote:`) and a `Not verified:` line is present: log `- [x] 2 Fix — applied; no deviations;
 checks pass` (prefix `retry: ` for the retry fix) and go to phase 3.
 Otherwise hard, listing each row that applies:
 
@@ -382,6 +385,7 @@ Otherwise hard, listing each row that applies:
 | `deviations` ≠ none | a size increase (harness "Size changes"): name each deviation from the assessment, the old size and one step up (small → medium, medium → large; large stays large) and what changes in phases 3–5; options "back to 1" (re-assess with fix.md's findings as added evidence) or "go on with size <s>" (logged as `size <s>`) |
 | a check fails | the failing check's first relevant line; options "back to 2" with what to change, or "back to 1" |
 | `status: partial` or `not-applied` | what the implementer left undone and why; same options |
+| no `Not verified:` line | the report is broken (harness); recommend "back to 2" (a fresh implementer) |
 
 Then phase 3.
 
@@ -390,8 +394,9 @@ Then phase 3.
 Always spawn a fresh `feat-bug-assessor` (test mode, row 3), never the
 agent that wrote the fix, with the cycle (`first`, `retry` or `after review
 fixes`), the report author's association, the approved commands and any
-environment or evidence the user supplied. Its report is the test-mode
-format of the agent file.
+environment or evidence the user supplied, and the not verified items:
+those of the latest `implementer` line (harness; none when it says `none`
+or there is none). Its report is the test-mode format of the agent file.
 
 **Cycle and retry**, read from the state file's Log, **only the lines
 after the last `back to` line** (a line starting with `- [x] back to `),
@@ -409,10 +414,15 @@ these lines.
 | --- | --- |
 | a failed check (harness, Reported files; the `Test report:` path must be on `Wrote:`) | **hard**: each failure with its reason; no verdict is logged; recommend a re-test (a fresh spawn, same cycle) |
 | `Sections: error …` or `Slug: mismatch …` | **hard**: the assessor's error line as is; recommend a re-test (a fresh spawn, same cycle) once the cause is fixed |
+| the implementer report just before this test (phase 4's review fixes) lacked its `Not verified:` line | **hard**: the report is broken (harness); recommend "back to 2" (a fresh implementer) |
+| an item given is absent from `Not verified items:` (matched on each item's `<check>` part, exactly as passed, or the line is missing when items were given) | **hard**: show those items and the verdict; recommend a re-test (a fresh spawn, same cycle, same items) that logs no `3 Test — failed` line and so uses no retry and no cycle; going on is the user's explicit decision, then the verdict's row applies |
 | `Verdict: verified` | **soft**: log `- [x] 3 Test — verified`; then phase 4, or phase 5 when this test followed review fixes |
 | `Verdict: partial` | **hard**: log `- [x] 3 Test — partial: <missing>`; show `Missing for verified`; the user supplies that environment or evidence (a fresh spawn, same cycle, with it), or decides explicitly to go on (see "Shipping without `verified`" in Gate commands) |
 | `Verdict: failed`, first cycle, retry unused | no stop: log `- [x] 3 Test — failed (retry 1 of 1): <Still failing>; retry fix` and go back to phase 2 with a fresh implementer, the test report's path (`Test report:`, `test.md`) and its `Still failing` line |
 | `Verdict: failed` otherwise (retry used, or after review fixes) | **hard**: log `- [x] 3 Test — failed: <Still failing>`; show `Still failing` and the test report link; recommend "back to 1" (re-assess with the failed reports as added evidence); the user may also decide explicitly (see below) |
+
+When the user goes on past unaccounted items, log `- [x] 3 Test —
+unaccounted: <items> (user: "<words>")` before the verdict's line.
 
 ## 4. Code review
 
@@ -444,7 +454,9 @@ Log the outcome before leaving the phase: `- [x] 4 Code review — picked
 <ids>` (or `none picked`). Picks go to a fresh `feat-implementer` in fix
 mode (row 2), in order: bugs and security, cuts, performance (each
 measured before and after, kept only if it beats the noise with tests
-green). Log its report. Then phase 3 again with a fresh spawn, cycle
+green). Tell it its `<who>`, `implementer`. Log its report and its `Not
+verified:` list as `4 implementer`; a report without the line makes the
+phase 3 gate that follows hard (harness). Then phase 3 again with a fresh spawn, cycle
 `after review fixes`: `verified` must hold again before ship, and a
 `failed` there is a hard gate, with no retry. No picks: phase 5.
 
@@ -467,5 +479,6 @@ secret scan: …` or another hard failure), set `Current phase: 5 Ship` back in 
 you may write `Current phase: done (PR #N)` in the local copy only
 (uncommitted). Never merge.
 
-Final message: the PR link, the branch and worktree, and the two or three
-things you'd look at first in review.
+Final message: the PR link, the branch and worktree, the two or three
+things you'd look at first in review, and the shipper's `Not verified:`
+line when it is not `none`, or that it is missing.

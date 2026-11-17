@@ -6,7 +6,8 @@ disallowedTools: NotebookEdit, Agent
 
 You ship one finished feature in the /feat workflow. The orchestrator gives
 you the worktree, the default branch, `feat-state.md` (brief, decisions,
-review results, performance numbers), the spec-number script's path and the
+review results, performance numbers), the spec-number script's path, the
+not verified items logged by the implementers (`/feat` only) and the
 project conventions. You can't talk to the user. The conventions override
 everything below.
 
@@ -44,9 +45,13 @@ everything below.
    only for some changes (a slow emulator or integration suite) runs only
    when the feature or the commits the rebase brought are in its scope, and
    narrowed the way the conventions say. On a failure, rerun only the
-   failing tests until green, then that check once. Then, nothing pushed
-   yet, check the number again (another feature may have taken it since
-   step 1): `bash <spec-number script> check <default> <NNN>-<short-name>`.
+   failing tests until green, then that check once. A full or slow check
+   you should run but could not, or that was killed or timed out, is not
+   verified (one that failed is not): put `n/a → <check> → <why>` on your
+   `Not verified:` line, `<why>` naming what is missing, never a value
+   (`<redacted>`); a suite the conventions leave out of scope is not one.
+   Then, nothing pushed yet, check the number again (another feature may
+   have taken it since step 1): `bash <spec-number script> check <default> <NNN>-<short-name>`.
    `keep NNN` → go on. `renumber MMM` → `git mv` the dir to
    `specs/<MMM>-<short-name>/`, rewrite the old path as in step 1 and in
    any committed file that names it (`git grep`), stage those by path,
@@ -58,7 +63,9 @@ everything below.
    `gh pr create` (not a draft unless the conventions say so). Body: the
    brief's Why and Behaviour, accepted design findings, what the code review
    found and fixed (performance with before/after numbers), the points to
-   look at in review, check results, a link to feat-state.md (numbered path),
+   look at in review, check results, a `Not verified` section (each item
+   you were given, as given, then your own, one per line as
+   `<task or n/a> → <check> → <why>`, or `none`), a link to feat-state.md (numbered path),
    and `Closes <issue>` when the state file names one, so merging closes it.
 5. If git or gh is blocked in this session (some hooks refuse git inside
    worktrees), don't work around it: build the single command the user can
@@ -92,7 +99,8 @@ orchestrator has already written `Current phase: done (shipping)` and
   verdict with the results of test.md's checks table, the reproduction
   status and, unless `Security bug: yes`, its steps (status only for a
   security bug), the review findings fixed, the points to look at, the
-  check results, a link to the state file, and `Fixes <ref>` only when the
+  check results, a `Not verified` section with your own items only, or
+  `none`, a link to the state file, and `Fixes <ref>` only when the
   state file has an `Issue:` line other than `none`. The shipped verdict,
   from the Log lines after the last `back to` line (one starting with
   `- [x] back to `): the `ship with <verdict>` line if there is one, else
@@ -120,4 +128,5 @@ Commits: <hash subject, one per line>
 Left uncommitted: <paths, or "none">
 Docs updated: <paths, or "none">
 Wrote: <absolute path of each file or dir you created, at its final path (the numbered spec dir, new docs; not the PR body file), one per line, or "none">
+Not verified: <its own: n/a → check → why, one per line, or "none">
 ```

@@ -144,6 +144,16 @@ links to it.
 Log every rejected finding with the user's reason, and every performance
 attempt with its numbers, so nothing is proposed or tried twice.
 
+Log each implementer's `Not verified:` list when its report arrives, `none`
+included: `- [x] <N> <who> — not verified: none`, or the line ending in `not
+verified:` with one indented `- <task or n/a> → <check> → <why>` per item.
+`<who>` names whose list it is, as the skill says; the latest line for a
+`<who>`, by position, is its list, so a later `none` clears earlier items.
+The skill resolves those lists for the agents it passes them to. A report without the line is
+broken, not empty: log no list for it, note `Not verified line missing` in
+its own Log line, and treat it as a surprise at the next gate; when no gate
+follows, say it in the final message.
+
 ## Board moves
 
 **Board moves**, only when `<repo root>/.feat-agent.yml` exists. The script

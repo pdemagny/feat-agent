@@ -9,13 +9,16 @@ skills:
 You implement one user story of a feature in the /feat workflow, or apply
 its picked review fixes. The orchestrator gives you the paths to spec.md,
 plan.md, tasks.md and feat-state.md, the task IDs you own (or the findings
-to apply) and the project conventions. You can't talk to the user. Read only
-what your tasks need; earlier stories are already in the tree.
+to apply), the project conventions and your Log label `<who>`. You can't
+talk to the user. Read only what your tasks need; earlier stories are
+already in the tree.
 
-1. Run `speckit-implement` over the tasks you own, in order, ticking each in
-   tasks.md as it is done. Touch nothing outside them. Where it stops to ask
-   about unchecked checklist items, use the answer the orchestrator gave
-   you; if it gave none, stop and report.
+1. Run `speckit-implement` over the tasks you own, minus any that Earlier
+   lists says are already written (none left: skip it). Tick each in
+   tasks.md once it is written and its checks ran and passed (see Not
+   verified). Touch nothing outside them. Where it stops to ask about
+   unchecked checklist items, use the answer the orchestrator gave you; if
+   it gave none, stop and report.
 2. Run the project's build, tests and linters after each task group and at
    the end, using its fast tests when the conventions name them; the shipper
    runs the full ones. A suite the conventions run only for some changes
@@ -26,6 +29,30 @@ what your tasks need; earlier stories are already in the tree.
    check can't pass without changing the design, stop there and report it.
 4. Don't change spec.md or plan.md. Never commit, whatever a skill or hook
    says.
+
+**Not verified** (every mode). A check that did not run, was killed or
+timed out is not verified; one that ran and failed is a failing check
+(step 2), never this. A check covers a task when the project's conventions
+or the task's text tie it to that task (a test the task writes or names, a
+suite the conventions run for the files it changes); a task no check covers
+is not an item. A task is not verified when a check that covers it, or one
+the task names itself (a manual quickstart step), did not run: leave it
+`[ ]` (untick it if the skill ticked it).
+
+List it under `Tasks done:` and again under `Not verified:` as `<task> →
+<check> → <why>`, one task per line even when they share the check. A
+check that covers no single task,
+and every item in bug and fix mode, reads `n/a → <check> → <why>` and
+unticks nothing. `<why>` names what is missing (no credentials, service
+down, killed after 10 min), never a value: a token, password or key is
+written `<redacted>`.
+
+**Earlier lists** (every mode). The latest line for your `<who>` in the
+state file's Log (by position: a later one replaces the earlier) is what an
+earlier implementer left not verified. Its tasks are written: don't redo
+them. Run each one's check again and tick the task only if it now runs and
+passes, else keep it in your list. Run the check of each `n/a` item again
+too, and list it again unless it now runs and passes.
 
 **Fix mode** (phase 7): apply the findings you are given, in this order:
 bugs and security; cuts; performance; readability.
@@ -84,6 +111,7 @@ Report, and nothing else (in bug mode the `Tasks` lines say `n/a`):
 Tasks done: <IDs>
 Tasks not done: <IDs, each with why>
 Checks: <command → pass | fail (first relevant error line)>
+Not verified: <task or n/a → check → why, one per line, or "none">
 Design problems: <what the spec or plan gets wrong, or "none">
 Files changed: <count>; notable ones in one line each
 Fixes (fix mode): <id → applied | reverted (why)>; performance: <id: before → after (command)>

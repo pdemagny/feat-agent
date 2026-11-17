@@ -87,6 +87,11 @@ in a `feat-*` subagent and Claude stops only at gates; see
 [workflow.md](workflow.md) for which phases stop and when. It ends with a PR
 link and never merges.
 
+A check an agent could not run (no credentials, a service down, a manual
+step, a killed run) is never passed off as green: its task stays unticked,
+the implementation gate lists it as Not verified, and the PR body repeats it
+under `Not verified`. Run it and tick the task yourself.
+
 State lives in `specs/<NNN-name>/feat-state.md`, next to the spec, plan and
 tasks (`specs/<name>/` until the shipper numbers it). The feature is built
 on branch `<name>`, in a worktree under
@@ -167,9 +172,12 @@ The gates you see:
   board tracking.
 - **Fix**: shown when the fix deviates from the assessment or a check
   fails.
-- **Test**: `verified` goes on; `partial` asks for what is missing; a
-  `failed` test goes back to the fix once, then asks you. A fix that is not
-  `verified` ships only if you say so.
+- **Test**: it also tries each check the fix could not run, and one it
+  still can't run makes it `partial`, so the PR's `Not verified` section
+  lists only checks the shipper could not run. `verified` goes on;
+  `partial` asks for what is missing; a `failed` test goes back to the fix
+  once, then asks you. A fix that is not `verified` ships only if you say
+  so.
 - **Code review**: you pick the fixes, unless the review is clean on a
   small, non-security fix.
 
