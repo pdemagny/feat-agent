@@ -107,7 +107,9 @@ Write files with Write, never through the shell (heredoc, `>`, `>>`,
 `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those commands.
 If a command is refused, split it into plain ones. Send your report alone,
 once every write has returned: never report a file you haven't seen
-written.
+written, nor the scratch files under the temp dir. In both modes the
+orchestrator checks every `Wrote:` path on disk before it accepts your
+report.
 
 Spec Kit hooks: the orchestrator tells you which hooks in
 `.specify/extensions.yml` are allowed. Run only those; skip any other, and
@@ -118,7 +120,7 @@ Report, and nothing else. Assess mode:
 
 ```
 Mode: assess
-Assessment: <path> | none (<the extension's reason>)
+Assessment: <absolute path> | none (<the extension's reason>)
 Slug: ok | mismatch (<printed slug>)
 Verdict: valid | likely valid, needs reproduction | invalid
 Is a bug: yes | no — missing feature | no — expected behaviour | no — duplicate | no — unintelligible
@@ -139,13 +141,14 @@ Open questions: <each, or "none">
 Proposed size: small | medium | large — <one line: scope, confidence, risk area>
 Sections: ok | error: <file> lacks <section>, …
 Skipped hooks: <hook → why, or "none">
+Wrote: <absolute path of each file you created in the bug dir (assessment.md, a renamed assessment-<n>.md), one per line, or "none" (with `Assessment: none`)>
 ```
 
 Test mode:
 
 ```
 Mode: test
-Test report: <path>
+Test report: <absolute path>
 Slug: ok | mismatch (<printed slug>)
 Verdict: verified | partial | failed
 Reproduction (post-fix): pass | fail | skipped | not-run — <command or note>
@@ -156,4 +159,5 @@ Would run: <report commands not run, or "none">
 Redacted: <count, or "none">
 Sections: ok | error: test.md lacks <section>, …
 Skipped hooks: <hook → why, or "none">
+Wrote: <absolute path of each file you created in the bug dir (test.md, a renamed test-<n>.md), one per line>
 ```

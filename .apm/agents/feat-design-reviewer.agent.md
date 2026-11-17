@@ -112,4 +112,5 @@ Findings:
 - [cost] <cost or risk> → <proposed change> (<artifact>) — severity: high | medium | nice-to-have
 - [design] <gap> → <proposed change> (<artifact>: <section or line>) — kind: clarity | fit | simplicity | readiness — severity: high | medium | nice-to-have
 Checked and fine: <one line per lens>
+Wrote: none
 ```

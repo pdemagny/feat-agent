@@ -177,4 +177,5 @@ net: -<N> lines possible | lean already
 Readability (7e):
 - <file:line> — <change> — <why it reads better>
 Dismissed: <things a skill raised that are not real, with why>
+Wrote: none
 ```

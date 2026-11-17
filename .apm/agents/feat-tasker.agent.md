@@ -29,7 +29,8 @@ Write files with Write or Edit, never through the shell (heredoc, `>`,
 `>>`, `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those
 commands. If a command is refused, split it into plain ones. Send your
 report alone, once every write has returned: never report a file you
-haven't seen written.
+haven't seen written. The orchestrator checks every `Wrote:` path on disk
+before it accepts your report.
 
 Spec Kit hooks: the orchestrator tells you which hooks in
 `.specify/extensions.yml` are allowed. Run only those; skip any other, and
@@ -46,4 +47,5 @@ Fixed: <MEDIUM/LOW findings you fixed, one line each>
 Open findings: <severity — finding → proposed fix (artifact)>
 Unchecked checklist items: <file: item, or "none">
 Skipped hooks: <hook → why, or "none">
+Wrote: <absolute paths, one per line: tasks.md always, plus every other file you created or changed in this spawn (artifacts you fixed)>
 ```

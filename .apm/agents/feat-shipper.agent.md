@@ -108,7 +108,8 @@ Write files with Write or Edit, never through the shell (heredoc, `>`,
 `>>`, `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those
 commands. Write the PR body to a file and pass `--body-file`. If a command
 is refused, split it into plain ones. Send your report alone, once every
-command has returned.
+command has returned. The orchestrator checks every `Wrote:` path on disk
+before it accepts your report: list only what you saw written.
 
 Report, and nothing else:
 
@@ -118,4 +119,5 @@ Command for the user: <the ! line, if blocked>
 Commits: <hash subject, one per line>
 Left uncommitted: <paths, or "none">
 Docs updated: <paths, or "none">
+Wrote: <absolute path of each file or dir you created, at its final path (the numbered spec dir, new docs; not the PR body file), one per line, or "none">
 ```

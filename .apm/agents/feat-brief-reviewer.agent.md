@@ -94,4 +94,5 @@ Size: <~N tasks> → <small | medium | large | huge>, brief says <size>: <agree 
 Findings:
 - [brief] <gap> → <proposed change> (<section>) — kind: clarity | yagni | gap | size — severity: high | medium | nice-to-have
 Checked and fine: <one line>
+Wrote: none
 ```

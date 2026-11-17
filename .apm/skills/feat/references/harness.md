@@ -54,6 +54,30 @@ A subagent's report is an input, never the end of your turn. A turn ends
 only at a hard gate, at the final message, or while agents are running; then
 say which are pending and continue when they report.
 
+## Reported files
+
+An agent's report can name a file whose write was refused. Every agent's
+report format ends with `Wrote: <absolute paths, or "none">`: its
+artifacts and the files it wrote, as its agent file says (never a deleted
+one). Before you accept a report, and before its gate rules:
+
+- Accept a path only when it is absolute, inside the worktree (the repo
+  when there is none), and free of `'`, newlines, `$` and backticks. Any
+  other path fails the phase without being run.
+- Run `ls -d -- '<path>' …` on every path of its `Wrote:` line (listed
+  among the *commands besides the tracker*). It prints names, never
+  content: it is not code reading. Skip it for `Wrote: none`.
+- The phase failed when the report has no `Wrote:` line, when a path is
+  refused (above), when an artifact path the report names elsewhere (its
+  artifact line) is not on its `Wrote:` line, or when `ls` reports a path
+  missing.
+- A failed phase is a **hard gate** straight away, whatever the gate would
+  have been, with no automatic retry: show each failure under "What you
+  should know", log `- [!] <N> <phase> — <reason>`, the reason being `no
+  Wrote: line`, `<path> refused (<why>)`, `<path> not on Wrote:` or
+  `<path> not on disk`, and recommend "back to N" (a fresh spawn of the
+  same agent). Don't start the next phase.
+
 ## Gates
 
 **Hard gate**: stop, show the gate summary, wait. Don't start the next phase
