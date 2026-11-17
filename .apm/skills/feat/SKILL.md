@@ -49,7 +49,9 @@ rules this skill follows. The values it refers to are below.
 - *Done marker*: marked done.
 - *Artifacts the orchestrator reads*: the brief and the state file. Open
   spec.md or plan.md only to quote a line the user must decide on.
-- *Commands besides the tracker*: git for the worktree and the diff.
+- *Commands besides the tracker*: git for the worktree and the diff;
+  `ls -d -- '<path>' …` on a report's accepted `Wrote:` paths (harness,
+  Reported files).
 - *Artifact owners*: specifier: spec.md; planner: plan.md, accepted
   design findings, and spec changes asked at the plan or the design review
   gate; tasker: tasks.md; implementer: code.
@@ -117,6 +119,10 @@ the phase 6 row.
 Phase 1 (the interview, the brief and its fresh-reader review) is
 `/brief`, in its own context.
 
+Every report's `Wrote:` line is checked first (harness, Reported files): a
+failed check makes that phase's gate hard, even where the table says soft
+or none.
+
 ---
 
 ## 0. Setup
@@ -169,7 +175,9 @@ claude`) and the `feat-*` agents are installed (plain or
 `[NEEDS CLARIFICATION]` marker or a blocker, the same at every size, large
 included; anything else surprising makes it hard. Otherwise it is soft. A
 blocker: the report has no `Spec:` path, or its Assumptions or Open markers
-say the brief can't be specified as written. A size remark makes it hard
+say the brief can't be specified as written. The `Spec:` path must be on
+`Wrote:`; a failed check (harness, Reported files) is hard before anything
+else. A size remark makes it hard
 too; sizes are checked at phases 3 and 5.
 
 **Hard**: stories and requirements in a few lines, the open markers
@@ -213,7 +221,8 @@ written) stops the run. It also reports a size trigger (new service,
 permissions, exposure or dependency); on a small feature, that is a size
 increase to ask about.
 
-Small and medium: no gate, go straight to phase 4. **Hard gate for large**:
+Small and medium: no gate, go straight to phase 4, unless the report fails
+its check (harness, Reported files). **Hard gate for large**:
 after a soft phase 2 it opens with the spec block (`**The spec (phase 2
 didn't stop):** …`, read from the Log: stories, requirements, numbered spec
 assumptions each with its recommendation, then the checklist question),
@@ -260,7 +269,8 @@ should know" (one line: what the amend changed).
 
 Spawn `feat-tasker`. It returns task counts per story, the MVP slice, the
 stories' task IDs, open findings with proposed fixes, and unchecked
-checklist items. **Hard gate** on CRITICAL/HIGH findings (accepted fixes go
+checklist items. **Hard gate** on a failed check (harness, Reported files;
+the `Tasks:` path must be on `Wrote:`), on CRITICAL/HIGH findings (accepted fixes go
 back to the tasker, which reruns analyze), on a size increase, on unchecked
 checklist items that the answer already given (phase 2, or the spec
 summary) doesn't cover (`speckit-implement` would otherwise stop to ask),
@@ -280,8 +290,9 @@ before phase 8, so a separate worktree would miss the spec and earlier
 stories. Pass the checklist answer from phase 5.
 
 **Soft gate** after the last story (hard after each one for large): tasks
-done, checks. Failing checks go back to the implementer once with the
-failures; if they still fail, or the fix needs a design change, hard gate.
+done, checks. Check each implementer's report (harness, Reported files)
+before spawning the next one. Failing checks go back to the implementer
+once with the failures; if they still fail, or the fix needs a design change, hard gate.
 Never accept a weakened test or check.
 
 ## 7. Code review

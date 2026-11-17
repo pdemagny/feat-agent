@@ -54,7 +54,8 @@ missing, stop: "/fix needs feat-agent's `feat` skill
   `gh api repos/<o>/<r>/issues/<N> --jq .author_association`;
   `gh repo view --json nameWithOwner,visibility`;
   `git ls-remote --heads origin fix-<slug>`; `git for-each-ref
-  --format='%(upstream)' refs/heads/fix-<slug>`.
+  --format='%(upstream)' refs/heads/fix-<slug>`; `ls -d -- '<path>' …` on a
+  report's accepted `Wrote:` paths (harness, Reported files).
 - *Artifact owners*: assessor: assessment.md (re-assess, "back to 1");
   implementer: code and fix.md.
 - *Agents that may be continued*: none: every spawn is fresh.
@@ -118,7 +119,9 @@ rows. Applying the picked fixes uses the phase 2 row.
 | 4 | Code review | `feat-code-reviewer` ×1 (small, medium) or ×2–3 | soft only when clean and small, not a security bug; else **hard**: user picks the fixes                                       |
 | 5 | Ship        | `feat-shipper` (fix mode)                       | none: ends with the PR link                                                                                                   |
 
-Gate message shape and hard/soft semantics are the harness's.
+Gate message shape and hard/soft semantics are the harness's. Every
+report's `Wrote:` line is checked first (harness, Reported files): a failed
+check makes that phase's gate hard, before any row below.
 
 ## Gate commands
 
@@ -250,6 +253,10 @@ argument as given), the report author's association, the commands the user
 approved so far, and on a re-assess the user's added evidence. Its report
 is the assess-mode format of the agent file.
 
+**Reported files first** (harness, Reported files): the `Assessment:` path
+must be on `Wrote:`, and `Assessment: none` comes with `Wrote: none`; a
+failed check is hard, recommend "back to 1".
+
 **Stop first** (checked before any other gate row): `Assessment: none`,
 `Verdict: invalid`, or `Is a bug: no — …` whatever the verdict (the
 assessor's `Is a bug` decides; never edit assessment.md to make them
@@ -363,12 +370,14 @@ the implementer's format with the `Bug fix (bug mode)` line.
 
 **Gate**, the same for the first fix and for the retry fix after a first
 `failed` test. Soft when `status: applied`, `deviations: none`, `slug:
-ok` and every check passes: log `- [x] 2 Fix — applied; no deviations;
+ok`, every check passes and the report passes its check (harness, Reported
+files; fix.md on `Wrote:`): log `- [x] 2 Fix — applied; no deviations;
 checks pass` (prefix `retry: ` for the retry fix) and go to phase 3.
 Otherwise hard, listing each row that applies:
 
 | Report says | Hard, and the gate shows |
 | --- | --- |
+| a failed check (harness, Reported files; fix.md must be on `Wrote:`) | each failure with its reason; recommend "back to 2" |
 | `slug: mismatch (…)` | the implementer's error as is; recommend "back to 2" (a fresh implementer) once the cause is fixed |
 | `deviations` ≠ none | a size increase (harness "Size changes"): name each deviation from the assessment, the old size and one step up (small → medium, medium → large; large stays large) and what changes in phases 3–5; options "back to 1" (re-assess with fix.md's findings as added evidence) or "go on with size <s>" (logged as `size <s>`) |
 | a check fails | the failing check's first relevant line; options "back to 2" with what to change, or "back to 1" |
@@ -398,6 +407,7 @@ these lines.
 
 | Report says | Gate |
 | --- | --- |
+| a failed check (harness, Reported files; the `Test report:` path must be on `Wrote:`) | **hard**: each failure with its reason; no verdict is logged; recommend a re-test (a fresh spawn, same cycle) |
 | `Sections: error …` or `Slug: mismatch …` | **hard**: the assessor's error line as is; recommend a re-test (a fresh spawn, same cycle) once the cause is fixed |
 | `Verdict: verified` | **soft**: log `- [x] 3 Test — verified`; then phase 4, or phase 5 when this test followed review fixes |
 | `Verdict: partial` | **hard**: log `- [x] 3 Test — partial: <missing>`; show `Missing for verified`; the user supplies that environment or evidence (a fresh spawn, same cycle, with it), or decides explicitly to go on (see "Shipping without `verified`" in Gate commands) |

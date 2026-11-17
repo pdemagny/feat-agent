@@ -39,6 +39,13 @@ is authoritative; this page mirrors it with explanations.
 
 **Hard gate**: Claude stops and waits for your answer. **Soft gate**: Claude
 reports and continues; anything surprising turns it into a hard gate.
+Every agent's report ends with a `Wrote:` line (its artifacts and the
+files it wrote, or `none`). Before it accepts the report, the coordinator
+refuses any path that is not absolute, is outside the worktree, or holds a
+quote, newline, `$` or backtick, then checks each path exists (`ls -d`,
+never reading the files) and that the report's artifact path is on the
+line. A failure fails the phase: a hard gate that shows the reason, with
+no automatic retry ("back to N" reruns it).
 After a soft phase 2, the next gate (3/4, or 3 on large) opens with the spec
 summary.
 
@@ -397,6 +404,9 @@ No agent is continued: every spawn is fresh.
   explicit words, logged and copied into the PR body.
 - **Code review**: picked fixes go to the implementer in fix mode, then a
   fresh test (`after review fixes`) must say `verified` again.
+- At every phase, a failed check of the agent's `Wrote:` line (assessment.md,
+  fix.md or test.md must be on it) makes the gate hard before any other
+  rule, as in `/feat`.
 - "skip 1", "skip 2" and "skip 3" are refused; "skip 4" on a security bug
   still asks for the go-ahead to ship; every "back to N" is logged and
   starts a new test cycle.
@@ -481,3 +491,9 @@ several runs are unfinished.
 both on every spawn, from their size tables (`/brief` for
 `feat-brief-reviewer`). Tool limits are deny lists (`disallowedTools`) rather
 than allow lists, so a new tool is available to an agent unless denied. No agent but the shipper commits, and no agent spawns further agents.
+Every report ends with `Wrote:`, absolute paths: the specifier, planner and
+tasker always list their artifact (spec.md, plan.md, tasks.md) plus every
+file they created or changed in that spawn; the implementer lists the
+files it created plus its artifacts (never files it only modified or
+deleted); the read-only reviewers say `none`. The coordinator checks them
+on disk before accepting the report.

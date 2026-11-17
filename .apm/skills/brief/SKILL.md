@@ -138,7 +138,9 @@ will. Pass `model` and `effort` for the size you proposed (this mirrors row
 skip the review; don't review inline: the context that wrote the brief
 can't read it fresh.
 
-Number its findings `F1…` and give each a recommendation. You know the
+Its report ends with `Wrote: none` (it is read-only); any path there is
+surprising: say so at the gate. Number its findings `F1…` and give each a
+recommendation. You know the
 interview, it doesn't: a finding the interview already answered is still a
 gap in the brief, so recommend writing the answer in, not rejecting it.
 
