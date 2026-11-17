@@ -33,7 +33,7 @@ is authoritative; this page mirrors it with explanations.
 | 3 | Plan          | `feat-planner`                                                                        | `speckit-plan`                                                     | `plan.md` and design docs                     | none (hard for large, opening with the spec summary after a soft phase 2)                                                  |
 | 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3, then `feat-planner` writes accepted findings | `security-and-hardening` (cost and design checklists in the agent) | a paraphrase, findings D1…                    | one gate with 3: hard only on a real finding, a user-call assumption, a constitution violation, a blocker, a size increase, a paraphrase that contradicts the brief or an unchecked checklist item after a soft phase 2 (always hard for large) |
 | 5 | Tasks         | `feat-tasker`                                                                         | `speckit-tasks`, `speckit-analyze`                                 | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, a size increase or an unanswered checklist item; always for large                                   |
-| 6 | Implement     | `feat-implementer` ×1 per user story, in turn                                         | `speckit-implement`                                                | the code, tasks ticked, checks green          | soft (hard per story for large; hard on a design problem)                                                                  |
+| 6 | Implement     | `feat-implementer` ×1 per user story, in turn                                         | `speckit-implement`                                                | the code, tasks ticked when their checks ran, a Not verified list | soft (hard per story for large; hard on a design problem)                                                                  |
 | 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies picks          | `security-and-hardening`, `performance-optimization`               | findings B, S, P, C, R; picked fixes applied  | **hard**                                                                                                                   |
 | 8 | Ship          | `feat-shipper`                                                                        | —                                                                  | docs updated, commits, push, PR               | none                                                                                                                       |
 
@@ -263,6 +263,12 @@ reads only what they need, runs build, tests and linters, never weakens a
 check, never commits. Failing checks go back once; a needed design change is
 a hard gate. **Large:** a gate after each story.
 
+A check that could not run (no credentials, a service down, a manual step,
+a killed or timed-out run) leaves its task unticked and listed as Not
+verified; the gate shows each list and how many tasks are not verified, and
+stays soft for it. A later implementer of the story retries those checks
+instead of redoing the tasks.
+
 ### 7 Code review (`feat-code-reviewer`)
 With [board tracking](#board-tracking) the coordinator first moves the issue
 to In review. It then makes the uncommitted work reviewable (`git add -N` on new
@@ -309,8 +315,9 @@ Updates the docs the project asks for, commits by the project's rules
 (default: `docs(specs)` then `feat(scope)` with its docs; `perf` and `refactor`
 only when separable),
 stages only the feature's files, rebases, pushes, opens a non-draft PR with
-the brief, accepted design changes, review results and numbers, and a link
-to the state file. If git is blocked in the session, it returns one `!`
+the brief, accepted design changes, review results and numbers, a `Not
+verified` section (every logged item and the ship's own unrun checks, or
+`none`), and a link to the state file. If git is blocked in the session, it returns one `!`
 command for you to run. If the spec-number script fails (git or gh error),
 nothing is pushed: `/feat` shows its `! spec-number: error: …` line as an
 error and leaves the state file at `8 Ship`, so `/feat resume` picks the
@@ -340,7 +347,8 @@ state file and flagged at the next gate. A failed `check` stops it.
 shipper numbers it) is the memory of the run: branch,
 worktree, size, current phase, conventions, allowed hooks, the issue if any, the brief, and a
 log of every gate with what you accepted and rejected (and why) and every
-performance attempt with its numbers. Every agent reads it; `/feat resume`
+performance attempt with its numbers, and each implementer's Not verified
+list (the latest one per implementer counts). Every agent reads it; `/feat resume`
 starts from it; the PR links to it. It's updated at each gate.
 
 ## /fix
@@ -367,7 +375,8 @@ which is authoritative for this section.
   fix mode it applies the review picks (phase 4).
 - **`feat-code-reviewer`**, unchanged, with a subset of its lenses.
 - **`feat-shipper`** in fix mode commits `fix(<scope>)` with the
-  `.specify/bugs/<slug>/` trail and opens the PR. Never merges.
+  `.specify/bugs/<slug>/` trail and opens the PR, whose `Not verified`
+  section holds only its own unrun checks. Never merges.
 
 No agent is continued: every spawn is fresh.
 
@@ -378,7 +387,7 @@ No agent is continued: every spawn is fresh.
 | 0 | Setup       | coordinator                                     | worktree on `fix-<slug>`, state file              | hard only if a hook would branch or commit                                                   |
 | 1 | Assess      | `feat-bug-assessor` (assess mode)               | `assessment.md`, the proposed size                | **stop** if not a bug; **hard** by default; soft only when nothing needs your call (below)   |
 | 2 | Fix         | `feat-implementer` (bug mode)                   | the code, `fix.md`                                | soft unless deviations from the assessment, a failing check or a status other than `applied` |
-| 3 | Test        | `feat-bug-assessor` (test mode), always fresh   | `test.md` with `verified`, `partial` or `failed`  | soft on `verified`; **hard** on `partial`; `failed` back to 2 once, then **hard**            |
+| 3 | Test        | `feat-bug-assessor` (test mode), always fresh   | `test.md` with `verified`, `partial` or `failed`  | soft on `verified`; **hard** on `partial` or an item left unaccounted; `failed` back to 2 once, then **hard**              |
 | 4 | Code review | `feat-code-reviewer` ×1 (small, medium) or ×2–3 | findings B, S, P, C; picks applied, then 3 again  | soft only when clean, small and not a security bug; else **hard**                            |
 | 5 | Ship        | `feat-shipper` (fix mode)                       | one `fix(<scope>)` commit, push, PR               | none                                                                                         |
 
@@ -397,7 +406,11 @@ No agent is continued: every spawn is fresh.
 - **Fix** turns hard on deviations from the assessment (handled like a size
   increase: one size step up, or "back to 1"), a failing check, or a status
   other than `applied`.
-- **Test**: `partial` asks you for the missing environment or evidence;
+- **Test**: the tester gets the checks the fix could not run (the fix gate
+  doesn't show them): it runs each one its rules allow or lists it under
+  `Missing for verified` (`partial`); an item it leaves unaccounted makes
+  the gate hard, and so does a missing `Not verified:` line in the review
+  fixes' report just before the test. `partial` asks you for the missing environment or evidence;
   the first `failed` goes back to the fix once (`retry 1 of 1` in the
   log), a second one, or one after review fixes, is hard with "back to 1"
   offered. A verdict other than `verified` reaches ship only on your

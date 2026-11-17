@@ -287,12 +287,19 @@ One `feat-implementer` per user story, one after the other in tasks.md
 order, each told its task IDs (setup and foundational tasks go with the
 first story, polish with the last). Not in parallel: nothing is committed
 before phase 8, so a separate worktree would miss the spec and earlier
-stories. Pass the checklist answer from phase 5.
+stories. Pass the checklist answer from phase 5, and each implementer its
+`<who>`, `US<n>` for its story (its retry and a resume included). Log each
+implementer's `Not verified:` list (harness, State file) as `6 US<n>`.
 
-**Soft gate** after the last story (hard after each one for large): tasks
-done, checks. Check each implementer's report (harness, Reported files)
-before spawning the next one. Failing checks go back to the implementer
-once with the failures; if they still fail, or the fix needs a design change, hard gate.
+**Soft gate** after the last story (hard after each one for large):
+`tasks done: <n> (<k> not verified)`, checks. Under "What you should know"
+show each story's latest `Not verified:` list (`Not verified: none` when
+empty; for large, the per-story gate shows that story's list). A non-empty
+list is not a surprise and never makes the gate hard; a report without the
+line is (harness): hard, recommending a fresh implementer for that story.
+Check each implementer's report (harness, Reported files) before spawning
+the next one. Failing checks go back to the implementer once with the
+failures; if they still fail, or the fix needs a design change, hard gate.
 Never accept a weakened test or check.
 
 ## 7. Code review
@@ -315,14 +322,18 @@ runs `/code-review ultra` before merging.
 **Hard gate**: the user picks. Spawn `feat-implementer` in fix mode with the
 picked findings, in order: bugs and security, cuts, performance (each
 measured before and after, kept only if it beats the noise with tests
-green), readability (one at a time, existing tests untouched). Log its
-report, performance numbers included.
+green), readability (one at a time, existing tests untouched). Tell it its
+`<who>`, `review fixes`. Log its report, performance numbers included, and
+its `Not verified:` list as `7 review fixes`. No gate follows: a report
+without the line is said in the final message (harness).
 
 ## 8. Ship
 
 Spawn `feat-shipper` with the state file, the conventions, the worktree, the
 default branch, the spec-number script (`<this skill's base
-dir>/scripts/spec-number.sh`) and the issue, if any. It numbers the spec
+dir>/scripts/spec-number.sh`), the issue, if any, and the not verified
+items: those of the latest line of each story and of `review fixes`
+(harness; none when every one says `none`). It numbers the spec
 dir, updates the docs the conventions call for, commits
 (default: `docs(specs)` then `feat(scope)` with its docs; `perf` and `refactor` only when separable),
 pushes and opens the PR, or returns `PR: blocked` with a single `!` line.
@@ -335,5 +346,7 @@ so `/feat resume` finds the run. Otherwise mark the state file done. Never
 merge.
 
 Final message: the PR link, the branch/worktree, the two or three things
-you'd look at first in review, and for a capability from a map, the next
+you'd look at first in review, the shipper's `Not verified:` line when it
+is not `none` (or the shipper report lacking the line), any report logged
+with `Not verified line missing` (the review fixes), and for a capability from a map, the next
 capability with `/brief <map> <id>`.
