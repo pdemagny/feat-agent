@@ -59,7 +59,7 @@ place() {
   elif [ -e "$dest" ] || [ -L "$dest" ]; then
     local bak
     # Outside skills/ and agents/: Claude Code would load a backup there as a skill or agent.
-    bak="$HOME/.claude/feat-agent-backups/$(basename "$dest").$(date +%Y%m%d%H%M%S)"
+    bak="$HOME/.claude/logistics-backups/$(basename "$dest").$(date +%Y%m%d%H%M%S)"
     mkdir -p "$(dirname "$bak")"
     mv "$dest" "$bak"
     echo "backup   $dest -> $bak"
@@ -95,7 +95,7 @@ has_agent() {
 
 # Installed as a Claude Code plugin: its skills and agents live in the plugin cache.
 has_plugin() {
-  claude plugin list 2>/dev/null | grep -q 'feat-agent@'
+  claude plugin list 2>/dev/null | grep -q 'logistics@'
 }
 
 case "$cmd" in
@@ -128,7 +128,7 @@ case "$cmd" in
     for t in "${tools[@]}"; do expect "tool $t" "install it" command -v "$t"; done
     expect "gh authenticated" "gh auth login" gh auth status
     if has_plugin; then
-      echo "ok       plugin feat-agent (skills and agents)"
+      echo "ok       plugin logistics (skills and agents)"
     else
       for d in "$repo"/.apm/skills/*/; do
         s="$(basename "$d")"

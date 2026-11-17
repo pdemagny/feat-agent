@@ -23,8 +23,8 @@ write the fix has verified it.
 
 Read `<this skill's base dir>/../feat/references/harness.md` now: it holds
 the rules this skill follows. The values it refers to are below. If it is
-missing, stop: "/fix needs feat-agent's `feat` skill
-(references/harness.md); install or update feat-agent".
+missing, stop: "/fix needs logistics' `feat` skill
+(references/harness.md); install or update logistics".
 
 ## Harness values
 
@@ -140,8 +140,8 @@ The harness's gate commands apply, with these `/fix` rules:
   first.
 
 Where this skill tells the user to run a command, it prints the plugin
-form too: `/fix` is `/feat-agent:fix`, `/brief` is `/feat-agent:brief`
-and `/feat` is `/feat-agent:feat` when feat-agent is installed as a Claude
+form too: `/fix` is `/logistics:fix`, `/brief` is `/logistics:brief`
+and `/feat` is `/logistics:feat` when logistics is installed as a Claude
 Code plugin.
 
 ---
@@ -175,7 +175,7 @@ Code plugin.
    (commit style, branch rules, where checks live, docs to update).
 4. Check `.specify/` exists (else stop: `specify init --here --integration
    claude`) and the `feat-*` agents are installed (plain or
-   `feat-agent:`-prefixed), `feat-bug-assessor` included. Check the bug
+   `logistics:`-prefixed), `feat-bug-assessor` included. Check the bug
    extension: no `.specify/extensions/bug/` and none of the
    `speckit-bug-assess`, `speckit-bug-fix`, `speckit-bug-test` skills →
    stop: "run `specify extension add bug` in this project". No heading
@@ -208,8 +208,8 @@ Code plugin.
      fix-<slug>` prints a line, append `-2`, `-3`, … until none holds.
      Rename the branch to `fix-<slug>` (`git branch --show-current`, then
      `git branch -m`).
-   - If setup found `.feat-agent.yml` and the worktree has none, log `- [!]
-     tracker: .feat-agent.yml is not in the worktree; commit and push it
+   - If setup found `.logistics.yml` and the worktree has none, log `- [!]
+     tracker: .logistics.yml is not in the worktree; commit and push it
      (board moves skipped)` and flag it at the first gate.
    - Create the state file in the harness template with this skill's
      values (`Size: not set`, `Agents: none (every spawn is fresh)`, `Map:
@@ -265,7 +265,7 @@ agree). The run ends at this gate:
   `Assessment: none (…)` text or assessment.md's verdict line) so the user
   can relabel or comment on the issue themselves.
 - `no — missing feature`: point to `/brief #N` for an issue, else `/brief
-  "<symptom>"` (plugin form `/feat-agent:brief`).
+  "<symptom>"` (plugin form `/logistics:brief`).
 - No issue is created, moved or edited (no board move: the building move
   never happens), and no later phase starts.
 - Write `Current phase: done (invalid)` for `Verdict: invalid` or

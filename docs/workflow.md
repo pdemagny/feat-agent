@@ -6,7 +6,7 @@ weight: 30
 # The workflow in detail
 
 What runs at each phase, on which model, for which size, and where it stops
-for you. The size table in [`.apm/skills/feat/SKILL.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/skills/feat/SKILL.md)
+for you. The size table in [`.apm/skills/feat/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/SKILL.md)
 is authoritative; this page mirrors it with explanations.
 
 ## Roles
@@ -325,7 +325,7 @@ run up again. Never merges.
 
 ## Board tracking
 
-Optional, and off unless the repo has a `.feat-agent.yml`; setup, scope and
+Optional, and off unless the repo has a `.logistics.yml`; setup, scope and
 the board's own workflows are in [install.md](install.md#5-board-tracking-optional).
 The skills run `.apm/skills/feat/scripts/tracker.sh` (no agent does): one
 `check` at the start of each run, which prints the board it will write to,
@@ -357,9 +357,9 @@ starts from it; the PR links to it. It's updated at each gate.
 bug report to a reviewed PR with Spec Kit's bug extension (`specify
 extension add bug`): assess, fix and test, each in a subagent, then the
 code review and the ship of `/feat`. It reads the same harness as `/feat`
-([`.apm/skills/feat/references/harness.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/skills/feat/references/harness.md):
+([`.apm/skills/feat/references/harness.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/references/harness.md):
 thin orchestrator, gate shape, state file, board moves, resume); its own
-values and size table are in [`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/skills/fix/SKILL.md),
+values and size table are in [`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/fix/SKILL.md),
 which is authoritative for this section.
 
 ### Roles

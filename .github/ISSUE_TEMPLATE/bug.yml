@@ -1,5 +1,5 @@
 name: Bug
-description: Something feat-agent does wrong
+description: Something logistics does wrong
 labels: [bug]
 body:
   - type: textarea

@@ -1,5 +1,5 @@
-baseURL = "https://pdemagny.github.io/feat-agent/"
-title = "feat-agent"
+baseURL = "https://pdemagny.github.io/logistics/"
+title = "logistics"
 locale = "en"
 disableKinds = ["taxonomy", "term", "RSS"]
 
@@ -31,7 +31,7 @@ disableKinds = ["taxonomy", "term", "RSS"]
 [params]
   BookTheme = "auto"
   BookSection = "docs"
-  BookRepo = "https://github.com/pdemagny/feat-agent"
+  BookRepo = "https://github.com/pdemagny/logistics"
   BookEditPath = "edit/main"
   BookSearch = true
 

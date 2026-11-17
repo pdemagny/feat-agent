@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Offline tests for .apm/skills/feat/scripts/tracker.sh (mise run test:tracker).
 #
-# Each case gets a temp git repo (with or without .feat-agent.yml) and a case
+# Each case gets a temp git repo (with or without .logistics.yml) and a case
 # dir. The stub tests/tracker/bin/gh, first on PATH, answers `gh repo` and
 # `gh issue` from case files and hands `gh api` to the real gh, whose config
 # (GH_CONFIG_DIR) sends every request to fake_github.py on a unix socket: the
@@ -51,7 +51,7 @@ new_case() {
   unset out
 }
 
-write_config() { printf '%s' "$1" >"$repo/.feat-agent.yml"; }
+write_config() { printf '%s' "$1" >"$repo/.logistics.yml"; }
 
 # fixture <file> <Op>: the endpoint's answer to operation <Op>.
 fixture() { command cp -f "$fixtures/$1" "$case_dir/$2.json"; }
@@ -97,10 +97,19 @@ ok() { printf 'ok %s\n' "$current"; }
 new_case "no config"
 tracker check
 expect_rc 0
-expect_out "tracker: off (no .feat-agent.yml)"
+expect_out "tracker: off (no .logistics.yml)"
 tracker set-status building '#1'
 expect_rc 0
-expect_out "tracker: off (no .feat-agent.yml)"
+expect_out "tracker: off (no .logistics.yml)"
+expect_no_calls
+ok
+
+# 1b. Old config name: check fails and says to rename it.
+new_case "old config name"
+printf 'x' >"$repo/.feat-agent.yml"
+tracker check
+expect_rc 1
+expect_out "tracker: error: .feat-agent.yml is now .logistics.yml; rename it"
 expect_no_calls
 ok
 
@@ -112,7 +121,7 @@ bad_config() {
   expect_out "$2"
   expect_no_calls
 }
-err_line='tracker: error: .feat-agent.yml line'
+err_line='tracker: error: .logistics.yml line'
 
 # 2. Malformed line: each error names the line or the key; gh never runs.
 new_case "malformed line"
@@ -121,7 +130,7 @@ bad_config "${CONFIG/    review: /$'\t'review: }" "$err_line 7: tab in a key lin
 bad_config "$CONFIG  owner: alice"$'\n' "$err_line 8: unknown key"
 bad_config "$CONFIG    review: Done"$'\n' "$err_line 8: duplicate tracker.statuses.review"
 bad_config "${CONFIG/    review: In review$'\n'/}" \
-  "tracker: error: .feat-agent.yml: missing tracker.statuses.review"
+  "tracker: error: .logistics.yml: missing tracker.statuses.review"
 bad_config "${CONFIG/provider: github/provider: linear}" "$err_line 2: provider must be github"
 ok
 

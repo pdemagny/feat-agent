@@ -1,10 +1,10 @@
-name: feat-agent
+name: logistics
 version: 0.11.0 # x-release-please-version
 description: 'From a feature idea or a bug report to a reviewed PR: /brief writes the brief, /feat runs Spec Kit phases in feat-* subagents sized by model and effort, /fix runs Spec Kit''s bug extension the same way.'
 author: Pierre Demagny
 license: MIT
-repository: https://github.com/pdemagny/feat-agent
-homepage: https://github.com/pdemagny/feat-agent
+repository: https://github.com/pdemagny/logistics
+homepage: https://github.com/pdemagny/logistics
 type: hybrid
 includes: auto
 # The third-party skills the agents load, pinned to an upstream tag.

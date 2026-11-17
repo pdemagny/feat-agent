@@ -57,7 +57,7 @@ with `gh`, its title and body are the idea and its unchecked checklist items
 are questions the interview answers. The brief records the issue, and the PR
 says `Closes #N`, so merging closes it.
 
-**Board tracking** (optional): with a `.feat-agent.yml` at the repo root,
+**Board tracking** (optional): with a `.logistics.yml` at the repo root,
 `/brief` and `/feat` move the issue across a GitHub Projects board (Brief,
 In progress, In review; Done when the PR merges). Each run first prints the
 board it will write to. A brief without an issue gets one created after you
@@ -159,7 +159,7 @@ One command, no brief and no `/clear` step: `/fix` assesses the report
 with Spec Kit's bug extension (install it once per project: `specify
 extension add bug`), fixes it, has a different agent verify the fix,
 reviews the code and opens a PR with `Fixes #N` when there is an issue.
-Installed as a plugin, it is `/feat-agent:fix`. A report that turns out to
+Installed as a plugin, it is `/logistics:fix`. A report that turns out to
 be a missing feature stops at the first gate and points to `/brief #N`.
 
 The gates you see:
@@ -202,8 +202,8 @@ Full matrix in [workflow.md](workflow.md#size--phase-matrix).
 
 ## Tuning
 
-The size tables in [`.apm/skills/feat/SKILL.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/skills/feat/SKILL.md) and
-[`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/feat-agent/blob/main/.apm/skills/fix/SKILL.md) are the single source
+The size tables in [`.apm/skills/feat/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/SKILL.md) and
+[`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/fix/SKILL.md) are the single source
 of truth: the coordinator passes `model` and `effort` from them on every
 agent call. Edit them and mirror the change in [workflow.md](workflow.md).
 
@@ -224,7 +224,7 @@ results were weakest, and raise that phase's effort before its model.
 
 They're ordinary Claude Code subagents: "have feat-code-reviewer review my
 uncommitted diff with lenses 7b and 7d", "have feat-design-reviewer review
-this plan with lens 4b". Installed as a plugin, they're `feat-agent:feat-code-reviewer` and
+this plan with lens 4b". Installed as a plugin, they're `logistics:feat-code-reviewer` and
 so on.
 
 ## When something goes wrong
@@ -232,9 +232,9 @@ so on.
 | What you see | What to do |
 | --- | --- |
 | `apm` or `specify`: command not found after installing | `uv tool update-shell`, then open a new shell |
-| `/brief`, `/feat` or `/fix` is not a known command | Restart Claude Code after installing. Installed as a plugin, they are `/feat-agent:brief` and so on. `install.sh check` lists what is missing ([install.md](install.md#4-check)) |
+| `/brief`, `/feat` or `/fix` is not a known command | Restart Claude Code after installing. Installed as a plugin, they are `/logistics:brief` and so on. `install.sh check` lists what is missing ([install.md](install.md#4-check)) |
 | `/fix` stops at setup and names `specify extension add bug` | Run it in the project, then `/fix` again |
-| `tracker: error: …` at the start of a run | Check `.feat-agent.yml` is committed and pushed, and `gh auth refresh -s project` ([board tracking](install.md#5-board-tracking-optional)) |
+| `tracker: error: …` at the start of a run | Check `.logistics.yml` is committed and pushed, and `gh auth refresh -s project` ([board tracking](install.md#5-board-tracking-optional)) |
 | A `[!] tracker:` line at a gate | A board move failed; the run went on. Move the card by hand |
 | The run ends with a line starting `! cd … && git …` | Git or `gh` was blocked in the session. Type that line as is: the `!` runs it in Claude Code |
 | The run ends with `! spec-number: error: …` | Nothing was pushed. Fix the cause (usually `gh` auth or network), then `/feat resume` |

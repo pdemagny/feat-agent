@@ -1,15 +1,15 @@
-# feat-agent
+# logistics
 
-[![Release](https://img.shields.io/github/v/release/pdemagny/feat-agent)](https://github.com/pdemagny/feat-agent/releases/latest)
-[![check](https://github.com/pdemagny/feat-agent/actions/workflows/check.yml/badge.svg)](https://github.com/pdemagny/feat-agent/actions/workflows/check.yml)
-[![docs](https://github.com/pdemagny/feat-agent/actions/workflows/docs.yml/badge.svg)](https://pdemagny.github.io/feat-agent/)
-[![License: MIT](https://img.shields.io/github/license/pdemagny/feat-agent)](https://github.com/pdemagny/feat-agent/blob/main/LICENSE)
-[![Claude Code plugin](https://img.shields.io/badge/Claude_Code-plugin-D97757)](https://pdemagny.github.io/feat-agent/docs/install/)
+[![Release](https://img.shields.io/github/v/release/pdemagny/logistics)](https://github.com/pdemagny/logistics/releases/latest)
+[![check](https://github.com/pdemagny/logistics/actions/workflows/check.yml/badge.svg)](https://github.com/pdemagny/logistics/actions/workflows/check.yml)
+[![docs](https://github.com/pdemagny/logistics/actions/workflows/docs.yml/badge.svg)](https://pdemagny.github.io/logistics/)
+[![License: MIT](https://img.shields.io/github/license/pdemagny/logistics)](https://github.com/pdemagny/logistics/blob/main/LICENSE)
+[![Claude Code plugin](https://img.shields.io/badge/Claude_Code-plugin-D97757)](https://pdemagny.github.io/logistics/docs/install/)
 [![Built on Spec Kit](https://img.shields.io/badge/built_on-Spec_Kit-6e40c9)](https://github.com/github/spec-kit)
 
 ### From idea to merge-ready PR on autopilot: an AI engineering team in your terminal, with spec-driven planning, right-sized models and smart gates that only stop you when it matters.
 
-feat-agent is a set of Claude Code skills and subagents that take a feature
+logistics is a set of Claude Code skills and subagents that take a feature
 idea, or a bug report, to a reviewed pull request, using
 [Spec Kit](https://github.com/github/spec-kit) for the spec, plan and tasks.
 
@@ -36,9 +36,9 @@ You need [Claude Code](https://code.claude.com/docs/en/setup), git, the
 [uv](https://docs.astral.sh/uv/).
 
 ```sh
-uv tool install apm-cli                         # the package manager that installs feat-agent
+uv tool install apm-cli                         # the package manager that installs logistics
 uv tool install specify-cli                     # Spec Kit
-apm install -g pdemagny/feat-agent -t claude    # skills, agents and the skills they use
+apm install -g pdemagny/logistics -t claude    # skills, agents and the skills they use
 
 cd ~/your-project
 specify init --here --integration claude        # once per project
@@ -95,7 +95,7 @@ Every phase, gate and model: [docs/workflow.md](docs/workflow.md).
 
 ## Documentation
 
-Also on the website: [pdemagny.github.io/feat-agent](https://pdemagny.github.io/feat-agent/).
+Also on the website: [pdemagny.github.io/logistics](https://pdemagny.github.io/logistics/).
 
 | Doc | What's in it |
 |---|---|
@@ -104,19 +104,19 @@ Also on the website: [pdemagny.github.io/feat-agent](https://pdemagny.github.io/
 | [docs/workflow.md](docs/workflow.md) | Every phase, gate and agent: the size × phase matrix, what runs when and how |
 | [docs/design.md](docs/design.md) | Why it is built this way: Claude Code mechanics, rejected alternatives |
 | [Roadmap](https://github.com/users/pdemagny/projects/2) | Known bugs and what is planned |
-| [CONTRIBUTING.md](https://github.com/pdemagny/feat-agent/blob/main/CONTRIBUTING.md) | Reporting bugs, proposing changes, working on feat-agent |
-| [SECURITY.md](https://github.com/pdemagny/feat-agent/blob/main/SECURITY.md) | Reporting a vulnerability privately |
+| [CONTRIBUTING.md](https://github.com/pdemagny/logistics/blob/main/CONTRIBUTING.md) | Reporting bugs, proposing changes, working on logistics |
+| [SECURITY.md](https://github.com/pdemagny/logistics/blob/main/SECURITY.md) | Reporting a vulnerability privately |
 
 ## Status
 
 Version 0.11.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli) <!-- x-release-please-version -->
-1.2.x. See [CHANGELOG.md](https://github.com/pdemagny/feat-agent/blob/main/CHANGELOG.md).
+1.2.x. See [CHANGELOG.md](https://github.com/pdemagny/logistics/blob/main/CHANGELOG.md).
 
 ## License
 
-MIT, see [LICENSE](https://github.com/pdemagny/feat-agent/blob/main/LICENSE). Some review checklists and prompts are adapted
+MIT, see [LICENSE](https://github.com/pdemagny/logistics/blob/main/LICENSE). Some review checklists and prompts are adapted
 from addyosmani/agent-skills, mattpocock/skills, dietrichgebert/ponytail
 (MIT) and google/elephant-goldfish-model (Apache-2.0), and the `.specify/`
 files come from Spec Kit (MIT). Credits and license texts are in
-[THIRD_PARTY_NOTICES.md](https://github.com/pdemagny/feat-agent/blob/main/THIRD_PARTY_NOTICES.md). The third-party skills
+[THIRD_PARTY_NOTICES.md](https://github.com/pdemagny/logistics/blob/main/THIRD_PARTY_NOTICES.md). The third-party skills
 that get installed keep their own licenses.

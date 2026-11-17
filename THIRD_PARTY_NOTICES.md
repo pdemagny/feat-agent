@@ -1,6 +1,6 @@
 # Third-party notices
 
-feat-agent is MIT-licensed (see [LICENSE](LICENSE)). It ships files copied
+logistics is MIT-licensed (see [LICENSE](LICENSE)). It ships files copied
 or adapted from the projects below, under their licenses. The skills that
 `apm install` or `install.sh deps` installs are not part of this repository
 and keep their own licenses.

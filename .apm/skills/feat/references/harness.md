@@ -1,6 +1,6 @@
 # Orchestrator harness
 
-The rules every feat-agent workflow skill follows. The skill that sent you
+The rules every logistics workflow skill follows. The skill that sent you
 here declares, in its `## Harness values` block, the values these rules
 name in *italics* (*state file*, *artifact dir*, *building move*, …); read
 each one there. `<skill>` is the skill's *skill* value.
@@ -44,7 +44,7 @@ Subagents don't see this conversation. Give each one, in its prompt:
 - for reviewers: the *reviewer context*, so they don't propose it again.
 
 Spawn each with the Agent tool, `subagent_type` = the agent's name as your
-agent list shows it (`feat-<name>`, or `feat-agent:feat-<name>` when
+agent list shows it (`feat-<name>`, or `logistics:feat-<name>` when
 installed as a Claude Code plugin), and
 **always pass `model` and `effort` from the size table**. If an agent file
 is missing, say so at the next gate and run that phase inline with its
@@ -156,9 +156,9 @@ follows, say it in the final message.
 
 ## Board moves
 
-**Board moves**, only when `<repo root>/.feat-agent.yml` exists. The script
+**Board moves**, only when `<repo root>/.logistics.yml` exists. The script
 is `bash <the *tracker script*>`; if it is missing,
-stop: "board tracking needs this script; install or update feat-agent's
+stop: "board tracking needs this script; install or update logistics'
 `feat` skill". A move is `set-status
 <building|review> <ref>`, `<ref>` being the *issue ref*. The skill says
 when each move happens (*building move*, *review move*). No `Issue:` line:
