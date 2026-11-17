@@ -52,8 +52,9 @@ When changing it:
   breaking change. Don't edit it by hand.
 - The roadmap is the GitHub Project https://github.com/users/pdemagny/projects/2:
   one issue per item, label `feat` or `bug`, fields Priority (P1/P2/P3), Size
-  (small/medium/large), Status. A PR says `Closes #N`; follow-ups are new
-  issues.
+  (small/medium/large), Status. A PR says `Closes #N` in its body, never
+  in a commit message (release-please would copy it into the release PR
+  and move the closed card back to In review); follow-ups are new issues.
 - The website (GitHub Pages, `.github/workflows/docs.yml`) is Hugo with the
   hugo-book theme over README.md and `docs/` (`hugo.toml` mounts them). A
   new page in `docs/` needs `title` and `weight` front matter; link repo
