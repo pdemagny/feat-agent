@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.12.0](https://github.com/pdemagny/logistics/compare/v0.11.0...v0.12.0) (2026-11-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **package:** rename .feat-agent.yml to .logistics.yml. Plugin users: remove the feat-agent plugin and marketplace, then install logistics from pdemagny/logistics. APM users: reinstall from pdemagny/logistics.
+
+### Features
+
+* **package:** rename feat-agent to logistics ([287fd24](https://github.com/pdemagny/logistics/commit/287fd247c707c7941d1dcb16d2d2b6983f409f3c))
+
 ## [0.11.0](https://github.com/pdemagny/feat-agent/compare/v0.10.0...v0.11.0) (2026-11-17)
 
 
