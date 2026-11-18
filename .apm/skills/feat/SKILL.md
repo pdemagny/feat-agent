@@ -7,9 +7,10 @@ description: >
   and open a PR on its own branch/worktree. Each phase runs in a dedicated
   feat-* subagent whose model and effort follow the feature's size; this
   session only coordinates and holds the gates where the user decides. Use
-  it as /feat followed by a brief path, or /feat resume, when a brief exists. Without a
+  it as /feat followed by a brief path, or /feat resume, when a brief exists,
+  or /feat rebase to bring a shipped run's PR onto the current main. Without a
   brief, use /brief first. Not for bugfixes (use /fix) or pure refactors.
-argument-hint: "specs/briefs/name.md | resume"
+argument-hint: "specs/briefs/name.md | resume | rebase [PR]"
 ---
 
 # /feat: from a brief to a PR
@@ -71,6 +72,16 @@ rules this skill follows. The values it refers to are below.
 - *Review phase*: 7.
 - *Resume search*: the most recent `specs/*/feat-state.md` not marked done;
   section 2 says how a soft phase 2 shows up on resume.
+- *Base-check boundaries*: the start of every phase once the state file
+  exists: phases 3 to 8, and any phase rerun by "back to N".
+- *Resolver context*: spec.md and plan.md.
+- *Implement row*: the phase 6 row. *Ship row*: the phase 8 row.
+- *Number check*: the spec-number script.
+- *Secret-scan script*: `<this skill's base dir>/scripts/secret-scan.sh`.
+- *Rebase search*: `specs/<slug>/feat-state.md` (glob
+  `specs/*/feat-state.md`), whatever its `Current phase:`: the shipper
+  commits it before phase 8 marks it done, and an open PR means the
+  shipper ran.
 
 ## Size table
 
@@ -101,8 +112,8 @@ reviewer, lenses `4a+4b+4c`. **medium / large**: one per lens, in parallel.
 Phase 7 runs one `feat-code-reviewer` per group of lenses. **small**: two
 reviewers, lenses `7a+7b` and `7c+7d+7e`. **medium / large**: one per lens,
 `7a`–`7d` in parallel, then `7e` with 7d's cuts. A group runs on the
-strongest model and effort among its rows. Applying the review fixes uses
-the phase 6 row.
+strongest model and effort among its rows. Applying the review fixes and
+moving onto a new main use the phase 6 row.
 
 ## Phases and gates
 
@@ -120,6 +131,10 @@ the phase 6 row.
 Phase 1 (the interview, the brief and its fresh-reader review) is
 `/brief`, in its own context.
 
+From phase 3 on, each phase starts with the base check (harness, Moving
+onto a new main): silent when main has not moved; a move is listed at the
+next gate, or stops there when it needs your call.
+
 Every report's `Wrote:` line is checked first (harness, Reported files): a
 failed check makes that phase's gate hard, even where the table says soft
 or none.
@@ -132,13 +147,18 @@ or none.
    `model` and `effort` per call, and `EnterWorktree`. If you can't do
    that here, stop: say `/feat` runs only in Claude Code, and that the
    brief can be built there. Don't run the phases inline instead.
-1. `$ARGUMENTS` must be a brief file (or `resume`). If it is an idea instead,
-   stop and point to `/brief "<idea>"`; if it is an issue (`#N` or its
-   URL), to `/brief #N`; if it describes a bug, to `/fix "<symptom>"` (or
-   `/fix #N`; `/logistics:fix` as a plugin). Read the brief; check it has
-   size, short name, behaviour and acceptance. Huge isn't a size here.
-   Older briefs and state files say "normal" or "big": read them as medium
-   and large; older briefs may lack "Today" and "Alternatives rejected".
+1. `$ARGUMENTS` must be a brief file (or `resume`, or `rebase`, below). If
+   it is an idea instead, stop and point to `/brief "<idea>"`; if it is an
+   issue (`#N` or its URL), to `/brief #N`; if it describes a bug, to
+   `/fix "<symptom>"` (or `/fix #N`; `/logistics:fix` as a plugin). Read
+   the brief; check it has size, short name, behaviour and acceptance.
+   Huge isn't a size here. Older briefs and state files say "normal" or
+   "big": read them as medium and large; older briefs may lack "Today" and
+   "Alternatives rejected".
+   - `rebase [<PR number, URL or branch>]`: run steps 0, 2, 3 and 4 (no
+     step 5: `rebase` makes no board moves), then read `<this skill's base
+     dir>/references/rebase.md` and follow it; no other run reads that
+     file.
 2. Read the project's `CLAUDE.md` / `AGENTS.md` and project memory. They
    override this file where they disagree. Keep the few lines agents need
    (commit style, branch rules, where checks live, docs to update).
@@ -160,8 +180,8 @@ claude`) and the `feat-*` agents are installed (plain or
    numbers other in-flight features take. The shipper numbers it in phase 8
    with the spec-number script (free on the fetched `origin/<default>` and
    in every open PR's files), checks it again before pushing, and leaves
-   the branch name as is. Prefer a worktree
-   (EnterWorktree). EnterWorktree picks its own
+   the branch name as is. `git fetch origin <default>` (harness, Fresh
+   base), then prefer a worktree (EnterWorktree). EnterWorktree picks its own
    branch name: check `git branch --show-current` and `git branch -m` it if
    needed. Enter it before spawning anything: agents start in your
    directory. If setup found `.logistics.yml` and the worktree has none,
@@ -306,9 +326,9 @@ Never accept a weakened test or check.
 ## 7. Code review
 
 First, the review move (see Board moves). The work is uncommitted, so
-`git diff <default>...HEAD` is empty. Run (these are git, not code reading):
+`git diff origin/<default>...HEAD` is empty. Run (these are git, not code reading):
 `git add -N` on the feature's new files, then
-`BASE=$(git merge-base <default> HEAD)`; the diff command is
+`BASE=$(git merge-base origin/<default> HEAD)`; the diff command is
 `git diff "$BASE"`. Check it is non-empty.
 
 Spawn the reviewers per the size table, each with the diff command, its
@@ -379,8 +399,13 @@ an error, don't mark the state file done and leave `Current phase: 8 Ship`
 so `/feat resume` finds the run. Otherwise mark the state file done. Never
 merge.
 
+`PR: conflict`: run harness "Moving onto a new main, At ship", then read
+the report as above.
+
 Final message: the PR link, the branch/worktree, the two or three things
 you'd look at first in review, the shipper's `Not verified:` line when it
 is not `none` (or the shipper report lacking the line), any report logged
-with `Not verified line missing` (the review fixes, from a hard gate), and for a capability from a map, the next
+with `Not verified line missing` (the review fixes, from a hard gate), a
+move onto a new main kept since the last gate or at ship (harness, Moving
+onto a new main), and for a capability from a map, the next
 capability with `/brief <map> <id>`.

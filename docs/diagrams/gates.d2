@@ -20,6 +20,8 @@ cc -> you: confirm the brief {class: gate}
 you -> cc: /feat on the brief, in a fresh context
 cc -> agents: specify
 cc -> you: answer its open questions, if any {class: maybe}
+cc -> agents: before each phase: move onto main, if it moved
+cc -> you: decide on a conflict that changes behaviour, if any {class: maybe}
 cc -> agents: plan + design review
 cc -> you: check the spec, decide on the findings {class: maybe}
 cc -> agents: tasks + consistency check
@@ -29,3 +31,6 @@ cc -> agents: code review
 cc -> you: decide on findings that need you, if any {class: maybe}
 cc -> agents: apply fixes, ship
 agents -> you: pull request, yours to merge {class: back}
+you -> cc: /feat rebase, when the PR conflicts
+cc -> agents: rebase, resolve, checks, push
+agents -> you: PR on the current main {class: back}

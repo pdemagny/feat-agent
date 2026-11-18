@@ -190,7 +190,37 @@ my conf.env:2: key-literal"
 expect_hidden hunter2024x "$jwt" adm1n
 ok
 
-# 8. Self: the scanner and this test pass their own scan.
+# 8. Range mode: only the lines the branch adds over <from>, numbered in the
+# new files, over several commits; main's own line and a removed one are not
+# reported. A missing argument or an unknown ref exits 2.
+new_case "range"
+put main.cfg a "$pw = \"main-secret-1\"" b
+put old.cfg "$tok = \"gone-secret-2\"" c
+git -C "$repo" add -A
+git -C "$repo" commit -q -m main
+base="$(git -C "$repo" rev-parse HEAD)"
+put main.cfg a "$pw = \"main-secret-1\"" b "$sec: \"branch-sec-3\""
+git -C "$repo" add -A
+git -C "$repo" commit -q -m one
+put new/file.txt x "${gh}branchtokenvalue"
+put old.cfg c
+git -C "$repo" add -A
+git -C "$repo" commit -q -m two
+scan range "$base" HEAD
+expect_rc 1
+expect_out "main.cfg:4: key-literal
+new/file.txt:2: github-token"
+expect_hidden main-secret-1 gone-secret-2 branch-sec-3 branchtokenvalue
+scan range HEAD HEAD
+expect_rc 0
+expect_out ""
+scan range "$base"
+expect_rc 2
+scan range no-such-ref HEAD
+expect_rc 2
+ok
+
+# 9. Self: the scanner and this test pass their own scan.
 new_case "self"
 command cp -f -- "$script" "$repo/secret-scan.sh"
 command cp -f -- "$here/run.sh" "$repo/run.sh"

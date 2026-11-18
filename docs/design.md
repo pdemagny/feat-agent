@@ -158,10 +158,13 @@ installer read it:
 - **`install.sh`**: symlinks for working on the workflow itself.
 
 The rules `/feat` and `/fix` share (thin orchestrator, gates, review findings,
-state file, board moves, resume) live in one file, `.apm/skills/feat/references/harness.md`,
+state file, board moves, moving onto a new main, resume) live in one file, `.apm/skills/feat/references/harness.md`,
 which `/fix` reaches as `../feat/references/harness.md` from its own base
 dir, as `/brief` reaches the tracker script; all three installers keep it
-in place, and `mise run lint` greps it for `/feat`-only words.
+in place, and `mise run lint` greps it for `/feat`-only words. The
+`rebase` entry point of both skills, `.apm/skills/feat/references/rebase.md`,
+sits beside it under the same rule: only a `rebase` run reads it, and the
+lint greps it too.
 
 Agent frontmatter has no `model` or `effort` (`/feat` passes both on every
 spawn from the size table) and limits tools with `disallowedTools`.

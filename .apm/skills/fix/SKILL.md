@@ -7,9 +7,9 @@ description: >
   its own branch/worktree. Each phase runs in a feat-* subagent whose model
   and effort follow the bug's size; this session only coordinates and holds
   the gates where the user decides. Use it as /fix #N, /fix <issue URL>,
-  /fix "<symptom>" or /fix resume. Not for features (use /brief) or
-  refactors.
-argument-hint: '#N | issue-url | "symptom" | resume'
+  /fix "<symptom>" or /fix resume, or /fix rebase to bring a shipped fix's
+  PR onto the current main. Not for features (use /brief) or refactors.
+argument-hint: '#N | issue-url | "symptom" | resume | rebase [PR]'
 ---
 
 # /fix: from a bug report to a PR
@@ -83,6 +83,21 @@ missing, stop: "/fix needs logistics' `feat` skill
   every path of `git worktree list --porcelain`, without the done marker;
   one → resume (EnterWorktree with `path` when it is another worktree),
   several → ask.
+- *Base-check boundaries*:
+  - the start of every phase from 2 on;
+  - phase 3 after review fixes;
+  - any "back to N" with N ≥ 2.
+
+  "back to 1" re-assesses with no check; checks resume at phase 2, once
+  the assess gate has set the size (the setup fetch covers phase 1).
+- *Resolver context*: assessment.md and fix.md, those that exist.
+- *Implement row*: the phase 2 row. *Ship row*: the phase 5 row.
+- *Number check*: none.
+- *Secret-scan script*: `<this skill's base
+  dir>/../feat/scripts/secret-scan.sh`.
+- *Rebase search*: `.specify/bugs/<slug>/feat-state.md` (glob
+  `.specify/bugs/*/feat-state.md`) whose `Current phase:` starts with
+  `done` (committed `done (shipping)`).
 
 ## Size table
 
@@ -107,7 +122,8 @@ group of lenses. **small**: one reviewer, lenses `7a+7b+7d`. **medium**:
 one reviewer, `7a+7b`; for a performance bug `7c` joins it (`7a+7b+7c`).
 **large**: `7a` and `7b` in parallel, plus `7c` in parallel for a
 performance bug. A group runs on the strongest model and effort among its
-rows. Applying the review fixes uses the phase 2 row.
+rows. Applying the review fixes and moving onto a new main use the phase 2
+row.
 
 ## Phases and gates
 
@@ -119,6 +135,11 @@ rows. Applying the review fixes uses the phase 2 row.
 | 3 | Test        | `feat-bug-assessor` (test mode), always fresh   | soft on `verified`; **hard** on `partial` or an item left unaccounted; `failed` goes back to 2 once, then **hard** with "back to 1" offered  |
 | 4 | Code review | `feat-code-reviewer` ×1 (small, medium) or ×2–3 | **hard** on a security risk area, `Size: large`, or a `user` or `S` finding; else soft (the `apply` findings are fixed, then 3 again)         |
 | 5 | Ship        | `feat-shipper` (fix mode)                       | none: ends with the PR link                                                                                                                  |
+
+From phase 2 on (once the assess gate has set the size), each phase starts
+with the base check (harness, Moving onto a new main): silent when main
+has not moved; a move is listed at the next gate, or stops there when it
+needs your call.
 
 Gate message shape and hard/soft semantics are the harness's. Every
 report's `Wrote:` line is checked first (harness, Reported files): a failed
@@ -155,11 +176,11 @@ Code plugin.
    phases inline instead.
 2. The argument:
    - `$ARGUMENTS` is one of: `#N`, `owner/repo#N`, an issue URL, a quoted
-     symptom, or `resume`.
+     symptom, `resume`, or `rebase [<PR number, URL or branch>]`.
    - A brief path (`specs/briefs/<name>.md`): stop and point to `/feat
      <path>`.
    - Empty: show the usage (`/fix #N | <issue URL> | "<symptom>" |
-     resume`) and stop.
+     resume | rebase [PR]`) and stop.
    - Refused here when the argument makes it plain (nothing created, no
      issue touched): a refactor request (not a bug: say so; `/brief` if it
      needs planning), a backport request (`/fix` fixes the current branch
@@ -171,6 +192,10 @@ Code plugin.
      its author counts as `unknown` (step 7).
    - `resume`: run steps 1, 3, 4 and 5, then follow Resume (below) instead
      of steps 6 and 7.
+   - `rebase [<PR number, URL or branch>]`: run steps 1, 3, 4 and 5 (no
+     board check: `rebase` makes no board moves), then read `<this skill's
+     base dir>/../feat/references/rebase.md` and follow it instead of
+     steps 6 and 7; no other run reads that file.
 3. Read the project's `CLAUDE.md` / `AGENTS.md` and project memory. They
    override this file where they disagree. Keep the few lines agents need
    (commit style, branch rules, where checks live, docs to update).
@@ -203,7 +228,8 @@ Code plugin.
      2–4 of its words; from a non-GitHub URL, its last path segment.
      Lowercase kebab-case, only `[a-z0-9-]`, at most 40 characters (the
      extension keeps such a slug unchanged).
-   - EnterWorktree, before spawning anything. Then the slug must be
+   - `git fetch origin <default>` (harness, Fresh base), then
+     EnterWorktree, before spawning anything. Then the slug must be
      unused: if `.specify/bugs/<slug>/` exists in the worktree, the branch
      `fix-<slug>` exists locally, or `git ls-remote --heads origin
      fix-<slug>` prints a line, append `-2`, `-3`, … until none holds.
@@ -229,7 +255,9 @@ Code plugin.
   before committing has `5 Ship` back in the local copy, and one waiting
   on the user's `!` command (`done (shipping)`, no upstream) resumes at
   phase 5.
-- **Board**: run `check` first; exit ≠ 0 → stop. The building move only
+- **Repair**: once in the run's worktree, the repair check first
+  (harness, Moving onto a new main), before anything else.
+- **Board**: run `check` next; exit ≠ 0 → stop. The building move only
   once the Log has the `1 Assess — <soft | hard> gate` line.
 - **Continue** at the recorded phase; finished phases (their Log lines)
   are not redone. The phase itself restarts with a fresh spawn, as every
@@ -428,9 +456,9 @@ unaccounted: <items> (user: "<words>")` before the verdict's line.
 ## 4. Code review
 
 First, the review move (see Board moves). The work is uncommitted, so
-`git diff <default>...HEAD` is empty:
+`git diff origin/<default>...HEAD` is empty:
 1. `git add -N` on the fix's new files.
-2. `BASE=$(git merge-base <default> HEAD)`.
+2. `BASE=$(git merge-base origin/<default> HEAD)`.
 3. The diff command is `git diff "$BASE"`; check it is non-empty.
 
 Spawn the reviewers per the size table's groups, each with: the bug dir as
@@ -488,6 +516,10 @@ secret scan: …` or another hard failure), set `Current phase: 5 Ship` back in 
 you may write `Current phase: done (PR #N)` in the local copy only
 (uncommitted). Never merge.
 
+`PR: conflict`: run harness "Moving onto a new main, At ship", then read
+the report as above; the state file stays `done (shipping)`.
+
 Final message: the PR link, the branch and worktree, the two or three
-things you'd look at first in review, and the shipper's `Not verified:`
-line when it is not `none`, or that it is missing.
+things you'd look at first in review, the shipper's `Not verified:`
+line when it is not `none`, or that it is missing, and a move onto a new
+main made at ship (harness, Moving onto a new main).

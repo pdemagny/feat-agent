@@ -188,6 +188,51 @@ unfinished run in this checkout or any of its worktrees (it asks when
 there are several) and continues where it stopped. Phases, models and
 board moves: [workflow.md](workflow.md#fix).
 
+## When main moves
+
+```
+/feat rebase           # every open PR of yours here that conflicts
+/feat rebase 57        # one PR (number, URL or branch)
+/fix rebase            # the same for /fix runs
+```
+
+While a run is going, it keeps up with main on its own: before each phase
+(from Plan in `/feat`, from Fix in `/fix`) it checks whether main has
+moved. When it has not, nothing changes and you see nothing. When it has,
+the run moves onto the new main and the next gate says so, with the files
+it resolved alone. A conflict that would drop or change behaviour stops
+before the phase, with the move undone and the run on its old base:
+
+| Answer        | Effect                                                          |
+| ------------- | --------------------------------------------------------------- |
+| `ok`          | the move again, with my recommendations                         |
+| your words    | the move again, with your resolution for that file              |
+| `stay`        | the phase runs on the old base; asked again once main moves on  |
+| `stop`        | pause, as at any gate                                           |
+
+When another PR merges first, yours may conflict with the new main.
+`rebase` (as a plugin, `/logistics:feat rebase` or `/logistics:fix
+rebase`) brings it back on its own: it rebases the branch onto the current
+main, resolves the conflicts that keep both sides' intent, runs the full
+checks and pushes with `--force-with-lease`, so nothing someone else
+pushed to the PR is overwritten. It takes only your own PRs of this
+repository whose branch holds a `/feat` or `/fix` state file; naming
+someone else's PR asks first. A conflict that would drop or change
+behaviour stops for your call; nothing is pushed until you answer. With
+several PRs, the ones that need you wait and the others go on: their
+questions come together in one gate at the end, grouped by PR.
+
+Every move is logged in the run's state file. On a PR, that Log line
+lands in its own commit, `docs(specs): log rebase onto <short sha>`
+(nothing but Log lines), and the PR body gets a note under `### Rebases`
+with what was resolved alone, what you decided and the checks.
+
+At the end you get one line per PR: pushed, with what was resolved alone
+and what you decided; nothing to do; skipped, with why; waiting; or its
+error.
+You never get a command to run. Details:
+[workflow.md](workflow.md#when-main-moves).
+
 ## Sizes
 
 Proposed by `/brief`; you decide.
@@ -239,5 +284,9 @@ so on.
 | A `[!] tracker:` line at a gate | A board move failed; the run went on. Move the card by hand |
 | The run ends with a line starting `! cd … && git …` | Git or `gh` was blocked in the session. Type that line as is: the `!` runs it in Claude Code |
 | The run ends with `! spec-number: error: …` | Nothing was pushed. Fix the cause (usually `gh` auth or network), then `/feat resume` |
+| Your PR conflicts after another one merged | `/feat rebase <PR>` (or `/fix rebase <PR>`) ([When main moves](#when-main-moves)) |
+| `rebase` ends with `! push refused: …` | Someone pushed to the PR since the run started; nothing was overwritten and the branch is back on the PR's head. Look at what they pushed, then run `rebase` again |
+| `rebase` ends with `! secret scan: …` or `! WIP commit …` | Nothing was pushed. Look at the file it names, or at the branch's last commits |
+| A `[!] move — git fetch failed` line at a gate | Check the network; the run went on, on the base it had |
 | The session closed, crashed or ran out of context mid-run | `/feat resume` (or `/fix resume`) continues from the state file |
 | Your plan has no Opus (or no Sonnet) | Change the model in the size tables ([Tuning](#tuning)) |
