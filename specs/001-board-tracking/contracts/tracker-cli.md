@@ -119,6 +119,11 @@ timeout after a server-side success would leave a duplicate.
       refused.
 - Title: the first line's text after `# Brief: ` (required, non-empty). A
   title gh rejects (e.g. too long) fails with gh's own error as the reason.
+- Label: the header's first `- Kind: <kind>` line (before the first line
+  starting with `## `), its value trimmed of spaces. `feat` or `bug` →
+  `--label <kind>`; `none` → no label; no such line → `--label feat`.
+  Anything else → `tracker: error: brief has a malformed Kind line (want
+  feat, bug or none)`, exit 2, before any gh call.
 - Body, written to a `mktemp` file removed on exit:
 
   ```markdown
@@ -137,18 +142,22 @@ timeout after a server-side success would leave a duplicate.
   The `Brief:` line stops resolving once `/feat` moves the brief into
   `feat-state.md` (phase 2); the final path isn't known at `/brief` time.
   This is an accepted limitation.
-- gh calls: 2.
+- gh calls: 2 (3 with the label retry).
   1. Current repo: `gh repo view --json nameWithOwner --jq .nameWithOwner`.
      Different from `<owner/repo>` → `tracker: error: could not create the
      issue (current repo is <resolved>, not <owner/repo> named at the gate)`,
      exit 1, no issue created.
-  2. `gh issue create -R <owner/repo> --title <title> --body-file <tmp>` (no
-     labels, no assignees). The printed URL must match
+  2. `gh issue create -R <owner/repo> --title <title> --body-file <tmp>
+     [--label <kind>]` (no assignees). The printed URL must match
      `^https://github\.com/([^/]+)/([^/]+)/issues/([1-9][0-9]{0,9})$`, and its
-     owner and repo must pass the ref rules above.
+     owner and repo must pass the ref rules above. When gh's error says
+     the label was not found (gh checks labels before creating anything),
+     one retry without `--label`.
 - Success: `tracker: created <owner>/<repo>#<N>`, exit 0, owner and repo
   taken from the printed URL (they name where gh created it, e.g. the
-  upstream of a fork). `/brief` writes this full ref into `Issue:`.
+  upstream of a fork); after the label retry, followed by ` (without the
+  <kind> label: <owner/repo> has none)`. `/brief` writes this full ref into
+  `Issue:`.
 - Failure: `tracker: error: could not create the issue (<reason>)`, exit 1.
 
 ### `set-status <brief|building|review> <ref>`
