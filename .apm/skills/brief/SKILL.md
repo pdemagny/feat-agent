@@ -83,10 +83,10 @@ plugin) and stop. A tiny brief, usually left by `/tiny` when the work
 outgrew it, is the draft: its Why, Behaviour and Acceptance are answers,
 not questions. Skip the `/tiny` offer; ask what it lacks (Today, Out of
 scope, Alternatives rejected, Constraints) and what is new since, then size
-it here. Keep its short name and `Issue:` line, and write the full brief
-to `specs/briefs/<short-name>.md` in this checkout, in place when it is
-already there; a brief read from a `/tiny` worktree leaves that worktree
-as it is.
+it here. Keep its short name, `Kind:` and `Issue:` lines, and write the
+full brief to `specs/briefs/<short-name>.md` in this checkout, in place
+when it is already there; a brief read from a `/tiny` worktree leaves that
+worktree as it is.
 
 ## 2. Size
 
@@ -116,6 +116,7 @@ Write it to `specs/briefs/<short-name>.md`:
 # Brief: <feature, one line>
 - Size: small | medium | large — <~N tasks expected, one-line reason>
 - Short name: <2–4 word kebab-case, e.g. edit-stack-config>
+- Kind: feat
 - Map: <map path and capability id, if it came from one>
 - Issue: <#N, or owner/repo#N for another repository, if it came from one>
 

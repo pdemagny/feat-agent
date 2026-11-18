@@ -95,6 +95,7 @@ The card stays where it is: `/brief` and `/fix` move it.
 # Brief: <the change, one line>
 - Size: tiny — <one-line reason>
 - Short name: <2–4 word kebab-case>
+- Kind: <feat, bug for a fix, none for anything else (refactor, docs, chore)>
 - Issue: <#N, or owner/repo#N, if there is one>
 
 ## Why

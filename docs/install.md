@@ -215,10 +215,13 @@ On the board, in its workflows:
   closing keywords in the PR body for that reason, so keep them out of
   the commits you write by hand too.
 
-**A `bug` label in the repo.** The issues `/fix` creates are labelled
-`bug` (one of GitHub's default labels). If the repo has no such label, the
-issue is created without it and the run says so; create the label (`gh
-label create bug`) to keep bug issues labelled.
+**`feat` and `bug` labels in the repo.** The issues `/fix` creates are
+labelled `bug` (one of GitHub's default labels); those `/brief` and `/tiny`
+create take the label their brief's `Kind:` line names: `feat` (also when
+the line is missing), `bug`, or none for `none` (a refactor or docs change
+from `/tiny`). If the repo has no such label, the issue is created without
+it and the run says so; create the labels (`gh label create feat`, `gh
+label create bug`) to keep issues labelled.
 
 **Repos you didn't write.** A repo's `.logistics.yml` and a brief's
 `Issue:` line decide where the writes go: they can point at any board your

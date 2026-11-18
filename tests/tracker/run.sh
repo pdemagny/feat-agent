@@ -248,7 +248,7 @@ expect_rc 0
 expect_out "tracker: created up/r#7"
 grep -q '^issue create -R up/r --title Add a widget --body-file ' "$case_dir/calls" ||
   fail "issue create call: $(grep '^issue create' "$case_dir/calls" || true)"
-! grep -q -- '--label' "$case_dir/calls" || fail "issue create got a label"
+grep -q '^issue create .* --label feat$' "$case_dir/calls" || fail "a brief without Kind is not labelled feat"
 for frag in '## Why' 'Users need widgets.' '## Behaviour' '- A widget shows.' '## not a heading' \
   '- It stays.' 'Brief: specs/briefs/add-widget.md'; do
   grep -qxF -- "$frag" "$case_dir/body" || fail "body lacks: $frag"
@@ -260,28 +260,68 @@ done
 ok
 
 # 9b. Tiny brief: /tiny's cut-down brief (header, Why, Behaviour,
-# Acceptance) is a brief to create-issue, unchanged.
+# Acceptance) is a brief to create-issue, unchanged; its Kind names the label.
 new_case "tiny brief"
 write_config "$CONFIG"
 printf 'up/r\n' >"$case_dir/repo"
 printf 'https://github.com/up/r/issues/12\n' >"$case_dir/issue-url"
 mkdir -p "$repo/specs/briefs"
 printf '%s\n' '# Brief: Fix the install link' '- Size: tiny — one link in README' \
-  '- Short name: install-link' '' \
+  '- Short name: install-link' '- Kind: bug' '' \
   '## Why' 'The link 404s.' '' \
   '## Behaviour' '- The link opens the install page.' '' \
   '## Acceptance' '- The link resolves.' >"$repo/specs/briefs/install-link.md"
 tracker create-issue specs/briefs/install-link.md up/r
 expect_rc 0
 expect_out "tracker: created up/r#12"
-grep -q '^issue create -R up/r --title Fix the install link --body-file ' "$case_dir/calls" ||
+grep -q '^issue create -R up/r --title Fix the install link --body-file .* --label bug$' "$case_dir/calls" ||
   fail "issue create call: $(grep '^issue create' "$case_dir/calls" || true)"
 for frag in 'The link 404s.' '- The link opens the install page.' 'Brief: specs/briefs/install-link.md'; do
   grep -qxF -- "$frag" "$case_dir/body" || fail "body lacks: $frag"
 done
-for frag in 'Size: tiny' 'The link resolves.'; do
+for frag in 'Size: tiny' 'Kind:' 'The link resolves.'; do
   ! grep -qF -- "$frag" "$case_dir/body" || fail "body holds: $frag"
 done
+ok
+
+# 9c. Brief Kind: none gives no label; a Kind other than feat, bug or none
+# is refused before any gh call; a Kind line inside a section is not the
+# header's; a repo without the feat label gets the issue without it.
+new_case "brief kind"
+write_config "$CONFIG"
+printf 'up/r\n' >"$case_dir/repo"
+printf 'https://github.com/up/r/issues/13\n' >"$case_dir/issue-url"
+mkdir -p "$repo/specs/briefs"
+# write_brief <Kind line>: a brief with that header line ('' for none).
+write_brief() {
+  printf '%s\n' '# Brief: Tidy the docs' '- Size: tiny — wording' "$1" '' \
+    '## Why' 'Docs are messy.' '- Kind: bug' '' \
+    '## Behaviour' '- Docs read well.' >"$repo/specs/briefs/tidy.md"
+}
+write_brief '- Kind:  none '
+tracker create-issue specs/briefs/tidy.md up/r
+expect_rc 0
+expect_out "tracker: created up/r#13"
+grep -q '^issue create -R up/r --title Tidy the docs --body-file ' "$case_dir/calls" ||
+  fail "issue create call: $(grep '^issue create' "$case_dir/calls" || true)"
+! grep -q -- '--label' "$case_dir/calls" || fail "Kind: none got a label"
+for kind in '- Kind: fix' '- Kind: feat | bug | none' '- Kind:' '- Kind: Feat'; do
+  command rm -f -- "$case_dir/calls"
+  write_brief "$kind"
+  tracker create-issue specs/briefs/tidy.md up/r
+  expect_rc 2
+  expect_out "tracker: error: brief has a malformed Kind line (want feat, bug or none)"
+  expect_no_calls
+done
+command rm -f -- "$case_dir/calls"
+: >"$case_dir/no-label"
+write_brief ''
+tracker create-issue specs/briefs/tidy.md up/r
+expect_rc 0
+expect_out "tracker: created up/r#13 (without the feat label: up/r has none)"
+[ "$(grep -c '^issue create' "$case_dir/calls")" = 2 ] || fail "want two issue create calls"
+grep '^issue create' "$case_dir/calls" | head -n 1 | grep -q -- '--label feat$' || fail "the first call lacks --label feat"
+grep '^issue create' "$case_dir/calls" | tail -n 1 | grep -qv -- '--label' || fail "the retry kept --label"
 ok
 
 # 10. Symlinked path: specs/briefs points outside the repo, so the brief is

@@ -427,6 +427,28 @@ doc_parts() {
   [ -n "${part2//[[:space:]]/}" ] || die "$kind has no ${s2#"## "} section" 2
 }
 
+# brief_label <file>: sets the caller's $label from the brief header's first
+# "- Kind:" line (before the first "## " line): feat (also when there is
+# none) or bug gives that label, none no label; anything else exits 2.
+brief_label() {
+  local line kind=feat
+  while IFS= read -r line || [ -n "$line" ]; do
+    line="${line%$'\r'}"
+    [[ "$line" != "## "* ]] || break
+    if [[ "$line" == "- Kind:"* ]]; then
+      kind="${line#- Kind:}"
+      kind="${kind#"${kind%%[! ]*}"}"
+      kind="${kind%"${kind##*[! ]}"}"
+      break
+    fi
+  done <"$1"
+  case "$kind" in
+    feat | bug) label=(--label "$kind") ;;
+    none) label=() ;;
+    *) die "brief has a malformed Kind line (want feat, bug or none)" 2 ;;
+  esac
+}
+
 RE_BRIEF_PATH='^specs/briefs/[a-z0-9][a-z0-9-]*\.md$'
 RE_ASSESSMENT_PATH='^\.specify/bugs/([a-z0-9][a-z0-9-]*)/assessment\.md$'
 
@@ -454,6 +476,7 @@ cmd_create_issue() {
   if [ "$kind" = brief ]; then
     doc_parts "$root/$path" brief "# Brief: " "## Why" "## Behaviour"
     printf '## Why\n%s\n\n## Behaviour\n%s\n\nBrief: %s\n' "$part1" "$part2" "$path" >"$body"
+    brief_label "$root/$path"
   else
     doc_parts "$root/$path" assessment "# Bug Assessment: " "## Symptom" "## Root Cause Hypothesis"
     ! secret_rule "$part1"$'\n'"$part2" ||
@@ -473,7 +496,7 @@ cmd_create_issue() {
       die "could not create the issue ($gh_reason)"
     run_gh issue create -R "$cur_repo" --title "$title" --body-file "$body" ||
       die "could not create the issue ($gh_reason)"
-    note=" (without the bug label: $cur_repo has none)"
+    note=" (without the ${label[1]} label: $cur_repo has none)"
   fi
   url="$gh_out"
   [[ "$url" =~ $RE_ISSUE_URL ]] || die "could not create the issue (unexpected URL from gh: $(clean "$url"))"
