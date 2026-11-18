@@ -4,6 +4,7 @@
 #   secret-scan.sh staged             the lines the staged diff adds
 #   secret-scan.sh worktree <path>... the lines <path> adds over HEAD (every
 #                                     line of an untracked file)
+#   secret-scan.sh range <from> <to>  the lines git diff <from> <to> adds
 #
 # Paths are relative to the repo root; the script works from any directory
 # of the repo. Removed lines never count. Prints `<file>:<line>: <rule>` for
@@ -118,8 +119,9 @@ scan_main() {
   case "$mode" in
     staged) [ "$#" -eq 1 ] ;;
     worktree) [ "$#" -ge 2 ] ;;
+    range) [ "$#" -eq 3 ] ;;
     *) false ;;
-  esac || scan_die "usage: secret-scan.sh staged | worktree <path>..."
+  esac || scan_die "usage: secret-scan.sh staged | worktree <path>... | range <from> <to>"
   shift
 
   root="$(git rev-parse --show-toplevel 2>/dev/null)" || scan_die "not a git repository"
@@ -132,6 +134,10 @@ scan_main() {
   scan_found=0
   if [ "$mode" = staged ]; then
     git "${diff_opts[@]}" --cached >"$tmp/diff" 2>"$tmp/err" ||
+      scan_die "git diff failed: $(head -n 1 "$tmp/err")"
+    scan_diff "$tmp/diff"
+  elif [ "$mode" = range ]; then
+    git "${diff_opts[@]}" --end-of-options "$1" "$2" -- >"$tmp/diff" 2>"$tmp/err" ||
       scan_die "git diff failed: $(head -n 1 "$tmp/err")"
     scan_diff "$tmp/diff"
   else

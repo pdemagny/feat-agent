@@ -16,7 +16,8 @@ is authoritative; this page mirrors it with explanations.
   `feat-brief-reviewer` read it fresh before you confirm it.
 - **Coordinator**: the session running `/feat`, started from a clean
   context. It holds every gate and edits only `feat-state.md`; it never
-  reads code, runs checks or edits artifacts. Every call it makes re-reads
+  reads code, runs checks or edits artifacts, and it runs git only to
+  compare bases and find runs. Every call it makes re-reads
   its whole context, so it stays thin on purpose.
 - **Phase agents**: the `feat-*` subagents. Each does one job, can't talk to
   you, starts with no conversation history, and gets what it needs (paths,
@@ -48,6 +49,10 @@ line. A failure fails the phase: a hard gate that shows the reason, with
 no automatic retry ("back to N" reruns it).
 After a soft phase 2, the next gate (3/4, or 3 on large) opens with the spec
 summary.
+
+From phase 3 on, each phase starts with the base check (see
+[When main moves](#when-main-moves)): silent when main has not moved; a
+move is listed at the next gate, or stops there when it needs your call.
 
 ## Size × phase matrix
 
@@ -83,7 +88,7 @@ large: one reviewer per lens, in parallel.
 
 **Phase 7 reviewers.** small: two reviewers, lenses 7a+7b and 7c+7d+7e. medium and large: one reviewer per lens, 7a–7d in parallel, then 7e
 with 7d's cuts. A group runs on the strongest model and effort among its lenses.
-Applying the review fixes uses the phase 6 row.
+Applying the review fixes and moving onto a new main use the phase 6 row.
 
 A huge idea never reaches `/feat` as one unit: each capability of its map
 gets its own brief and size column.
@@ -171,7 +176,9 @@ put to you before anything runs. With [board tracking](#board-tracking) it
 runs the board check and moves the issue to In progress.
 
 ### 2 Specify (`feat-specifier`)
-The coordinator creates branch `<short-name>` (worktree when possible,
+The coordinator fetches `origin/<default>` first, so the run starts from
+the remote head rather than a stale local copy, then creates branch
+`<short-name>` (worktree when possible,
 renamed if EnterWorktree picked another name) and enters it, so every agent
 starts there. The spec dir is `specs/<short-name>/` until phase 8 numbers it. The specifier runs `speckit-specify` from the brief and
 reports stories, requirements, open `[NEEDS CLARIFICATION]` markers with
@@ -272,7 +279,8 @@ instead of redoing the tasks.
 ### 7 Code review (`feat-code-reviewer`)
 With [board tracking](#board-tracking) the coordinator first moves the issue
 to In review. It then makes the uncommitted work reviewable (`git add -N` on new
-files, `git diff <merge-base>`; a `...HEAD` diff would be empty) and spawns
+files, `git diff` against `git merge-base origin/<default> HEAD`; a
+`...HEAD` diff would be empty) and spawns
 the reviewers with their lenses:
 - **7a Correctness, spec, standards**: three separate passes. Standards:
   the project's documented rules (hard) and a Fowler smell baseline
@@ -345,6 +353,18 @@ nothing is pushed: `/feat` shows its `! spec-number: error: …` line as an
 error and leaves the state file at `8 Ship`, so `/feat resume` picks the
 run up again. Never merges.
 
+If main moved since the phase's base check and the shipper's rebase
+conflicts, it aborts the rebase, pushes nothing and reports `PR: conflict`
+with the conflicting files; it never resolves them itself. `/feat` (and
+`/fix` at its phase 5) then moves the run with `feat-implementer` in
+rebase mode, as at any phase boundary (see [When main moves](#when-main-moves)),
+and spawns the shipper a second time, as the first. That move's Log line
+is written after the second report, in the local state file only, and the
+final message lists it. Before any push, in every mode, the shipper checks
+the commits it would push: a `logistics-wip:` commit (a move's temporary
+WIP commit) stops it with `PR: blocked` and `! WIP commit on <branch>;
+nothing pushed`.
+
 ## Board tracking
 
 Optional, and off unless the repo has a `.logistics.yml`; setup, scope and
@@ -372,6 +392,77 @@ log of every gate with what you accepted and rejected (and why) and every
 performance attempt with its numbers, and each implementer's Not verified
 list (the latest one per implementer counts). Every agent reads it; `/feat resume`
 starts from it; the PR links to it. It's updated at each gate.
+
+## When main moves
+
+Runs go in parallel, one worktree each; when one merges, the others fall
+behind `origin/<default>`, and the open PRs among them may conflict.
+Running runs keep up on their own; `/feat rebase [PR]` and `/fix rebase
+[PR]` (as a plugin, `/logistics:feat rebase` and `/logistics:fix rebase`)
+bring shipped runs back onto the current main. The rules are in the
+harness's "Moving onto a new main" and, for shipped runs, in
+[`.apm/skills/feat/references/rebase.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/references/rebase.md),
+read only by a `rebase` run.
+
+- **Before each phase** (from phase 3 of `/feat`, phase 2 of `/fix`, and
+  any phase rerun by "back to N"): the coordinator runs `git fetch origin
+  <default>` and `git merge-base --is-ancestor origin/<default> HEAD`. When
+  main has not moved, nothing happens: no agent, nothing shown or logged.
+  When it has, the move below runs before the phase. A move that went
+  through is listed at the next gate (`Main moved <old> → <new>; checks
+  <result>`, then each file resolved alone); one that needs you stops
+  before the phase at `## Main moved — needs your call`, where you answer
+  "ok" (the recommendations), your own resolution, "stay" (the run stays
+  on the old base until main moves again) or "stop". A failed fetch is
+  logged as `[!] move — git fetch failed`, flagged at the next gate, and
+  the run goes on.
+- **Which PRs** (`rebase`): with an argument (a PR number, URL or branch), that PR;
+  without one, every open PR of yours on this repository that GitHub marks
+  conflicting. Only your own PRs of this repository whose branch adds one
+  state file: forks and other repositories are skipped, and naming
+  another author's PR stops to ask before anything is fetched.
+- **The move**: `feat-implementer` in rebase mode, on the implement row
+  at the run's size, rebases the branch onto `origin/<default>`, resolves
+  alone the conflicts that keep both sides' intent and undoes the whole
+  move to ask you about the others (the harness has the rules); then the
+  checks (the full ones on a PR).
+- **Uncommitted work**: set aside in a temporary `logistics-wip:` commit
+  and a pre-move ref, never the stash and never pushed, both gone once the
+  move reports.
+- **Undo and repair**: when you refuse a recommendation at the move's
+  gate, or stop there, the run stays on the old base: the move was undone
+  before it asked, the WIP commit too, so tracked files and the index are
+  as before (untracked files a check created may remain). A run that died
+  mid-move is repaired by `resume` before anything else: it aborts an
+  unfinished rebase, puts the branch back on the pre-move ref and undoes a
+  leftover `logistics-wip:` commit (found by its subject even when the ref
+  was never set), then logs `move — repaired`.
+- **The log**: every move, kept or refused, gets a `move —` line in the
+  state file's Log (format in the harness), so `resume` and the PR body
+  show it.
+- **The push**: `feat-shipper` in rebase mode, on the ship row, commits
+  the move's mechanical check fixes in a commit of their own, then the
+  move's Log lines alone (`docs(specs): log rebase onto <short sha>`,
+  holding only Log lines: the local done mark stays out), checks the spec
+  number again, and pushes with
+  `--force-with-lease=<branch>:<the PR head it started from>`. If someone
+  pushed to the PR meanwhile, the push is refused, the branch goes back to
+  that PR head, nothing is overwritten, and the run says so. It scans for
+  secrets twice: the staged files before each commit, and before the push
+  the lines the PR brings onto the new main, none of main's own commits.
+  It adds a
+  note under `### Rebases` in the PR body (what was resolved alone, what
+  you decided, the checks), and points the body's state-file link at the
+  new path when the spec number changed.
+- **Several PRs waiting on you**: without an argument, a PR whose move
+  needs your call waits, undone, and the next one goes on. After the last
+  PR, one gate lists every waiting PR's questions under `PR #<n>`
+  headings, after what was already pushed or skipped; then each one moves
+  with your answers. A PR you refuse stays as it is, its `stayed on` line
+  logged, nothing pushed.
+- **At the end**: one line per PR: pushed with what was resolved alone
+  and decided, nothing to do, skipped with why, waiting, or its error.
+  Never a command for you to run.
 
 ## /fix
 
@@ -418,6 +509,9 @@ No agent is continued: every spawn is fresh.
 | 4 | Code review | `feat-code-reviewer` ×1 (small, medium) or ×2–3 | findings B, S, P, C with recommendations; fixes applied, then 3 again | **hard** on a security risk area, `Size: large`, or a `user` or `S` finding; else soft |
 | 5 | Ship        | `feat-shipper` (fix mode)                       | one `fix(<scope>)` commit, push, PR               | none                                                                                         |
 
+From phase 2 on (once the assess gate has set the size), each phase starts
+with the base check of [When main moves](#when-main-moves).
+
 ### Gates
 
 - **Assess** stops the run when the report is not a bug (a missing
@@ -462,7 +556,7 @@ at the assess gate, so phase 1 is the same in every column.
 | #  | Phase                                 | Agent                | small           | medium          | large           |
 | -- | ------------------------------------- | -------------------- | --------------- | --------------- | --------------- |
 | 1  | Assess                                | `feat-bug-assessor`  | opus · medium   | opus · medium   | opus · medium   |
-| 2  | Fix (and review picks)                | `feat-implementer`   | sonnet · medium | opus · medium   | opus · high     |
+| 2  | Fix (review fixes and moves)          | `feat-implementer`   | sonnet · medium | opus · medium   | opus · high     |
 | 3  | Test                                  | `feat-bug-assessor`  | sonnet · medium | sonnet · high   | opus · medium   |
 | 4a | Correctness, spec, standards (lens 7a) | `feat-code-reviewer` | sonnet · medium | opus · medium   | opus · medium   |
 | 4b | Security (lens 7b)                    | `feat-code-reviewer` | sonnet · medium | opus · medium   | opus · high     |
@@ -474,7 +568,8 @@ at the assess gate, so phase 1 is the same in every column.
 reviewer, 7a+7b (7a+7b+7c for a performance bug). large: 7a and 7b in
 parallel, plus 7c for a performance bug. A group runs on the strongest
 model and effort among its lenses. The spec pass reads assessment.md and
-fix.md, as a bug has no spec.md.
+fix.md, as a bug has no spec.md. Applying the review fixes and moving onto
+a new main use the phase 2 row.
 
 ### Why these choices
 
@@ -525,15 +620,17 @@ several runs are unfinished.
 | `feat-planner`         | 3, 4 (amend)    | opus · high     | NotebookEdit, Agent                    | `speckit-plan`                     | plan.md, design docs; accepted findings into spec.md |
 | `feat-design-reviewer` | 4               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | per lens, on demand                | nothing                                              |
 | `feat-tasker`          | 5               | sonnet · medium | NotebookEdit, Agent                    | `speckit-tasks`, `speckit-analyze` | tasks.md, small artifact fixes                       |
-| `feat-implementer`     | 6, 7 (fix mode); `/fix` 2 (bug mode), 4 (fix mode) | sonnet · medium | Agent           | `speckit-implement`; `speckit-bug-fix` in bug mode | code, tasks.md; fix.md in bug mode   |
+| `feat-implementer`     | 6, 7 (fix mode), any boundary (rebase mode); `/fix` 2 (bug mode), 4 (fix mode) | sonnet · medium | Agent           | `speckit-implement`; `speckit-bug-fix` in bug mode | code, tasks.md; fix.md in bug mode   |
 | `feat-code-reviewer`   | 7               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | per lens, on demand                | nothing                                              |
-| `feat-shipper`         | 8; `/fix` 5 (fix mode) | haiku · medium  | NotebookEdit, Agent             | —                                  | docs, commits, PR                                    |
+| `feat-shipper`         | 8; `/fix` 5 (fix mode); `rebase` (rebase mode) | haiku · medium  | NotebookEdit, Agent             | —                                  | docs, commits, PR                                    |
 
 `feat-code-reviewer` also runs `/fix`'s phase 4, unchanged, with lenses
 7a–7d only. Agent files carry no model or effort: `/feat` and `/fix` pass
 both on every spawn, from their size tables (`/brief` for
 `feat-brief-reviewer`). Tool limits are deny lists (`disallowedTools`) rather
-than allow lists, so a new tool is available to an agent unless denied. No agent but the shipper commits, and no agent spawns further agents.
+than allow lists, so a new tool is available to an agent unless denied. No agent but the shipper commits (the implementer's rebase mode makes
+one temporary WIP commit, undone before it reports and never pushed), and
+no agent spawns further agents.
 Every report ends with `Wrote:`, absolute paths: the specifier, planner and
 tasker always list their artifact (spec.md, plan.md, tasks.md) plus every
 file they created or changed in that spawn; the implementer lists the

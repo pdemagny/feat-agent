@@ -26,8 +26,10 @@ When changing it:
   `docs/img` differs from a fresh render.
 - The rules `/feat` and `/fix` share live in
   `.apm/skills/feat/references/harness.md`, written with named values that
-  each skill's `## Harness values` block fills. Keep `/feat`-only words out
-  of it: `mise run lint` greps it.
+  each skill's `## Harness values` block fills. The `rebase` entry point
+  both skills read lives in `.apm/skills/feat/references/rebase.md`, under
+  the same rule. Keep `/feat`-only words out of both: `mise run lint` greps
+  them.
 - Adding or removing a third-party skill: update `dependencies` in
   `apm.yml`, `deps` in `install.sh`, the `npx skills add` line in
   `docs/install.md` and its table, and the agent's `skills:` (or the lens in

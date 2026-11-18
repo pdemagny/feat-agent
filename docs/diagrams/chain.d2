@@ -46,6 +46,8 @@ review: code review, in parallel {
 
 g7: you decide on findings\nthat need you {class: maybe}
 pr: pull request {shape: oval}
+move: main moved?\nmove + checks {class: check}
+gm: you decide on a conflict\nthat changes behaviour {class: maybe}
 
 idea -> brief: interview
 idea -> map: too big for one {style.stroke-dash: 3}
@@ -69,3 +71,6 @@ review.sec -> g7
 review.perf -> g7
 review.read -> g7
 g7 -> pr: fix + ship
+pr -> move: /feat rebase\nwhen it conflicts {style.stroke-dash: 3}
+move -> gm
+gm -> pr: pushed

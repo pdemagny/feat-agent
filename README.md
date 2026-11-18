@@ -21,6 +21,9 @@ idea, or a bug report, to a reviewed pull request, using
 - **`/fix #N`** (or `/fix "<symptom>"`) assesses a bug, fixes it, has a
   different agent verify the fix, reviews it and opens a PR with
   `Fixes #N`.
+- **`/feat rebase`** (or `/fix rebase`) keeps a shipped run's PR on the
+  current main once another PR merges: it rebases it, resolves the
+  conflicts and pushes it; only real decisions stop for you.
 
 You decide at a few gates (the brief, the spec when it leaves a question
 open, which review findings to fix); everything else runs on its own, and nothing is ever merged for you.
@@ -65,7 +68,7 @@ call, and `EnterWorktree`.
 
 ## How it works
 
-<p align="center"><img src="docs/img/gates.svg" alt="Sequence diagram of a small or medium feature: you, Claude Code and the agents. You always confirm the brief, and decide when a code review finding needs your call. The run also stops when the spec has open questions, when the plan and design review need your call (you then check the spec too), and when the consistency check finds serious gaps." width="560"></p>
+<p align="center"><img src="docs/img/gates.svg" alt="Sequence diagram of a small or medium feature: you, Claude Code and the agents. You always confirm the brief, and decide when a code review finding needs your call. The run also stops when the spec has open questions, when the plan and design review need your call (you then check the spec too), and when the consistency check finds serious gaps. Before each phase, if main moved, the run moves onto it and stops only for a conflict that changes behaviour; after the pull request, /feat rebase brings a conflicting PR onto the current main and pushes it." width="560"></p>
 
 Agents do the work, each phase in a fresh one. Solid orange arrows are gates
 where the run always waits for you; dashed ones wait only when something
@@ -73,7 +76,7 @@ needs your call. The spec stops only on an open question; otherwise you see
 its summary at the plan and design review gate. A large feature also stops
 after the plan, the design review, the tasks, each story and the code review.
 
-<p align="center"><img src="docs/img/chain.svg" alt="From your idea to a pull request: brief, fresh reader, you confirm; spec, you answer its questions; plan; security, cost, and clarity and fit reviewed in parallel; you check the spec and decide on findings, then spec and plan are amended; tasks and a consistency check; code written one story at a time; correctness, security, performance and over-engineering reviewed in parallel, readability after over-engineering; you decide on findings that need you; pull request. A huge idea first becomes a capability map, one brief per capability." width="480"></p>
+<p align="center"><img src="docs/img/chain.svg" alt="From your idea to a pull request: brief, fresh reader, you confirm; spec, you answer its questions; plan; security, cost, and clarity and fit reviewed in parallel; you check the spec and decide on findings, then spec and plan are amended; tasks and a consistency check; code written one story at a time; correctness, security, performance and over-engineering reviewed in parallel, readability after over-engineering; you decide on findings that need you; pull request. When the pull request conflicts, /feat rebase moves it onto the current main and runs the checks, you decide only on a conflict that changes behaviour, and it is pushed. A huge idea first becomes a capability map, one brief per capability." width="480"></p>
 
 Each artifact is checked before the next one is built from it. Shown for
 medium and large features, with one reviewer per lens; a small feature runs

@@ -17,6 +17,8 @@ Every call you make re-reads your whole context, for the whole run. So:
   line; never read its GraphQL or IDs, never pass it to a subagent. Run the
   other listed commands only for what the skill uses them for; they are
   not code reading.
+- **Exception, moving onto a new main**: the git and gh commands of
+  Moving onto a new main and of `references/rebase.md`.
 - **Don't re-read artifacts.** Read the *artifacts the orchestrator reads*,
   nothing more; quote from agent reports at gates.
 - **Keep reports short in your context**: keep findings and numbers, drop
@@ -206,13 +208,96 @@ state file exists, keep it until *the state file is created*), flag it under
 "What you should know" at the next gate, and go on. `[!]` lines never
 block resume.
 
+## Moving onto a new main
+
+Runs go in parallel, one worktree each; when one merges, the others fall
+behind `origin/<default>`. `git` here is the git the conventions name (a
+required path, plain commands, no `$(…)`). The commands of this section
+compare bases: they are not code reading. The last base is never stored:
+it is `git merge-base HEAD origin/<default>`, and each move's old and new
+base are on its Log line.
+
+**Fresh base**: `git fetch origin <default>` just before creating the
+worktree, so it starts from the remote head, not a stale local
+`origin/<default>`.
+
+**Base check**, at each of the *base-check boundaries*: `git fetch origin
+<default>`, then `git merge-base --is-ancestor origin/<default> HEAD`.
+- Exit 0: main has not moved. Nothing: no spawn, nothing shown or logged.
+- Exit 1, but the user already refused this base: the latest `move —
+  stayed on` Log line names a `<new>` that origin/<default> still descends
+  from (`git merge-base --is-ancestor origin/<default> <new>` exits 0).
+  Nothing either.
+- Exit 1 otherwise: spawn `feat-implementer` in rebase mode on the
+  *implement row*, with the worktree, the default branch, the state file,
+  the *resolver context*, `Shipped: no` and `Action: move`. Then the phase.
+- The fetch fails: log `- [!] move — git fetch failed (<first line>)`,
+  flag it at the next gate, go on.
+
+**The move's report** (its `Move:` line), checked first like any report
+(Reported files):
+- `<old> → <new>`: log the move (below). The next gate, or the final
+  message, shows `Main moved <old> → <new>; checks <result>`, then its
+  `Resolved alone:` lines, one per file. It is not a surprise.
+- `undone (<old> → <new>)`: **hard gate** before the phase:
+  - the gate, `## Main moved — needs your call`: the worktree is back on
+    `<old>`, its tracked content and index as before; each `Needs
+    decision:` item as file, the run's side, main's side, the
+    recommendation;
+  - any answer but a refusal or "stop": a fresh rebase-mode spawn with
+    `Decisions:`, one line per item, `<file> — <the accepted rec | the
+    user's words>` ("ok" copies each item's rec as is); its report is read
+    the same way;
+  - a refusal ("stay"): log `- [x] move — stayed on <old>, refused <new>
+    (user: "<words>")` and run the phase on `<old>`;
+  - "stop": as at any gate.
+- `nothing to do`: nothing is logged or shown.
+
+Move gate:
+
+```
+## Main moved before phase <N> <name> — needs your call
+**What I did:** feat-implementer, rebase mode (<model · effort>): <old7> → <new7>, then undone; the worktree is on <old7>, its tracked content and index as before
+**What you should know:** resolved alone: <n> files (listed); checks with my recommendations: <result>
+**Your call:**
+1. <file> — run: <one line> — main: <one line> — I recommend <rec>
+**Next:** the move with your answers ("ok": my recommendations), then phase <N> <name>
+```
+
+**Repair**: on resume, once in the run's worktree and before anything
+else, and after a rebase-mode spawn that ended without a report: `git
+rev-parse -q --verify refs/logistics/pre-move/<branch>`, then `git log -1
+--format=%s`. The ref exists, or the subject starts with `logistics-wip:`
+(a move died between its WIP commit and its ref): spawn rebase mode with
+`Action: repair`, log `- [x] move — repaired (<its Move: line>)`, then go
+on.
+
+**At ship**: a shipper report `PR: conflict` pushed nothing; its
+`Conflicts:` lists the files. Run rebase mode (`Shipped: no`) as above
+(a move that needs the user's call stops at the move gate), then spawn
+the shipper again, as the first time. Write that move's Log line after
+the shipper's report, in the local copy only (as the done mark is), in
+the state file at the path from the shipper's `Wrote:` when it numbered
+the dir, and list the move in the final message.
+
+**Log**, one entry per move, kept or decided (`<where>`: `before <N>
+<name>`, `at ship`, or `PR #<n>`):
+
+    - [x] move — <old> → <new> (<where>): checks <result>; not verified: <none | items>
+        - resolved: <file> — <how>
+        - asked: <file> — <decision> (user: "<words>" | as recommended)
+
+The move's not verified items stay on that line and at the next gate;
+they are not passed on (the ship's full checks run after any move).
+
 ## Resume
 
 **`/<skill> resume`**: find the state file per the *resume search*, skipping
 those with the *done marker* (ask if several), and read it. When it is in
 another worktree of this repo, enter that worktree first (EnterWorktree
-with `path`). Run `check` (the *board-check step*), then the current
-phase's move. Recap in one paragraph and show the current
+with `path`). Then the repair check (Moving onto a new main), then `check`
+(the *board-check step*), then the current phase's move, then the base
+check before the current phase's spawn. Recap in one paragraph and show the current
 gate. Resuming in a fresh context is also the cheap way back after a break
 of more than an hour, when the cache has expired: say so if the user comes
 back late to a long session.
