@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.14.0](https://github.com/pdemagny/logistics/compare/v0.13.0...v0.14.0) (2026-11-18)
+
+
+### Features
+
+* **brief:** grow a tiny brief into a full one with /brief &lt;path&gt; ([cd08510](https://github.com/pdemagny/logistics/commit/cd085100d1f43a2cf6a1d689d162560edd58a480))
+* **tracker:** label issues created from a brief with its Kind line ([ab0d38a](https://github.com/pdemagny/logistics/commit/ab0d38aaed0bd4d4b05cdb67b49613f91cf94592))
+
+
+### Bug Fixes
+
+* **brief:** save the brief in the repo so /feat can find it by name ([f025802](https://github.com/pdemagny/logistics/commit/f02580250e5b28b3c86d829fb2e715ff7a2f9e24))
+* **feat:** run speckit-analyze on unnumbered spec dirs ([0a2be2d](https://github.com/pdemagny/logistics/commit/0a2be2d07da227a034c4a0d383b13aacce80443d))
+* **feat:** stop /feat resume offering runs that already shipped ([da6fa6f](https://github.com/pdemagny/logistics/commit/da6fa6f5f63b43b086cf56adfec6f368fa456acc))
+
 ## [0.13.0](https://github.com/pdemagny/logistics/compare/v0.12.0...v0.13.0) (2026-11-18)
 
 
