@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.13.0](https://github.com/pdemagny/logistics/compare/v0.12.0...v0.13.0) (2026-11-18)
+
+
+### Features
+
+* **feat:** rebase shipped PRs onto main with /feat rebase and /fix rebase ([2f7a034](https://github.com/pdemagny/logistics/commit/2f7a034d7f0051e11794e5433b661ed963d6c64c))
+* **feat:** stop the code review gate only for findings that need you ([9a7d55f](https://github.com/pdemagny/logistics/commit/9a7d55f0c6d39fde89aa3bad2df63ac06dd21aea))
+* **tiny:** add /tiny for trivial changes in one session ([17c919f](https://github.com/pdemagny/logistics/commit/17c919f2e051d92034bfef01290370bce6a524ae))
+
+
+### Bug Fixes
+
+* **assessor:** redact passwd and api key values the secret scan catches ([e4181b4](https://github.com/pdemagny/logistics/commit/e4181b4615b4df5bdf229cdee231e932567d1e47))
+* **shipper:** scan only added lines and require a literal secret value ([8bf1ef0](https://github.com/pdemagny/logistics/commit/8bf1ef0a9faa88258742d6680a5e4e8084d3d6b2))
+
 ## [0.12.0](https://github.com/pdemagny/logistics/compare/v0.11.0...v0.12.0) (2026-11-17)
 
 
