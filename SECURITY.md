@@ -31,7 +31,8 @@ Only the latest release gets fixes. Update before reporting
   run commands, write outside its worktree, commit or push without the gate
   the workflow promises (see [docs/workflow.md](docs/workflow.md)).
 - Secrets or other sensitive data ending up in commits, pull request
-  bodies, issues or `.specify/` trails, past the checks `/fix` runs.
+  bodies, issues or `.specify/` trails, past the checks `/fix` and `/tiny`
+  run.
 - `install.sh` or the board tracker script (`.apm/skills/feat/scripts/`)
   touching files or calling services they shouldn't, or mishandling
   untrusted issue data.

@@ -16,7 +16,9 @@ contexts:
    … gates …  → PR link
 ```
 
-A bug takes one: `/fix #42` ([below](#fixing-a-bug-fix)).
+A bug takes one: `/fix #42` ([below](#fixing-a-bug-fix)). So does a
+trivial change, in a single session: `/tiny "fix the install link"`
+([below](#a-trivial-change-tiny)).
 
 Words you'll meet:
 
@@ -49,7 +51,8 @@ paraphrase of the feature, its own size estimate and its findings `F1…`,
 each with a recommendation; "ok" accepts them all.
 
 Claude may also start it on its own when you ask it to build a feature.
-It's not for bugfixes (use [`/fix`](#fixing-a-bug-fix)) or pure refactors. You
+It's not for bugfixes (use [`/fix`](#fixing-a-bug-fix)), trivial changes
+(use [`/tiny`](#a-trivial-change-tiny)) or pure refactors. You
 can also write a brief by hand in the same format and skip this step.
 
 From a GitHub issue, run `/brief #N` (or pass its URL): Claude reads it
@@ -188,6 +191,40 @@ unfinished run in this checkout or any of its worktrees (it asks when
 there are several) and continues where it stopped. Phases, models and
 board moves: [workflow.md](workflow.md#fix).
 
+## A trivial change: `/tiny`
+
+```
+/tiny "fix the broken install link in the README"
+/tiny #42                     # a GitHub issue (or owner/repo#42, or its URL)
+/tiny specs/briefs/<name>.md  # a tiny brief from an earlier run
+```
+
+For a typo, a docs or markdown change, a small obvious feature or a bug
+whose cause is plain: the whole run happens in the session you type in,
+with no Spec Kit and no subagent. Installed as a plugin, it is
+`/logistics:tiny`.
+
+1. **Frame**: at most three questions, then a tiny brief in
+   `specs/briefs/` (`Size: tiny`, Why, Behaviour, Acceptance) in its own
+   worktree. You confirm it at the one gate; with board tracking and no
+   issue, you also choose to **create an issue** from it or **proceed
+   without one**. With an issue, the card moves to *In progress*.
+2. **Do**: the edit, plus what your conventions say moves with it, then
+   your project's checks.
+3. **Check**: the card moves to *In review*; the diff is reread against
+   the brief. When the change touches a contract other files read (a
+   report format, a mirrored table, a schema), one `feat-code-reviewer`
+   reads it fresh; it stops for you only on a judgement call.
+4. **Ship**: secret scan, one commit with the brief, rebase on main, push,
+   PR with `Closes #N`.
+
+It stays tiny on purpose: one reading of the ask, no design choice, about
+10 files and 300 lines at most, nothing touching auth, secrets, personal
+data or a public interface, a bug's cause plain from the code. When the
+work breaks one of these, `/tiny` stops and hands you the next command,
+`/brief #N` or `/fix #N`; the card stays on the board for it. `/brief` and
+`/fix` offer `/tiny` the other way round.
+
 ## When main moves
 
 ```
@@ -239,6 +276,7 @@ Proposed by `/brief`; you decide.
 
 | Size   | When                                                                                 | What changes                                                                                             |
 | ------ | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| tiny   | one reading, no design choice, ~10 files / 300 lines, nothing sensitive              | no `/feat`: [`/tiny`](#a-trivial-change-tiny) in one session, no subagent                                |
 | small  | up to ~30 tasks, no new service, permissions, exposure or dependency; docs-only work | Sonnet at medium effort for most phases, two code reviewers, fewest gates                                |
 | medium | ~31–60 tasks, or a small one adding a service, permissions, exposure or dependency   | Opus for planning, design security, implementation, correctness and security review; five code reviewers |
 | large  | more than ~60 tasks                                                                  | Opus for nearly every phase, higher effort on planning and reviews; gates at 3, 4, 5 and after each story |
@@ -278,7 +316,7 @@ so on.
 | What you see | What to do |
 | --- | --- |
 | `apm` or `specify`: command not found after installing | `uv tool update-shell`, then open a new shell |
-| `/brief`, `/feat` or `/fix` is not a known command | Restart Claude Code after installing. Installed as a plugin, they are `/logistics:brief` and so on. `install.sh check` lists what is missing ([install.md](install.md#4-check)) |
+| `/brief`, `/feat`, `/fix` or `/tiny` is not a known command | Restart Claude Code after installing. Installed as a plugin, they are `/logistics:brief` and so on. `install.sh check` lists what is missing ([install.md](install.md#4-check)) |
 | `/fix` stops at setup and names `specify extension add bug` | Run it in the project, then `/fix` again |
 | `tracker: error: …` at the start of a run | Check `.logistics.yml` is committed and pushed, and `gh auth refresh -s project` ([board tracking](install.md#5-board-tracking-optional)) |
 | A `[!] tracker:` line at a gate | A board move failed; the run went on. Move the card by hand |

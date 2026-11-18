@@ -610,6 +610,45 @@ instead of the brief). It is committed with the trail, already marked
 worktree of `git worktree list`, enters that worktree, and asks when
 several runs are unfinished.
 
+## /tiny
+
+`/tiny "<change>"`, `/tiny #N` or `/tiny <tiny brief>` makes a trivial
+change in the session you type in: no Spec Kit, no size table, no state
+file, no harness. [`.apm/skills/tiny/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/tiny/SKILL.md)
+is authoritative for this section; `mise run lint` keeps it under 200
+lines.
+
+| # | Phase | Runs in                                       | Gate                                                       |
+| - | ----- | --------------------------------------------- | ---------------------------------------------------------- |
+| 1 | Frame | you                                           | **hard**: the tiny brief, and issue or not                 |
+| 2 | Do    | you                                           | none                                                       |
+| 3 | Check | you; `feat-code-reviewer` (7a) for a contract | only on a `user` finding or a check that stays red         |
+| 4 | Ship  | you                                           | none: ends with the PR link (stops on a secret or conflict) |
+
+**The tiny check**, in Frame and whenever something new comes up: one
+reading of the ask, no design choice left open; no new dependency,
+service, permission or exposure, nothing touching auth, secrets, personal
+data or a public interface; about 10 files and 300 changed lines at most;
+for a bug, a cause plain from the code. A failed condition stops the run
+with the handoff (`/brief #N` or `/brief "<ask>"`, `/fix #N` or `/fix
+"<symptom>"`), worktree and edits left in place. `/brief` (before its
+interview) and `/fix` (at setup) offer `/tiny` for work that passes it.
+
+**The tiny brief** is `/brief`'s format cut to its header (`Size: tiny`),
+Why, Behaviour and Acceptance, in `specs/briefs/<short-name>.md`, and is
+committed with the change so the issue's `Brief:` link resolves. `tracker.sh
+create-issue` reads it as it reads a brief.
+
+**Board moves** use the same `tracker.sh`: `check` at the start;
+`create-issue` at the Frame gate when you choose it; `building` after that
+gate and `review` when Check starts, both only with an issue; `Closes #N`
+in the PR. A failed move is shown and never blocks.
+
+**Fresh review**, only when the diff changes a contract other files read
+(a report format, a mirrored table, a schema, a script's output):
+`feat-code-reviewer`, sonnet · medium, lens 7a, with the tiny brief as the
+spec. Its `apply` findings are applied, `skip` ones go in the PR body.
+
 ## Agents
 
 | Agent                  | Phase(s)        | small size      | Denied tools                           | Loads                              | Writes                                               |
@@ -625,7 +664,7 @@ several runs are unfinished.
 | `feat-shipper`         | 8; `/fix` 5 (fix mode); `rebase` (rebase mode) | haiku · medium  | NotebookEdit, Agent             | —                                  | docs, commits, PR                                    |
 
 `feat-code-reviewer` also runs `/fix`'s phase 4, unchanged, with lenses
-7a–7d only. Agent files carry no model or effort: `/feat` and `/fix` pass
+7a–7d only, and `/tiny`'s fresh review with lens 7a. Agent files carry no model or effort: `/feat` and `/fix` pass
 both on every spawn, from their size tables (`/brief` for
 `feat-brief-reviewer`). Tool limits are deny lists (`disallowedTools`) rather
 than allow lists, so a new tool is available to an agent unless denied. No agent but the shipper commits (the implementer's rebase mode makes

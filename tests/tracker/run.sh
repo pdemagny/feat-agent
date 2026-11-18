@@ -259,6 +259,31 @@ for frag in 'No widgets.' 'Gadgets.' '# Brief: Add a widget'; do
 done
 ok
 
+# 9b. Tiny brief: /tiny's cut-down brief (header, Why, Behaviour,
+# Acceptance) is a brief to create-issue, unchanged.
+new_case "tiny brief"
+write_config "$CONFIG"
+printf 'up/r\n' >"$case_dir/repo"
+printf 'https://github.com/up/r/issues/12\n' >"$case_dir/issue-url"
+mkdir -p "$repo/specs/briefs"
+printf '%s\n' '# Brief: Fix the install link' '- Size: tiny — one link in README' \
+  '- Short name: install-link' '' \
+  '## Why' 'The link 404s.' '' \
+  '## Behaviour' '- The link opens the install page.' '' \
+  '## Acceptance' '- The link resolves.' >"$repo/specs/briefs/install-link.md"
+tracker create-issue specs/briefs/install-link.md up/r
+expect_rc 0
+expect_out "tracker: created up/r#12"
+grep -q '^issue create -R up/r --title Fix the install link --body-file ' "$case_dir/calls" ||
+  fail "issue create call: $(grep '^issue create' "$case_dir/calls" || true)"
+for frag in 'The link 404s.' '- The link opens the install page.' 'Brief: specs/briefs/install-link.md'; do
+  grep -qxF -- "$frag" "$case_dir/body" || fail "body lacks: $frag"
+done
+for frag in 'Size: tiny' 'The link resolves.'; do
+  ! grep -qF -- "$frag" "$case_dir/body" || fail "body holds: $frag"
+done
+ok
+
 # 10. Symlinked path: specs/briefs points outside the repo, so the brief is
 # refused before any gh call.
 new_case "symlinked path"

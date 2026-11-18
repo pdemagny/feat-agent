@@ -140,6 +140,16 @@ keeping contexts small:
   stories' reads.
 - **Fewer, cheaper agents where the feature is small**: one design reviewer
   instead of three, two code reviewers instead of five, medium effort.
+- **No pipeline below small.** Each subagent re-reads its context from
+  scratch, and a small `/feat` run still spawns about eight of them and
+  writes spec, plan and tasks: for a typo or a docs edit that costs far
+  more than the edit. `/tiny` does that work in the session you type in,
+  with no Spec Kit and no size table. What keeps it safe is the tiny check
+  (one reading, no design choice, a few files, nothing sensitive), which
+  hands off to `/brief` or `/fix` when it fails, plus the parts that cost
+  little: the worktree, the checks, a reread of the diff, the secret scan.
+  It spawns one reviewer only for a change to a contract other files
+  read, where a reread by the context that wrote it is least trustworthy.
 
 ## Distribution: one source, three installers
 

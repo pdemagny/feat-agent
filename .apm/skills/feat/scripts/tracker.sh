@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Board tracking for /brief, /feat and /fix: moves the feature's issue across the
+# Board tracking for /brief, /feat, /fix and /tiny: moves the feature's issue across the
 # GitHub Projects board named in <repo root>/.logistics.yml.
 #
 #   tracker.sh check

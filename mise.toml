@@ -26,6 +26,7 @@ run = [
   "python3 -m py_compile tests/tracker/fake_github.py docs/diagrams/models.py",
   "claude plugin validate .",
   "! grep -Eiq 'specifier|planner|tasker|spec\\.md|brief|phase [0-9]|/feat' .apm/skills/feat/references/harness.md .apm/skills/feat/references/rebase.md",
+  "test \"$(wc -l < .apm/skills/tiny/SKILL.md)\" -le 200 || { echo '/tiny is over 200 lines: keep it tiny'; exit 1; }",
 ]
 
 [tasks.check]
@@ -50,6 +51,7 @@ test -f .claude/skills/feat/scripts/secret-scan.sh
 test -f .claude/skills/feat/references/harness.md
 test -f .claude/skills/feat/references/rebase.md
 test -f .claude/skills/fix/SKILL.md
+test -f .claude/skills/tiny/SKILL.md
 '''
 
 [tasks."test:tracker"]

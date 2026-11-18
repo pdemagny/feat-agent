@@ -21,6 +21,11 @@ idea, or a bug report, to a reviewed pull request, using
 - **`/fix #N`** (or `/fix "<symptom>"`) assesses a bug, fixes it, has a
   different agent verify the fix, reviews it and opens a PR with
   `Fixes #N`.
+- **`/tiny "<change>"`** (or `/tiny #N`) makes a trivial change, a typo, a
+  docs edit or an obvious fix, in one session with no subagent: a tiny
+  brief (optionally an issue on your board), the edit, your checks, a
+  reread of the diff, then the PR. It hands off to `/brief` or `/fix` when
+  the work turns out bigger.
 - **`/feat rebase`** (or `/fix rebase`) keeps a shipped run's PR on the
   current main once another PR merges: it rebases it, resolves the
   conflicts and pushes it; only real decisions stop for you.
@@ -59,7 +64,8 @@ Then, in Claude Code:
 
 `/clear` starts the build with a fresh context, so the interview isn't
 carried into every later step. For a bug: `/fix #42` or `/fix "export
-drops the last row"`.
+drops the last row"`. For a typo, a docs edit or an obvious fix: `/tiny
+"fix the install link"`, in one session.
 
 Prefer a Claude Code plugin, or working from a clone? Both, and a command
 that checks your setup, are in [docs/install.md](docs/install.md). Claude
@@ -94,6 +100,9 @@ one design reviewer and two code reviewers covering the same lenses.
   and one PR per capability.
 - **`/fix`** runs the same way on Spec Kit's bug extension: assess, fix,
   test by a different agent, code review, ship.
+- **`/tiny`** skips the pipeline for work too small to need it: one
+  session, no Spec Kit, no subagent unless the change touches a contract
+  other files read; it hands off to `/brief` or `/fix` when it isn't tiny.
 
 Every phase, gate and model: [docs/workflow.md](docs/workflow.md).
 
@@ -104,7 +113,7 @@ Also on the website: [pdemagny.github.io/logistics](https://pdemagny.github.io/l
 | Doc | What's in it |
 |---|---|
 | [docs/install.md](docs/install.md) | Prerequisites, the three ways to install, the setup check, board tracking, update, uninstall |
-| [docs/usage.md](docs/usage.md) | Brief, build, fix a bug, answer gates, resume, change the size, tune models and effort |
+| [docs/usage.md](docs/usage.md) | Brief, build, fix a bug, make a trivial change, answer gates, resume, change the size, tune models and effort |
 | [docs/workflow.md](docs/workflow.md) | Every phase, gate and agent: the size × phase matrix, what runs when and how |
 | [docs/design.md](docs/design.md) | Why it is built this way: Claude Code mechanics, rejected alternatives |
 | [Roadmap](https://github.com/users/pdemagny/projects/2) | Known bugs and what is planned |

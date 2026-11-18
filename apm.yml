@@ -1,6 +1,6 @@
 name: logistics
 version: 0.12.0 # x-release-please-version
-description: 'From a feature idea or a bug report to a reviewed PR: /brief writes the brief, /feat runs Spec Kit phases in feat-* subagents sized by model and effort, /fix runs Spec Kit''s bug extension the same way.'
+description: 'From a feature idea or a bug report to a reviewed PR: /brief writes the brief, /feat runs Spec Kit phases in feat-* subagents sized by model and effort, /fix runs Spec Kit''s bug extension the same way, /tiny makes a trivial change in one session.'
 author: Pierre Demagny
 license: MIT
 repository: https://github.com/pdemagny/logistics

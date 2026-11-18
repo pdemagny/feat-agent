@@ -15,7 +15,7 @@ Claude Code only. Three ways to install; the design behind them:
 | Claude Code (tested on 2.1.308) | runs `/feat` and its agents; older versions may ignore subagent `effort` or `skills`  | <https://code.claude.com/docs/en/setup>         |
 | git ≥ 2.44                      | branches, worktrees, diffs; moves runs with `rebase`, phase 8 renumbers with `rebase --autosquash` | your package manager                            |
 | GitHub CLI `gh`, logged in      | phase 8 pushes and opens the PR; `rebase` lists your conflicting PRs and pushes with `--force-with-lease`; board tracking needs the `project` scope ([section 5](#5-board-tracking-optional)) | <https://cli.github.com>, then `gh auth login`  |
-| Spec Kit CLI `specify`          | phases 2–6 are Spec Kit skills                                                        | `uv tool install specify-cli`                   |
+| Spec Kit CLI `specify`          | phases 2–6 are Spec Kit skills; `/tiny` doesn't need it                               | `uv tool install specify-cli`                   |
 | Spec Kit bug extension, `/fix` only (tested with bug 1.0.1 and 1.0.2) | `/fix`'s assess, fix and test phases are its skills       | `specify extension add bug` in each project     |
 | APM (`apm`) or Node.js (`npx`)  | APM installs everything; `npx` installs the third-party skills for the other two ways | `uv tool install apm-cli`; <https://nodejs.org> |
 
@@ -173,7 +173,8 @@ needed by `/fix` only, so neither of these lines changes the exit code:
 `/brief` and `/feat` can move a brief's issue across a GitHub Projects
 board: Brief when the brief is written, In progress while it is built, In
 review from the code review on (`/fix` moves a bug's issue the same way:
-[workflow.md](workflow.md#board-moments)). Which moment sets which status:
+[workflow.md](workflow.md#board-moments); `/tiny` the issue it is given or
+creates from its tiny brief: [workflow.md](workflow.md#tiny)). Which moment sets which status:
 [workflow.md](workflow.md#board-tracking). It is off unless the repo has a
 `.logistics.yml` at its root:
 
