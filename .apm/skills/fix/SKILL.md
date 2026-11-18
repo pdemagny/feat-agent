@@ -473,7 +473,8 @@ or picked: phase 5.
 First write `Current phase: done (shipping)` and `- [x] 5 Ship` into the
 state file, so the copy the shipper commits is already done. Then spawn
 `feat-shipper` (fix mode, row 5) with the state file, the conventions, the
-worktree, the default branch, the bug dir, the issue ref (none when
+worktree, the default branch, the bug dir, the secret-scan script
+(`<this skill's base dir>/../feat/scripts/secret-scan.sh`), the issue ref (none when
 `Issue: none`: then the PR has no `Fixes` line; else `Fixes <ref>`) and
 `Security bug: yes` when the assessment's risk area includes security,
 else `Security bug: no`. It updates the docs the conventions call for,

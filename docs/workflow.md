@@ -398,7 +398,12 @@ which is authoritative for this section.
 - **`feat-code-reviewer`**, unchanged, with a subset of its lenses.
 - **`feat-shipper`** in fix mode commits `fix(<scope>)` with the
   `.specify/bugs/<slug>/` trail and opens the PR, whose `Not verified`
-  section holds only its own unrun checks. Never merges.
+  section holds only its own unrun checks. Never merges. Before
+  committing it runs `.apm/skills/feat/scripts/secret-scan.sh` on the
+  staged diff: only added lines count, and a match (a vendor token prefix,
+  or a key named password, token, secret or api key holding a literal
+  value) stops the ship with `<file>:<line>` and the rule, never the
+  value. The tracker refuses an issue body by the same rules.
 
 No agent is continued: every spawn is fresh.
 
