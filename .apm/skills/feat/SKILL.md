@@ -129,7 +129,7 @@ moving onto a new main use the phase 6 row.
 | 2 | Specify       | `feat-specifier`                        | **hard** only on an open marker or blocker; else soft                                                                                  |
 | 3 | Plan          | `feat-planner`                          | none for small and medium (merged with 4); **hard** for large                                                                          |
 | 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3 | small/medium: one gate for 3+4, hard on a finding, a user-call assumption, a blocker, size increase or checklist item; large: **hard** |
-| 5 | Tasks         | `feat-tasker`                           | **hard** on CRITICAL/HIGH findings, a size increase or an unanswered checklist item, and always for large; else soft                   |
+| 5 | Tasks         | `feat-tasker`                           | **hard** on CRITICAL/HIGH findings, analyze not run, a size increase or an unanswered checklist item, and always for large; else soft  |
 | 6 | Implement     | `feat-implementer`, one per user story  | soft unless checks fail; **hard after each story** for large                                                                           |
 | 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5   | small/medium: **hard** on a `user` or `S` finding or a `not met` criterion, else soft (the `apply` findings are fixed); large: **hard**, findings shown with their recommendations |
 | 8 | Ship          | `feat-shipper`                          | none: ends with the PR link                                                                                                            |
@@ -296,10 +296,14 @@ should know" (one line: what the amend changed).
 ## 5. Tasks
 
 Spawn `feat-tasker`. It returns task counts per story, the MVP slice, the
-stories' task IDs, open findings with proposed fixes, and unchecked
-checklist items. **Hard gate** on a failed check (harness, Reported files;
+stories' task IDs, whether analyze ran, open findings with proposed fixes,
+and unchecked checklist items. **Hard gate** on a failed check (harness, Reported files;
 the `Tasks:` path must be on `Wrote:`), on CRITICAL/HIGH findings (accepted fixes go
-back to the tasker, which reruns analyze), on a size increase, on unchecked
+back to the tasker, which reruns analyze), on an `Analyze:` line that is
+`not run` (say under "What you should know" that analyze did not run, with
+its error, and that spec, plan and tasks were only cross-checked by hand) or
+missing (say there that the tasker did not say whether analyze ran), on a
+size increase, on unchecked
 checklist items that the answer already given (phase 2, or the spec
 summary) doesn't cover (`speckit-implement` would otherwise stop to ask),
 and always for large. Otherwise soft. Check the size against the task count

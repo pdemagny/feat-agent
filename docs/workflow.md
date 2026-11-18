@@ -33,7 +33,7 @@ is authoritative; this page mirrors it with explanations.
 | 2 | Specify       | `feat-specifier`                                                                      | `speckit-specify`                                                  | branch/worktree, `spec.md`, `feat-state.md`   | **hard** only on an open question or a blocker; else soft, and its summary opens the next gate                              |
 | 3 | Plan          | `feat-planner`                                                                        | `speckit-plan`                                                     | `plan.md` and design docs                     | none (hard for large, opening with the spec summary after a soft phase 2)                                                  |
 | 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3, then `feat-planner` writes accepted findings | `security-and-hardening` (cost and design checklists in the agent) | a paraphrase, findings D1…                    | one gate with 3: hard only on a real finding, a user-call assumption, a constitution violation, a blocker, a size increase, a paraphrase that contradicts the brief or an unchecked checklist item after a soft phase 2 (always hard for large) |
-| 5 | Tasks         | `feat-tasker`                                                                         | `speckit-tasks`, `speckit-analyze`                                 | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, a size increase or an unanswered checklist item; always for large                                   |
+| 5 | Tasks         | `feat-tasker`                                                                         | `speckit-tasks`, `speckit-analyze`                                 | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, analyze not run, a size increase or an unanswered checklist item; always for large                  |
 | 6 | Implement     | `feat-implementer` ×1 per user story, in turn                                         | `speckit-implement`                                                | the code, tasks ticked when their checks ran, a Not verified list | soft (hard per story for large; hard on a design problem)                                                                  |
 | 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies the fixes         | `security-and-hardening`, `performance-optimization`               | findings B, S, P, C, R with recommendations; fixes applied | small/medium: **hard** on a finding that needs you (`user`), an `S` finding or an unmet criterion, else soft; large: **hard** |
 | 8 | Ship          | `feat-shipper`                                                                        | —                                                                  | docs updated, commits, push, PR               | none                                                                                                                       |
@@ -254,12 +254,15 @@ same one, continued with `SendMessage`, after a soft gate (still warm); a
 fresh one after a hard gate.
 
 ### 5 Tasks (`feat-tasker`)
-Runs `speckit-tasks` then `speckit-analyze`, fixes MEDIUM/LOW findings that
-don't change meaning, and reports CRITICAL/HIGH with proposed fixes, task
-IDs per story, the MVP slice, and unchecked checklist items. The gate is
-hard only on CRITICAL/HIGH findings, a size increase, or checklist items
-the checklist answer you already gave doesn't cover (`speckit-implement`
-would stop on them).
+Runs `speckit-tasks` then `speckit-analyze`, handing Spec Kit's scripts the
+unnumbered feature dir (`SPECIFY_FEATURE_DIRECTORY`), fixes MEDIUM/LOW
+findings that don't change meaning, and reports CRITICAL/HIGH with proposed
+fixes, task IDs per story, the MVP slice, whether analyze ran, and
+unchecked checklist items. When analyze can't run, the tasker cross-checks
+spec, plan and tasks by hand and says so (`Analyze: not run`). The gate is
+hard only on CRITICAL/HIGH findings, analyze not run, a size increase, or
+checklist items the checklist answer you already gave doesn't cover
+(`speckit-implement` would stop on them).
 Last cheap moment to change direction.
 
 **Size changes** are checked at the plan (size trigger) and here (task
