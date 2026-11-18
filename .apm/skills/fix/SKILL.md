@@ -53,6 +53,7 @@ missing, stop: "/fix needs logistics' `feat` skill
   `gh issue view <ref> --json number,title,url`;
   `gh api repos/<o>/<r>/issues/<N> --jq .author_association`;
   `gh repo view --json nameWithOwner,visibility`;
+  `gh pr list --head <branch> --state all --json state --jq '.[].state'`;
   `git ls-remote --heads origin fix-<slug>`; `git for-each-ref
   --format='%(upstream)' refs/heads/fix-<slug>`; `ls -d -- '<path>' …` on a
   report's accepted `Wrote:` paths (harness, Reported files).

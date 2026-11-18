@@ -337,8 +337,11 @@ the noise with tests green, every attempt logged with its numbers), then
 readability one change at a time with tests after each.
 
 ### 8 Ship (`feat-shipper`)
-Numbers the spec dir with `.apm/skills/feat/scripts/spec-number.sh`: after
-fetching `origin/<default>`, the next number free on it and in every open
+Before each shipper spawn, `/feat` marks the state file `done (shipping)`,
+so the copy the shipper commits is already done and `/feat resume` skips
+the run once it is pushed (a ship interrupted before the push, its branch
+with no upstream, is still resumed). The shipper numbers the spec dir
+with `.apm/skills/feat/scripts/spec-number.sh`: after fetching `origin/<default>`, the next number free on it and in every open
 same-repo PR (the `specs/NNN-*` paths among its files, all pages, or its
 branch name when it has no spec files; fork PRs and numbers longer than
 four digits are ignored), so two features shipped at the same time get different numbers
@@ -354,8 +357,9 @@ verified` section (every logged item and the ship's own unrun checks, or
 `none`), and a link to the state file. If git is blocked in the session, it returns one `!`
 command for you to run. If the spec-number script fails (git or gh error),
 nothing is pushed: `/feat` shows its `! spec-number: error: …` line as an
-error and leaves the state file at `8 Ship`, so `/feat resume` picks the
-run up again. Never merges.
+error and sets the state file back to `8 Ship`, so `/feat resume` picks
+the run up again. Resume also skips a run whose branch has a merged or
+closed PR. Never merges.
 
 If main moved since the phase's base check and the shipper's rebase
 conflicts, it aborts the rebase, pushes nothing and reports `PR: conflict`
@@ -447,8 +451,8 @@ read only by a `rebase` run.
 - **The push**: `feat-shipper` in rebase mode, on the ship row, commits
   the move's mechanical check fixes in a commit of their own, then the
   move's Log lines alone (`docs(specs): log rebase onto <short sha>`,
-  holding only Log lines: the local done mark stays out), checks the spec
-  number again, and pushes with
+  holding only Log lines: the local `done (PR #N)` mark stays out),
+  checks the spec number again, and pushes with
   `--force-with-lease=<branch>:<the PR head it started from>`. If someone
   pushed to the PR meanwhile, the push is refused, the branch goes back to
   that PR head, nothing is overwritten, and the run says so. It scans for

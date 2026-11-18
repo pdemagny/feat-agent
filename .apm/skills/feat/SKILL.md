@@ -43,14 +43,21 @@ rules this skill follows. The values it refers to are below.
 - *Size line*: `small | medium | large`.
 - *Agents line*: `<specifier|planner|tasker> <agent id>, … (for
   SendMessage)`.
-- *Current phase values*: `<N> <name>`; marked done in phase 8.
+- *Current phase values*: `<N> <name>`, `done (shipping)` (written
+  before each shipper spawn, so it is committed), `done (PR #N)` (local
+  copy only).
 - *Map line*: `<map path and id, if any>`.
 - *Issue ref*: the `Issue:` line (the brief's, then the state file's);
   in the state file, `<the brief's issue, if any>`.
-- *Done marker*: marked done.
+- *Done marker*: `Current phase:` starts with `done`, except a `done
+  (shipping)` run whose branch has no upstream yet (an interrupted ship,
+  or a `!` command not run yet: `git for-each-ref --format='%(upstream)'
+  refs/heads/<branch>` prints an empty line).
 - *Artifacts the orchestrator reads*: the brief and the state file. Open
   spec.md or plan.md only to quote a line the user must decide on.
 - *Commands besides the tracker*: git for the worktree and the diff;
+  `gh pr list --head <branch> --state all --json state --jq '.[].state'`;
+  `git for-each-ref --format='%(upstream)' refs/heads/<branch>`;
   `ls -d -- '<path>' …` on a report's accepted `Wrote:` paths (harness,
   Reported files).
 - *Artifact owners*: specifier: spec.md; planner: plan.md, accepted
@@ -70,8 +77,8 @@ rules this skill follows. The values it refers to are below.
   going back from 7 or 8 to 2–6.
 - *Review move*: when phase 7 starts; on resume in phases 7–8.
 - *Review phase*: 7.
-- *Resume search*: the most recent `specs/*/feat-state.md` not marked done;
-  section 2 says how a soft phase 2 shows up on resume.
+- *Resume search*: the most recent `specs/*/feat-state.md` without the done
+  marker; section 2 says how a soft phase 2 shows up on resume.
 - *Base-check boundaries*: the start of every phase once the state file
   exists: phases 3 to 8, and any phase rerun by "back to N".
 - *Resolver context*: spec.md and plan.md.
@@ -79,9 +86,8 @@ rules this skill follows. The values it refers to are below.
 - *Number check*: the spec-number script.
 - *Secret-scan script*: `<this skill's base dir>/scripts/secret-scan.sh`.
 - *Rebase search*: `specs/<slug>/feat-state.md` (glob
-  `specs/*/feat-state.md`), whatever its `Current phase:`: the shipper
-  commits it before phase 8 marks it done, and an open PR means the
-  shipper ran.
+  `specs/*/feat-state.md`), whatever its `Current phase:`: an open PR
+  means the shipper ran, and older runs committed `8 Ship`.
 
 ## Size table
 
@@ -384,7 +390,10 @@ the gate's Log line.
 
 ## 8. Ship
 
-Spawn `feat-shipper` with the state file, the conventions, the worktree, the
+First write `Current phase: done (shipping)` and `- [x] 8 Ship` into the
+state file, so the copy the shipper commits is already done; do it before
+every shipper spawn, a second one after a conflict included. Then spawn
+`feat-shipper` with the state file, the conventions, the worktree, the
 default branch, the spec-number script (`<this skill's base
 dir>/scripts/spec-number.sh`), the issue, if any, and the not verified
 items: those of the latest line of each story and of `review fixes`
@@ -393,15 +402,18 @@ dir, updates the docs the conventions call for, commits
 (default: `docs(specs)` then `feat(scope)` with its docs; `perf` and `refactor` only when separable),
 pushes and opens the PR, or returns `PR: blocked` with a single `!` line.
 When that line is a command for the user to run (`! cd <worktree> && git
-…`: git or gh blocked in the session), give it to the user as is and mark
-the state file done. When it is an error, not a command (`! spec-number:
-error: …` or another hard failure: nothing pushed), show it to the user as
-an error, don't mark the state file done and leave `Current phase: 8 Ship`
-so `/feat resume` finds the run. Otherwise mark the state file done. Never
+…`: git or gh blocked in the session), give it to the user as is; the
+state file stays done (resume finds the run while its branch has no
+upstream). When it is an error, not a command (`! spec-number: error: …`
+or another hard failure: nothing pushed), show it to the user as an error
+and set `Current phase: 8 Ship` back in the local copy so `/feat resume`
+finds the run. After the PR you may write `Current phase: done (PR #N)` in
+the local copy only (uncommitted). Either edit goes to the state file at
+the path from the shipper's `Wrote:` when it numbered the dir. Never
 merge.
 
 `PR: conflict`: run harness "Moving onto a new main, At ship", then read
-the report as above.
+the report as above; the state file stays `done (shipping)`.
 
 Final message: the PR link, the branch/worktree, the two or three things
 you'd look at first in review, the shipper's `Not verified:` line when it

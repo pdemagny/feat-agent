@@ -3,7 +3,7 @@
 - Branch: not-verified-list Worktree: /home/pierre/Projects/feat-agent/.claude/worktrees/fix-11-skipped-checks-visible
 - Size: small
 - Agents: specifier a3d8e169ec29c68a7, planner af0c5ec262370145c, tasker a0678db0da7ef1483 (for SendMessage)
-- Current phase: 8 Ship
+- Current phase: done (PR #25)
 - Conventions: conventional commits `type(scope): msg`, one logical change per commit, concise; never co-author; stage only task files (leave `.specify/bugs/11-skipped-checks-visible/` uncommitted: the earlier /fix trail). Shell is zsh; use `command rm -f` etc. In the worktree call `/usr/bin/git` directly. Checks: `mise run lint`, `mise run test:apm` (also `mise run test:tracker`, `mise run test:spec-number`). Agent report formats and the orchestrator (feat/fix SKILL.md) change together; feat/fix size tables mirror docs/workflow.md; `.apm/skills/feat/references/harness.md` stays free of /feat-only words (lint greps it); diagrams unchanged here. Agent frontmatter carries no model/effort/tools/color. Don't edit CHANGELOG or versions.
 - Allowed Spec Kit hooks: none configured (hooks: {})
 - Map: none

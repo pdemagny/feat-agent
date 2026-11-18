@@ -3,7 +3,7 @@
 - Branch: code-review-soft-gate Worktree: /home/pierre/Projects/logistics/.claude/worktrees/brief-code-review-soft-gate
 - Size: small
 - Agents: specifier ac4b68b004f0bc411, planner ac72205ab33b14cfa (amend; first run a8ac072ca4944a454), tasker a50f21c745eb7793a (for SendMessage)
-- Current phase: 8 Ship
+- Current phase: done (PR #35)
 - Conventions: conventional commits `type(scope): msg`, one logical change per commit, no co-author, user is sole author; never "Closes #N" in a commit (PR body only); `/feat` and `/fix` stay thin (no code reading); reviewer report format and its coordinators change together; mirror size-table/agent changes in docs/workflow.md; D2 diagrams in docs/diagrams/ rendered to docs/img/ by `mise run diagrams` (commit both; gates.d2 and chain.d2 for /feat gate changes); harness.md holds no /feat-only words (lint greps it); `mise run lint` and `mise run test:apm` before committing; CHANGELOG generated, never edited; never edit versions by hand; in worktrees call `/usr/bin/git` directly, one plain command per call; `rm`/`cp`/`mv` are interactive aliases: use `command rm -f` etc.
 - Allowed Spec Kit hooks: none (none configured)
 - Map: none

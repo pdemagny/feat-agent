@@ -3,7 +3,7 @@
 - Branch: rebase-when-main-moves Worktree: /home/pierre/Projects/logistics/.claude/worktrees/brief-rebase-when-main-moves
 - Size: medium
 - Agents: specifier a333647034bfae27a, planner a97fc78166ea57086 (amend; first planner a32efe71298ef578f), tasker a431f9fe1791ac92c
-- Current phase: 8 Ship
+- Current phase: done (PR #40)
 - Conventions: conventional commits `type(scope): msg`, one logical change per commit, no co-author trailer; in worktrees call `/usr/bin/git`, one plain command per call (no heredocs, pipes, globs, `$(…)`); `rm`/`cp`/`mv` are `-i` aliases: use `command rm -f` etc.; follow `.claude/CLAUDE.md` (size tables mirrored in `docs/workflow.md`; D2 diagrams re-rendered with `mise run diagrams` and committed; `harness.md` free of `/feat`-only words; agent report formats change with their coordinator; `/feat` and `/fix` stay thin; plugin.json lists agents); `mise run lint` and `mise run test:apm` before committing; CHANGELOG generated, never edited; PR body says `Closes #13`, never a commit message; never name private projects from outside this repo (use "a private project" or `~/Projects/my-app`)
 - Allowed Spec Kit hooks: none (`hooks: {}`)
 - Map: none
