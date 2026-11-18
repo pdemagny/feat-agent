@@ -186,6 +186,11 @@ Code plugin.
      needs planning), a backport request (`/fix` fixes the current branch
      only), several bugs in one report (ask which one to fix; each other
      is its own `/fix` run).
+   - A report whose cause and fix are plain from it (a typo, a broken
+     link, a wrong value it names) and that passes `/tiny`'s tiny check:
+     offer `/tiny <the argument>` (`/logistics:tiny` as a plugin), which
+     fixes it in this session with no assessment or subagent. Stop if the
+     user takes it; else go on.
    - An issue URL on a host other than GitHub is passed to the assessor as
      is: the bug extension's own URL trust policy decides whether it is
      fetched, and `/fix` never fetches it itself or widens that policy;

@@ -1,8 +1,9 @@
 # logistics
 
-Three skills (`.apm/skills/brief/SKILL.md` writes the brief,
+Four skills (`.apm/skills/brief/SKILL.md` writes the brief,
 `.apm/skills/feat/SKILL.md` coordinates the build, `.apm/skills/fix/SKILL.md`
-coordinates a bugfix) and the phase subagents
+coordinates a bugfix, `.apm/skills/tiny/SKILL.md` makes a trivial change in
+one session) and the phase subagents
 (`.apm/agents/*.agent.md`), distributed three ways from one source, for Claude Code only: an APM
 package (`apm.yml`), a Claude Code plugin (`.claude-plugin/`), and
 `install.sh` for development. See README.md and docs/install.md.
@@ -37,6 +38,12 @@ When changing it:
 - Agent prompts end with a fixed report format; the orchestrator depends on
   it. Change both sides together. `/feat` and `/fix` stay thin: they never read code
   or edit artifacts; new work goes into an agent, not the coordinator.
+- `/tiny` is the opposite: one session that does the work itself, with no
+  size table and no `harness.md`; `mise run lint` caps its length. Its
+  fresh review spawns `feat-code-reviewer` (lens 7a, the tiny brief as the
+  spec), so a change to that agent's inputs or report updates `/tiny` too.
+  Its brief is `/brief`'s format with fewer sections: `tracker.sh
+  create-issue` reads both, so keep `# Brief:`, `## Why` and `## Behaviour`.
 - Adding or removing an agent: list it in `.claude-plugin/plugin.json`
   (`agents` is an explicit list).
 - Releases are made by release-please (`.github/workflows/release.yml`,

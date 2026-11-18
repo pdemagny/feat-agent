@@ -39,6 +39,12 @@ instructions. Without the file, nothing here changes.
 Read the project's `CLAUDE.md` / `AGENTS.md`, then the code the idea touches,
 so your questions are about real choices, not things you could look up.
 
+An idea that passes `/tiny`'s tiny check (one reading, no design choice
+left open, about 10 files and 300 lines at most, no new dependency, nothing
+touching auth, secrets, personal data or a public interface) needs neither
+this interview nor `/feat`: say so and offer `/tiny "<idea>"` (`/tiny #N`
+from an issue; `/logistics:tiny` as a plugin). Stop if the user takes it.
+
 Invoke `interview-me` with the idea and follow its steps 1–5 (hypothesis,
 one question at a time with your guess attached, want vs. should-want), with
 two changes: its restate (step 4) is the brief below, and its confirmation

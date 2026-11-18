@@ -37,6 +37,7 @@ Where things are:
 .apm/skills/feat/references/  harness.md: the rules /feat and /fix share (gates, state file, board, resume)
 .apm/skills/fix/              the bugfix orchestrator: assess, fix, test, review, ship; its own size table
 .apm/skills/brief/            phase 1: interview, size, brief or capability map
+.apm/skills/tiny/             a trivial change in one session: tiny brief, edit, checks, PR
 .apm/agents/*.agent.md        one subagent per phase role
 apm.yml                       APM package: metadata and the third-party skill dependencies
 .claude-plugin/               Claude Code plugin and marketplace manifests
@@ -59,9 +60,11 @@ work in this repo. The ones that bite most:
   `mise run diagrams` (the model grid from `/feat`'s size table): re-render
   and commit `docs/img` when you change the table, the phases or the gates.
 - Every agent prompt ends with a fixed report format that `/feat` or `/fix`
-  parses: change both sides together.
+  parses (and `/tiny`, for `feat-code-reviewer`): change both sides
+  together.
 - `/feat` and `/fix` only coordinate. New work goes into an agent, not the
-  coordinator.
+  coordinator. `/tiny` is the exception: one session doing the work itself,
+  kept under 200 lines by `mise run lint`.
 
 ## Before you open a pull request
 
