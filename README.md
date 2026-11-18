@@ -15,7 +15,7 @@ idea, or a bug report, to a reviewed pull request, using
 
 - **`/brief "<idea>"`** interviews you about a feature and writes a short
   brief.
-- **`/feat <brief>`** specifies, plans, reviews the design, breaks it into
+- **`/feat <brief>`** (its path or short name) specifies, plans, reviews the design, breaks it into
   tasks, implements, reviews the code, then commits, pushes and opens a PR
   on its own branch.
 - **`/fix #N`** (or `/fix "<symptom>"`) assesses a bug, fixes it, has a

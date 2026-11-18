@@ -40,10 +40,14 @@ Words you'll meet:
 
 Claude reads the code the idea touches, then asks you questions one at a
 time (`interview-me`), each with its guess attached. It proposes a size and
-writes the brief to `specs/briefs/<short-name>.md`: why, how it's handled
+writes the brief to `specs/briefs/<short-name>.md` at the top of the repo
+(of its worktree when you run it in one): why, how it's handled
 today, behaviour, out of scope, alternatives rejected, acceptance,
 constraints, size, short name. Expect pushback: before writing a decision
-down, Claude gives its strongest counter-argument.
+down, Claude gives its strongest counter-argument. It ends by printing the
+brief's absolute path; run outside a git checkout, it asks for the repo's
+path before anything else (and stops without one), and the brief never
+goes to a temporary dir.
 
 A fresh agent (`feat-brief-reviewer`) then reads the brief without the
 interview, as the build will. You confirm the brief together with its
@@ -94,6 +98,15 @@ The session becomes a thin coordinator: it never reads code. Every phase runs
 in a `feat-*` subagent and Claude stops only at gates; see
 [workflow.md](workflow.md) for which phases stop and when. It ends with a PR
 link and never merges.
+
+`<brief>` is the brief's path or just its short name (`/feat
+edit-stack-config`): then `/feat` looks for `specs/briefs/<name>.md` in
+this checkout and in the repo's other worktrees, asks when it finds more
+than one, and names every path it searched when it finds none. Once the
+brief is in the run's state file, `/feat` deletes it only when it is this
+checkout's `specs/briefs/<short-name>.md`; any other brief (in another
+worktree, or a file elsewhere you gave by path) stays, and the final
+message names it.
 
 A check an agent could not run (no credentials, a service down, a manual
 step, a killed run) is never passed off as green: its task stays unticked,

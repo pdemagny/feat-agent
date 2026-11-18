@@ -134,6 +134,11 @@ gate, its hand-off step skipped), gives the strongest counter-argument to
 each decision before writing it down, proposes a size and writes
 `specs/briefs/<name>.md`: why, how it's handled today, behaviour, out of
 scope, alternatives rejected with their reasons, acceptance, constraints.
+The path is anchored to the checkout's top level (`git rev-parse
+--show-toplevel`: the repo, or its worktree), never a temporary dir; outside
+a git checkout it asks for the repo's path before the interview and stops
+without one, and the board check, the reads and the write all use that
+top level. Its last lines print the absolute path.
 From an issue (`/brief #N` or its URL) it reads the issue with `gh` as
 the idea and records it in the brief; the shipper's PR says `Closes #N`.
 With [board tracking](#board-tracking) it checks the board first, moves the
@@ -173,7 +178,10 @@ brief. Detection rules and map format adapted from the scope check in
 `spec-driven-development` (MIT).
 
 ### 0 Setup (coordinator)
-Checks the argument is a brief, reads `CLAUDE.md`/`AGENTS.md` and project
+Checks the argument is a brief, a path or a short name (`[a-z0-9-]`): a name is looked up
+as `specs/briefs/<name>.md` in this checkout, then in every worktree `git
+worktree list` names; one match is used and named, several are put to you,
+none stops the run with every path searched. It then reads `CLAUDE.md`/`AGENTS.md` and project
 memory (they override the skill), checks Spec Kit and the agents, and reads
 `.specify/extensions.yml`: hooks that would create branches or commit are
 put to you before anything runs. With [board tracking](#board-tracking) it
@@ -187,7 +195,9 @@ renamed if EnterWorktree picked another name) and enters it, so every agent
 starts there. The spec dir is `specs/<short-name>/` until phase 8 numbers it. The specifier runs `speckit-specify` from the brief and
 reports stories, requirements, open `[NEEDS CLARIFICATION]` markers with
 recommended answers, assumptions and unchecked checklist items. The
-coordinator moves the brief into `feat-state.md` and gates. The gate is hard
+coordinator moves the brief into `feat-state.md` (deleting the brief file
+only when it is `specs/briefs/<short-name>.md` in the checkout `/feat`
+started in; any other stays, and the final message names it) and gates. The gate is hard
 only when the spec has an open marker or the specifier reports a blocker (or
 the report holds something surprising, such as a remark about size), at
 every size. Otherwise it is soft: one line, `Phase 2 Specify — soft`, and
