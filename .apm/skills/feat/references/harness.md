@@ -276,7 +276,7 @@ on.
 `Conflicts:` lists the files. Run rebase mode (`Shipped: no`) as above
 (a move that needs the user's call stops at the move gate), then spawn
 the shipper again, as the first time. Write that move's Log line after
-the shipper's report, in the local copy only (as the done mark is), in
+the shipper's report, in the local copy only (as `done (PR #N)` is), in
 the state file at the path from the shipper's `Wrote:` when it numbered
 the dir, and list the move in the final message.
 
@@ -293,7 +293,10 @@ they are not passed on (the ship's full checks run after any move).
 ## Resume
 
 **`/<skill> resume`**: find the state file per the *resume search*, skipping
-those with the *done marker* (ask if several), and read it. When it is in
+those with the *done marker* and those whose `Branch:` already shipped:
+`gh pr list --head <branch> --state all --json state --jq '.[].state'`
+prints `MERGED` or `CLOSED` and no `OPEN` (a `gh` error skips nothing).
+Ask if several remain, and read it. When it is in
 another worktree of this repo, enter that worktree first (EnterWorktree
 with `path`). Then the repair check (Moving onto a new main), then `check`
 (the *board-check step*), then the current phase's move, then the base
