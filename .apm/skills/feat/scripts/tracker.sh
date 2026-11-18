@@ -28,9 +28,11 @@ RE_SKIP_LINE='^ *(#.*)?$'
 RE_ISSUE_URL='^https://github\.com/([A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9._-]{1,100})/issues/([1-9][0-9]{0,9})$'
 RE_AFTER_QUOTE='^ *(#.*)?$'
 RE_SCOPE_PROJECT='(^|,) *project *(,|$)'
-# Secret-looking values (FR-038's patterns): an assessment-derived issue body
-# that matches one is refused.
-RE_SECRET='-----BEGIN|gh[opsur]_|github_pat_|AKIA|xox[bp]-|(^|[^A-Za-z0-9_])sk-|(password|token|secret)["'"'"']?[[:space:]]*[:=]'
+# Secret-looking values (the shipper's secret-scan rules, secret_rule): an
+# assessment-derived issue body that matches one is refused.
+# shellcheck source-path=SCRIPTDIR source=secret-scan.sh
+. "$(dirname -- "${BASH_SOURCE[0]}")/secret-scan.sh" 2>/dev/null ||
+  { printf 'tracker: error: secret-scan.sh is missing next to tracker.sh\n'; exit 1; }
 
 # GraphQL documents and --jq filters, verbatim from the contract
 # (specs/001-board-tracking/contracts/tracker-cli.md). Never spliced into: each
@@ -454,7 +456,7 @@ cmd_create_issue() {
     printf '## Why\n%s\n\n## Behaviour\n%s\n\nBrief: %s\n' "$part1" "$part2" "$path" >"$body"
   else
     doc_parts "$root/$path" assessment "# Bug Assessment: " "## Symptom" "## Root Cause Hypothesis"
-    [[ ! "$part1"$'\n'"$part2" =~ $RE_SECRET ]] ||
+    ! secret_rule "$part1"$'\n'"$part2" ||
       die "assessment's Symptom or Root Cause Hypothesis holds a secret-looking value; redact it first" 2
     printf '## Symptom\n%s\n\n## Root cause\n%s\n\nTrail: .specify/bugs/%s/\n' "$part1" "$part2" "$slug" >"$body"
     label=(--label bug)

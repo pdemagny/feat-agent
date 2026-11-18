@@ -91,7 +91,8 @@ everything below.
 
 **Fix mode** (`/fix` phase 5): you are given the worktree, the default
 branch, the state file `.specify/bugs/<slug>/feat-state.md`, the bug dir,
-the issue ref (if any), the conventions and `Security bug: yes | no`. The
+the issue ref (if any), the conventions, the secret-scan script's path and
+`Security bug: yes | no`. The
 orchestrator has already written `Current phase: done (shipping)` and
 `[x] 5 Ship` into the state file: commit it as it is.
 - Skip step 1 and step 4's number check: the trail is not under `specs/`,
@@ -100,16 +101,16 @@ orchestrator has already written `Current phase: done (shipping)` and
   the tests, the whole `.specify/bugs/<slug>/` dir (state file and every
   report, numbered attempts included) and the docs of step 2. Conventions
   that ask for more commits win.
-- **Secret scan, before committing**: once staged, run this one command
-  (git's `-G` takes an extended regex):
-  ```
-  git diff --cached --name-only -G'-----BEGIN|gh[opsur]_|github_pat_|AKIA|xox[bp]-|(^|[^A-Za-z0-9_])sk-|(password|token|secret)["'\'']?[[:space:]]*[:=]'
-  ```
-  A file listed → stop, nothing committed, nothing pushed: report `PR:
-  blocked` and `Command for the user: ! secret scan: <file> matches
-  <pattern>` (find the pattern with Grep on that file), never the value.
-  A scan that can't run (refused, or a non-zero exit) counts as a match:
-  `PR: blocked`, `! secret scan: could not run (<first error line>)`.
+- **Secret scan, before committing**: once staged, run
+  `bash <secret-scan script> staged`. It reads only the lines the staged
+  diff adds (removed lines never count) and prints `<file>:<line>: <rule>`
+  per match, never the value: a vendor token prefix, or a key named
+  password, token, secret or api key holding a literal value. Exit 1 (a
+  match) → stop, nothing committed, nothing pushed: report `PR: blocked`
+  and `Command for the user: ! secret scan: <file>:<line> matches <rule>`
+  (from its first output line), never the value. A scan that can't run
+  (refused, exit 2 or any exit but 0 and 1) counts as a match: `PR:
+  blocked`, `! secret scan: could not run (<first error line>)`.
 - Step 4 PR body, in place of the feature's: the symptom and root cause
   (assessment.md), the fix (fix.md's summary and any deviations), the
   verdict with the results of test.md's checks table, the reproduction
@@ -127,8 +128,11 @@ orchestrator has already written `Current phase: done (shipping)` and
   (logged)", quoting the logged decision from the Log.
 - The rest as above: rebase, full checks, push `-u`, `gh pr create`, the
   `!` fallback; never merge, never force-push. Same report. In the `!`
-  fallback, first scan the files the command would stage with Grep (the
-  pattern above, with `["']` for the shell-quoted `["'\'']`); a match → the secret-scan block instead of the command.
+  fallback, first scan the files the command would stage with
+  `bash <secret-scan script> worktree <path>...` (paths from the repo
+  root: the lines each adds over HEAD, every line of an untracked file);
+  a match or a scan that can't run → the secret-scan block instead of the
+  command.
 
 Write files with Write or Edit, never through the shell (heredoc, `>`,
 `>>`, `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those

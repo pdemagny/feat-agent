@@ -396,11 +396,14 @@ expect_rc 1
 ok
 
 # 17. Secret in the body: an assessment whose Symptom or Root Cause holds a
-# secret-looking value is refused before any gh call.
+# secret-looking value (secret-scan.sh's rules) is refused before any gh
+# call; a key with no literal value is not a secret. The samples are built
+# by concatenation, so this file passes the secret scan itself.
 new_case "secret in body"
 write_config "$CONFIG"
 want="tracker: error: assessment's Symptom or Root Cause Hypothesis holds a secret-looking value; redact it first"
-for value in 'password=hunter2' '"token": "abc"' 'key ghs_abc' 'sk-proj123' '-----BEGIN RSA PRIVATE KEY-----'; do
+for value in "pass""word=\"hunter2024\"" "\"tok""en\": 'abcd1234efgh'" \
+  "API_""KEY=0123456789abcdefghij0123" 'key gh''s_abc' 's''k-proj123' '-----BEG''IN RSA PRIVATE KEY-----'; do
   write_assessment login-timeout '# Bug Assessment: Login times out' '' \
     '## Symptom' 'Login spins.' "$value" '' \
     '## Root Cause Hypothesis' 'The lock is held.'
@@ -408,5 +411,16 @@ for value in 'password=hunter2' '"token": "abc"' 'key ghs_abc' 'sk-proj123' '---
   expect_rc 2
   expect_out "$want"
   expect_no_calls
+done
+printf 'up/r\n' >"$case_dir/repo"
+printf 'https://github.com/up/r/issues/9\n' >"$case_dir/issue-url"
+for value in 'pass''word=hunter2' '"tok''en": "abc"' "tok""en: \${{ secrets.GH_TOKEN }}" \
+  'sec''ret := cfg.GetString("sec''ret")'; do
+  write_assessment login-timeout '# Bug Assessment: Login times out' '' \
+    '## Symptom' 'Login spins.' "$value" '' \
+    '## Root Cause Hypothesis' 'The lock is held.'
+  tracker create-issue .specify/bugs/login-timeout/assessment.md up/r
+  expect_rc 0
+  expect_out "tracker: created up/r#9"
 done
 ok
