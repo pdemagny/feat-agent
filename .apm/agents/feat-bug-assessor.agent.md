@@ -59,8 +59,10 @@ Excerpts`, …), replace each secret-looking value, the whole match from the
 key to the end of its value, with `<redacted>` (`password=hunter2` →
 `<redacted>`), so the shipper's scan does not match it again: private-key
 blocks (`-----BEGIN` to `-----END`), `gh[opsur]_`, `github_pat_`, `AKIA`,
-`xox[bp]-` and `sk-` tokens, and `password`, `token` or `secret` followed
-by `=` or `:` (quoted or not). In test mode, count them for `Redacted:`.
+`xox[bp]-` and `sk-` tokens, and a key named `password`, `passwd`,
+`token`, `secret` or api key (`api_key`, `api-key`, `apikey`, any case)
+followed by `=`, `:`, `:=` or `=>` (quoted or not), whatever its value. In
+test mode, count them for `Redacted:`.
 
 **Assess mode** (phase 1):
 
