@@ -7,10 +7,10 @@ description: >
   and open a PR on its own branch/worktree. Each phase runs in a dedicated
   feat-* subagent whose model and effort follow the feature's size; this
   session only coordinates and holds the gates where the user decides. Use
-  it as /feat followed by a brief path, or /feat resume, when a brief exists,
+  it as /feat followed by a brief path or short name, or /feat resume, when a brief exists,
   or /feat rebase to bring a shipped run's PR onto the current main. Without a
   brief, use /brief first. Not for bugfixes (use /fix) or pure refactors.
-argument-hint: "specs/briefs/name.md | resume | rebase [PR]"
+argument-hint: "specs/briefs/name.md | name | resume | rebase [PR]"
 ---
 
 # /feat: from a brief to a PR
@@ -153,11 +153,23 @@ or none.
    `model` and `effort` per call, and `EnterWorktree`. If you can't do
    that here, stop: say `/feat` runs only in Claude Code, and that the
    brief can be built there. Don't run the phases inline instead.
-1. `$ARGUMENTS` must be a brief file (or `resume`, or `rebase`, below). If
+1. `$ARGUMENTS` must be a brief: its path or its short name (or `resume`,
+   or `rebase`, below). If
    it is an idea instead, stop and point to `/brief "<idea>"`; if it is an
    issue (`#N` or its URL), to `/brief #N`; if it describes a bug, to
-   `/fix "<symptom>"` (or `/fix #N`; `/logistics:fix` as a plugin). Read
-   the brief; check it has size, short name, behaviour and acceptance.
+   `/fix "<symptom>"` (or `/fix #N`; `/logistics:fix` as a plugin).
+   **Find the brief**: an existing file as given is the brief. Else take
+   `<name>` (the argument without a leading `specs/briefs/` and a trailing
+   `.md`); it must be a short name (`[a-z0-9][a-z0-9-]*`), else stop as
+   for no match. Look for `specs/briefs/<name>.md` under `git rev-parse
+   --show-toplevel` (this checkout), then under every other worktree `git
+   worktree list --porcelain` names. One match: use it and say its
+   absolute path. Several: list them and ask which; never pick one. None:
+   stop, naming every path searched, and point to `/brief`. Keep the
+   brief's absolute path for phase 2, and whether it is exactly `<this
+   checkout's top level>/specs/briefs/<short name>.md`, the short name
+   matching `[a-z0-9][a-z0-9-]*` (a file given by path counts only then).
+   Read the brief; check it has size, short name, behaviour and acceptance.
    Huge isn't a size here, nor tiny: stop and point to `/tiny <path>`,
    or `/brief <path>` to grow it when it outgrew tiny. Older briefs and
    state files say "normal" or "big": read them as medium and large; older
@@ -196,8 +208,12 @@ claude`) and the `feat-*` agents are installed (plain or
    push it (board moves skipped)` and flag it at the first gate.
 2. Spawn `feat-specifier` with the brief. It returns stories, requirements
    and open `[NEEDS CLARIFICATION]` markers with recommended answers.
-3. Create the state file (move the brief into it; delete
-   `specs/briefs/<short-name>.md`).
+3. Create the state file (move the brief into it). Delete the brief file,
+   by the absolute path setup found, only when setup marked it as this
+   checkout's `specs/briefs/<short name>.md` (the checkout `/feat` started
+   in). Any other brief (in another worktree, elsewhere in this checkout,
+   outside it) stays: log `- [!] brief left in place: <path>` and name it
+   in the final message, so the user decides.
 
 **Gate**: hard only when the specifier's report lists an open
 `[NEEDS CLARIFICATION]` marker or a blocker, the same at every size, large
@@ -424,5 +440,6 @@ you'd look at first in review, the shipper's `Not verified:` line when it
 is not `none` (or the shipper report lacking the line), any report logged
 with `Not verified line missing` (the review fixes, from a hard gate), a
 move onto a new main kept since the last gate or at ship (harness, Moving
-onto a new main), and for a capability from a map, the next
+onto a new main), a brief left in place (the Log's `brief left in place`
+line), and for a capability from a map, the next
 capability with `/brief <map> <id>`.
