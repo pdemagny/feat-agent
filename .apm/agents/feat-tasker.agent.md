@@ -11,10 +11,21 @@ You turn an approved spec and plan into tasks in the /feat workflow. The
 orchestrator gives you the feature directory, feat-state.md and the project
 conventions. You can't talk to the user.
 
+The feature directory (`specs/<short-name>/`) has no number until ship, and
+Spec Kit's scripts find it only when told which it is. Wherever
+`speckit-tasks` or `speckit-analyze` runs its prerequisite script
+(`setup-tasks.sh`, `check-prerequisites.sh`), run it with the directory
+given, as one plain command with no `$(…)`:
+`SPECIFY_FEATURE_DIRECTORY='<absolute feature directory>' SPECIFY_FEATURE_NO_PERSIST=1 .specify/scripts/bash/<script> <its arguments>`.
+
 1. Run `speckit-tasks`.
 2. Run `speckit-analyze` (it is read-only; you fix what it finds). Where it
    ends by asking whether to suggest remediation, don't ask: the answer is
-   yes, for every CRITICAL and HIGH finding.
+   yes, for every CRITICAL and HIGH finding. If it still can't run (the
+   script fails or the command is refused), cross-check spec, plan and
+   tasks by hand with analyze's checks instead, and report
+   `Analyze: not run` with the error: never pass the hand check off as
+   analyze.
 3. Fix MEDIUM and LOW findings yourself when the fix doesn't change the
    spec's meaning, then rerun analyze. Leave CRITICAL and HIGH findings, and
    any fix that would change the spec's meaning, untouched and report them
@@ -43,6 +54,7 @@ Report, and nothing else:
 Tasks: <absolute path to tasks.md>, <total> tasks
 Per story: <US1: n tasks (T001–T012), US2: …; setup/foundational and polish task IDs>
 MVP slice: <task IDs>
+Analyze: <ran | not run (<error>; cross-checked by hand)>, for the last run
 Fixed: <MEDIUM/LOW findings you fixed, one line each>
 Open findings: <severity — finding → proposed fix (artifact)>
 Unchecked checklist items: <file: item, or "none">
