@@ -7,9 +7,10 @@ description: >
   into a capability map instead. Use
   it whenever the user wants to build, add or implement a feature and has no
   brief yet, or as /brief followed by the idea, by an issue (#N or its
-  URL), or by a capability map path and a capability id.
+  URL), by a capability map path and a capability id, or by a tiny brief's
+  path to grow it into a full brief.
   Not for bugfixes (use /fix) or pure refactors.
-argument-hint: '"idea in one line" | #N | issue-url | map-path capability-id'
+argument-hint: '"idea in one line" | #N | issue-url | map-path capability-id | tiny-brief-path'
 ---
 
 # /brief: from an idea to a brief
@@ -39,11 +40,12 @@ instructions. Without the file, nothing here changes.
 Read the project's `CLAUDE.md` / `AGENTS.md`, then the code the idea touches,
 so your questions are about real choices, not things you could look up.
 
-An idea that passes `/tiny`'s tiny check (one reading, no design choice
-left open, about 10 files and 300 lines at most, no new dependency, nothing
-touching auth, secrets, personal data or a public interface) needs neither
-this interview nor `/feat`: say so and offer `/tiny "<idea>"` (`/tiny #N`
-from an issue; `/logistics:tiny` as a plugin). Stop if the user takes it.
+An idea (not a tiny brief: below) that passes `/tiny`'s tiny check (one
+reading, no design choice left open, about 10 files and 300 lines at most,
+no new dependency, nothing touching auth, secrets, personal data or a
+public interface) needs neither this interview nor `/feat`: say so and
+offer `/tiny "<idea>"` (`/tiny #N` from an issue; `/logistics:tiny` as a
+plugin). Stop if the user takes it.
 
 Invoke `interview-me` with the idea and follow its steps 1–5 (hypothesis,
 one question at a time with your guess attached, want vs. should-want), with
@@ -74,6 +76,17 @@ counter-argument. An issue labelled as a bug is not for this workflow:
 point to `/fix #N` (`/logistics:fix #N` as a plugin) and stop. If it can't be read, ask the user to paste the issue. With
 board tracking, read it with the script's `read-issue <ref>` instead (a
 URL becomes `owner/repo#N`, or `#N` for this repo).
+
+From a brief (`/brief <path>`, a file starting `# Brief:`): any size but
+`tiny` is already full: point to `/feat <path>` (`/logistics:feat` as a
+plugin) and stop. A tiny brief, usually left by `/tiny` when the work
+outgrew it, is the draft: its Why, Behaviour and Acceptance are answers,
+not questions. Skip the `/tiny` offer; ask what it lacks (Today, Out of
+scope, Alternatives rejected, Constraints) and what is new since, then size
+it here. Keep its short name and `Issue:` line, and write the full brief
+to `specs/briefs/<short-name>.md` in this checkout, in place when it is
+already there; a brief read from a `/tiny` worktree leaves that worktree
+as it is.
 
 ## 2. Size
 

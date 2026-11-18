@@ -152,9 +152,10 @@ or none.
    issue (`#N` or its URL), to `/brief #N`; if it describes a bug, to
    `/fix "<symptom>"` (or `/fix #N`; `/logistics:fix` as a plugin). Read
    the brief; check it has size, short name, behaviour and acceptance.
-   Huge isn't a size here. Older briefs and state files say "normal" or
-   "big": read them as medium and large; older briefs may lack "Today" and
-   "Alternatives rejected".
+   Huge isn't a size here, nor tiny: stop and point to `/tiny <path>`,
+   or `/brief <path>` to grow it when it outgrew tiny. Older briefs and
+   state files say "normal" or "big": read them as medium and large; older
+   briefs may lack "Today" and "Alternatives rejected".
    - `rebase [<PR number, URL or branch>]`: run steps 0, 2, 3 and 4 (no
      step 5: `rebase` makes no board moves), then read `<this skill's base
      dir>/references/rebase.md` and follow it; no other run reads that
