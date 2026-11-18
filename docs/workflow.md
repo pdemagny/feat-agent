@@ -138,7 +138,11 @@ From an issue (`/brief #N` or its URL) it reads the issue with `gh` as
 the idea and records it in the brief; the shipper's PR says `Closes #N`.
 With [board tracking](#board-tracking) it checks the board first, moves the
 issue to Brief, and after the gate offers to create the issue when the
-brief has none.
+brief has none. From a tiny brief (`/brief <path>`, what `/tiny` hands off
+when the work outgrows it) it takes Why, Behaviour and Acceptance as
+answered, asks for the missing sections, sizes it, and writes the full
+brief under the same short name and issue in the checkout it runs in;
+`/feat` refuses a `Size: tiny` brief.
 
 Then `feat-brief-reviewer` reads the brief with no knowledge of the
 interview, as the specifier will, on every brief. It makes four passes:
@@ -630,9 +634,10 @@ reading of the ask, no design choice left open; no new dependency,
 service, permission or exposure, nothing touching auth, secrets, personal
 data or a public interface; about 10 files and 300 changed lines at most;
 for a bug, a cause plain from the code. A failed condition stops the run
-with the handoff (`/brief #N` or `/brief "<ask>"`, `/fix #N` or `/fix
-"<symptom>"`), worktree and edits left in place. `/brief` (before its
-interview) and `/fix` (at setup) offer `/tiny` for work that passes it.
+with the handoff (`/brief <tiny brief>`, `/brief #N` or `/brief "<ask>"`,
+`/fix #N` or `/fix "<symptom>"`), worktree and edits left in place.
+`/brief` (before its interview) and `/fix` (at setup) offer `/tiny` for
+work that passes it.
 
 **The tiny brief** is `/brief`'s format cut to its header (`Size: tiny`),
 Why, Behaviour and Acceptance, in `specs/briefs/<short-name>.md`, and is

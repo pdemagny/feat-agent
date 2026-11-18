@@ -43,9 +43,9 @@ Tiny means all of:
 Run it in Frame and again whenever you learn something new. When a
 condition fails, **bail out**: say which one and why, then hand off in a
 fresh context (`/clear` first; don't start it yourself):
-- a feature: `/brief #N` with an issue, else `/brief "<the ask in one
-  line>"`, naming the tiny brief's path if one was written: it holds the
-  answers so far;
+- a feature: `/brief <the tiny brief's absolute path>` if one was
+  written (it holds the answers so far and the issue), else `/brief #N`
+  with an issue, else `/brief "<the ask in one line>"`;
 - a bug: `/fix #N`, else `/fix "<symptom>"`.
 
 Leave the worktree and any uncommitted edit as they are, and say where.

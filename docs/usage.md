@@ -60,6 +60,11 @@ with `gh`, its title and body are the idea and its unchecked checklist items
 are questions the interview answers. The brief records the issue, and the PR
 says `Closes #N`, so merging closes it.
 
+From a tiny brief, run `/brief <its path>` (`/tiny` hands you this when
+the work outgrew it): its why, behaviour and acceptance stand, the
+interview asks only for the rest, and the full brief keeps its short name
+and issue. `/feat` refuses a tiny brief and points here or to `/tiny`.
+
 **Board tracking** (optional): with a `.logistics.yml` at the repo root,
 `/brief` and `/feat` move the issue across a GitHub Projects board (Brief,
 In progress, In review; Done when the PR merges). Each run first prints the
@@ -222,8 +227,8 @@ It stays tiny on purpose: one reading of the ask, no design choice, about
 10 files and 300 lines at most, nothing touching auth, secrets, personal
 data or a public interface, a bug's cause plain from the code. When the
 work breaks one of these, `/tiny` stops and hands you the next command,
-`/brief #N` or `/fix #N`; the card stays on the board for it. `/brief` and
-`/fix` offer `/tiny` the other way round.
+`/brief <tiny brief>` (or `/brief #N`) or `/fix #N`; the card stays on the
+board for it. `/brief` and `/fix` offer `/tiny` the other way round.
 
 ## When main moves
 
