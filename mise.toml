@@ -15,7 +15,7 @@ go = "1.27.1"                   # Hugo fetches its theme as a Go module
 d2 = "0.9.0"                    # renders the diagrams in docs/img (`mise run diagrams`)
 
 [tasks.lint]
-description = "shellcheck the shell scripts and their tests, actionlint the workflows, compile the Python test stub and measure.py (checked against Python 3.11), validate the Claude Code plugin, check every agent denies Artifact and EnterWorktree"
+description = "shellcheck the shell scripts and their tests, actionlint the workflows, compile the Python test stub and measure.py (checked against Python 3.11), check the size tables' copies match sizes.json, validate the Claude Code plugin, check every agent denies Artifact and EnterWorktree"
 run = [
   "shellcheck install.sh",
   "shellcheck .apm/skills/feat/scripts/*.sh",
@@ -23,10 +23,12 @@ run = [
   "shellcheck tests/spec-number/run.sh tests/spec-number/bin/gh",
   "shellcheck tests/secret-scan/run.sh .apm/skills/feat/scripts/secret-scan.sh",
   "shellcheck tests/story/run.sh",
+  "shellcheck tests/sizes/run.sh",
   "shellcheck tests/measure/run.sh tests/measure/bin/*",
   "actionlint",
-  "python3 -m py_compile tests/tracker/fake_github.py docs/diagrams/models.py .apm/skills/feat/scripts/measure.py",
-  "python3 -c 'import ast, sys; ast.parse(open(sys.argv[1]).read(), feature_version=(3, 11))' .apm/skills/feat/scripts/measure.py",
+  "python3 -m py_compile tests/tracker/fake_github.py docs/diagrams/sizes.py .apm/skills/feat/scripts/measure.py",
+  "python3 -c 'import ast, sys; [ast.parse(open(f).read(), feature_version=(3, 11)) for f in sys.argv[1:]]' .apm/skills/feat/scripts/measure.py docs/diagrams/sizes.py",
+  "python3 -I docs/diagrams/sizes.py --check",
   "claude plugin validate .",
   "! grep -Eiq 'specifier|planner|tasker|spec\\.md|brief|phase [0-9]|/feat' .apm/skills/feat/references/harness.md .apm/skills/feat/references/rebase.md",
   "test \"$(wc -l < .apm/skills/tiny/SKILL.md)\" -le 200 || { echo '/tiny is over 200 lines: keep it tiny'; exit 1; }",
@@ -54,6 +56,7 @@ test -f .claude/skills/feat/scripts/tracker.sh
 test -f .claude/skills/feat/scripts/secret-scan.sh
 test -f .claude/skills/feat/scripts/story.sh
 test -f .claude/skills/feat/scripts/measure.py
+test -f .claude/skills/feat/sizes.json
 test -f .claude/skills/feat/references/harness.md
 test -f .claude/skills/feat/references/rebase.md
 test -f .claude/skills/fix/SKILL.md
@@ -85,19 +88,24 @@ run = "bash tests/secret-scan/run.sh"
 description = "Run the story script's offline tests (real and synthetic tasks.md fixtures)"
 run = "bash tests/story/run.sh"
 
+[tasks."test:sizes"]
+description = "Run sizes.py's offline tests (fixture sizes.json and stale copies, scratch roots)"
+run = "bash tests/sizes/run.sh"
+
 [tasks.docs]
 description = "Build the documentation website (README.md and docs/, see hugo.toml) into public/"
 run = "hugo --gc --minify"
 
 [tasks.diagrams]
-description = "Render docs/diagrams to docs/img (the model grid is read from the size table); CI fails if they differ"
+description = "Regenerate the size tables' copies from .apm/skills/feat/sizes.json and render docs/diagrams to docs/img; lint and CI fail if they differ"
 run = '''
 #!/usr/bin/env bash
 set -euo pipefail
+python3 -I docs/diagrams/sizes.py
 flags=(--pad 24 --theme 0 --dark-theme 200 --omit-version)
 d2 "${flags[@]}" --sketch docs/diagrams/gates.d2 docs/img/gates.svg
 d2 "${flags[@]}" --sketch --layout elk docs/diagrams/chain.d2 docs/img/chain.svg
-python3 docs/diagrams/models.py | d2 "${flags[@]}" - docs/img/models.svg
+python3 -I docs/diagrams/sizes.py --d2 | d2 "${flags[@]}" - docs/img/models.svg
 '''
 
 [tasks."docs:serve"]

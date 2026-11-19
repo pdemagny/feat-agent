@@ -32,7 +32,7 @@ removes the links. `mise tasks` lists the rest.
 Where things are:
 
 ```
-.apm/skills/feat/             the orchestrator: phases, gates, size table (source of truth)
+.apm/skills/feat/             the orchestrator: phases, gates, size table; sizes.json (the source of models, efforts, loads)
 .apm/skills/feat/scripts/     tracker.sh (board moves), spec-number.sh (numbers the spec dir), measure.py (run cost)
 .apm/skills/feat/references/  harness.md: the rules /feat and /fix share (gates, state file, board, resume)
 .apm/skills/fix/              the bugfix orchestrator: assess, fix, test, review, ship; its own size table
@@ -53,12 +53,12 @@ The rules for changing the skills and agents are in
 [`.claude/CLAUDE.md`](.claude/CLAUDE.md), which Claude Code loads when you
 work in this repo. The ones that bite most:
 
-- The size tables in `.apm/skills/feat/SKILL.md` and
-  `.apm/skills/fix/SKILL.md` are the source of truth for models and
-  efforts; mirror any change in [docs/workflow.md](docs/workflow.md).
+- `.apm/skills/feat/sizes.json` is the source of models and efforts: edit
+  it and run `mise run diagrams`, which regenerates the size tables in both
+  skills and [docs/workflow.md](docs/workflow.md). Lint fails on drift.
 - The diagrams in the README and docs are drawn from `docs/diagrams/` by
-  `mise run diagrams` (the model grid from `/feat`'s size table): re-render
-  and commit `docs/img` when you change the table, the phases or the gates.
+  `mise run diagrams` (the model grid from `sizes.json`): re-render and
+  commit `docs/img` when you change the sizes, the phases or the gates.
 - Every agent prompt ends with a fixed report format that `/feat` or `/fix`
   parses (and `/tiny`, for `feat-code-reviewer`): change both sides
   together.
@@ -69,8 +69,8 @@ work in this repo. The ones that bite most:
 ## Before you open a pull request
 
 - `mise run lint`, `mise run test:apm`, `mise run test:tracker`,
-  `mise run test:spec-number`, `mise run test:story` and
-  `mise run test:measure` pass. The `check`
+  `mise run test:spec-number`, `mise run test:story`,
+  `mise run test:sizes` and `mise run test:measure` pass. The `check`
   workflow runs the same on every pull request.
 - For a change to a skill or agent prompt, run it on a scratch project and
   say in the PR what you ran and what happened. There is no automated test

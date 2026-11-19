@@ -306,9 +306,11 @@ Full matrix in [workflow.md](workflow.md#size--phase-matrix).
 ## Tuning
 
 The size tables in [`.apm/skills/feat/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/SKILL.md) and
-[`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/fix/SKILL.md) are the single source
-of truth: the coordinator passes `model` and `effort` from them on every
-agent call. Edit them and mirror the change in [workflow.md](workflow.md).
+[`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/fix/SKILL.md) are what the coordinator
+reads: it passes `model` and `effort` from them on every agent call. In a
+checkout, edit [`.apm/skills/feat/sizes.json`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/sizes.json)
+and run `mise run diagrams`, which regenerates those tables and
+[workflow.md](workflow.md). In an install, tune the SKILL.md tables.
 
 Agent files carry no model or effort; outside the workflow an agent runs
 on the session's model unless you name one.
@@ -346,4 +348,4 @@ so on.
 | `rebase` ends with `! secret scan: …` or `! WIP commit …` | Nothing was pushed. Look at the file it names, or at the branch's last commits |
 | A `[!] move — git fetch failed` line at a gate | Check the network; the run went on, on the base it had |
 | The session closed, crashed or ran out of context mid-run | `/feat resume` (or `/fix resume`) continues from the state file |
-| Your plan has no Opus (or no Sonnet) | Change the model in the size tables ([Tuning](#tuning)) |
+| Your plan has no Opus (or no Sonnet) | Change the model in the SKILL.md size tables ([Tuning](#tuning)) |

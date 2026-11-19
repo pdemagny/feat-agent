@@ -95,9 +95,11 @@ rules this skill follows. The values it refers to are below.
 
 ## Size table
 
-The single source of truth for models and efforts: agent files carry none.
-`Loads` is what the agent reads
-for its job. Row 1 is spawned by `/brief`, which mirrors it.
+The models and efforts passed on every spawn. Generated from `sizes.json` in a
+checkout; edit that, not this table. Agent files carry none. `Loads` is what
+the agent reads for its job. Row 1 is spawned by `/brief`, which mirrors it.
+
+<!-- sizes-start feat-table -->
 
 | Phase                           | Agent                  | Loads                          | small           | medium          | large           |
 | ------------------------------- | ---------------------- | ------------------------------ | --------------- | --------------- | --------------- |
@@ -115,6 +117,8 @@ for its job. Row 1 is spawned by `/brief`, which mirrors it.
 | 7d Over-engineering             | `feat-code-reviewer`   | —                              | sonnet · medium | sonnet · medium | sonnet · medium |
 | 7e Readability                  | `feat-code-reviewer`   | —                              | sonnet · medium | sonnet · medium | sonnet · medium |
 | 8 Ship                          | `feat-shipper`         | —                              | haiku · medium  | haiku · medium  | haiku · medium  |
+
+<!-- sizes-end feat-table -->
 
 Phase 4 runs one `feat-design-reviewer` per group of lenses. **small**: one
 reviewer, lenses `4a+4b+4c`. **medium / large**: one per lens, in parallel.

@@ -6,8 +6,9 @@ weight: 30
 # The workflow in detail
 
 What runs at each phase, on which model, for which size, and where it stops
-for you. The size table in [`.apm/skills/feat/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/SKILL.md)
-is authoritative; this page mirrors it with explanations.
+for you. The size tables here and in both skills are generated from
+[`.apm/skills/feat/sizes.json`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/sizes.json)
+by `mise run diagrams`; this page adds the explanations.
 
 ## Roles
 
@@ -60,28 +61,34 @@ move is listed at the next gate, or stops there when it needs your call.
 
 Opus where judgment decides, Sonnet for the routine work, Haiku to ship. A
 split cell is a phase whose reviewers run in parallel, one per group of
-lenses (O = Opus, S = Sonnet). The picture is drawn from the size table by
-`mise run diagrams`.
+lenses (O = Opus, S = Sonnet). The picture is drawn from
+`.apm/skills/feat/sizes.json` by `mise run diagrams`.
 
 Each cell: model · effort, passed by `/feat` on every spawn.
+
+<!-- sizes-start feat-matrix -->
 
 | #  | Phase                        | Agent                  | small           | medium          | large           | huge                         |
 | -- | ---------------------------- | ---------------------- | --------------- | --------------- | --------------- | ---------------------------- |
 | 1  | Brief                        | your session           | session         | session         | session         | session, plus capability map |
-| 1  | Brief review                 | `feat-brief-reviewer`  | sonnet · medium | sonnet · medium | opus · medium   | first capability's size      |
+| 1  | Brief review (`/brief`)      | `feat-brief-reviewer`  | sonnet · medium | sonnet · medium | opus · medium   | first capability's size      |
 | 2  | Specify                      | `feat-specifier`       | sonnet · medium | sonnet · medium | opus · high     | —                            |
 | 3  | Plan                         | `feat-planner`         | opus · high     | opus · high     | opus · xhigh    | —                            |
-| 4a | Security design ∥            | `feat-design-reviewer` | sonnet · medium | opus · medium   | opus · high     | —                            |
-| 4b | Cost design ∥                | `feat-design-reviewer` | sonnet · medium | sonnet · medium | opus · medium   | —                            |
-| 4c | Clarity and fit ∥            | `feat-design-reviewer` | sonnet · medium | sonnet · high   | opus · medium   | —                            |
-| 5  | Tasks + analyze              | `feat-tasker`          | sonnet · medium | sonnet · medium | opus · high     | —                            |
-| 6  | Implement (×1 per story)     | `feat-implementer`     | sonnet · medium | opus · medium   | opus · high     | —                            |
+| 4a | Security design              | `feat-design-reviewer` | sonnet · medium | opus · medium   | opus · high     | —                            |
+| 4b | Cost design                  | `feat-design-reviewer` | sonnet · medium | sonnet · medium | opus · medium   | —                            |
+| 4c | Clarity and fit              | `feat-design-reviewer` | sonnet · medium | sonnet · high   | opus · medium   | —                            |
+| 5  | Tasks                        | `feat-tasker`          | sonnet · medium | sonnet · medium | opus · high     | —                            |
+| 6  | Implement                    | `feat-implementer`     | sonnet · medium | opus · medium   | opus · high     | —                            |
 | 7a | Correctness, spec, standards | `feat-code-reviewer`   | sonnet · medium | opus · medium   | opus · medium   | —                            |
 | 7b | Security                     | `feat-code-reviewer`   | sonnet · medium | opus · medium   | opus · high     | —                            |
 | 7c | Performance                  | `feat-code-reviewer`   | sonnet · medium | sonnet · medium | opus · medium   | —                            |
 | 7d | Over-engineering             | `feat-code-reviewer`   | sonnet · medium | sonnet · medium | sonnet · medium | —                            |
 | 7e | Readability                  | `feat-code-reviewer`   | sonnet · medium | sonnet · medium | sonnet · medium | —                            |
 | 8  | Ship                         | `feat-shipper`         | haiku · medium  | haiku · medium  | haiku · medium  | —                            |
+
+<!-- sizes-end feat-matrix -->
+
+Phase 6 runs one implementer per user story, in turn.
 
 **Phase 4 reviewers.** small: one reviewer, lenses 4a+4b+4c. medium and
 large: one reviewer per lens, in parallel.
@@ -520,7 +527,7 @@ code review and the ship of `/feat`. It reads the same harness as `/feat`
 ([`.apm/skills/feat/references/harness.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/references/harness.md):
 thin orchestrator, gate shape, review findings, state file, board moves, resume); its own
 values and size table are in [`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/fix/SKILL.md),
-which is authoritative for this section.
+which is what the coordinator reads for this section (generated from `sizes.json`).
 
 ### Roles
 
@@ -600,16 +607,20 @@ with the base check of [When main moves](#when-main-moves).
 Each cell: model · effort, passed by `/fix` on every spawn. The size is set
 at the assess gate, so phase 1 is the same in every column.
 
-| #  | Phase                                 | Agent                | small           | medium          | large           |
-| -- | ------------------------------------- | -------------------- | --------------- | --------------- | --------------- |
-| 1  | Assess                                | `feat-bug-assessor`  | opus · medium   | opus · medium   | opus · medium   |
-| 2  | Fix (review fixes and moves)          | `feat-implementer`   | sonnet · medium | opus · medium   | opus · high     |
-| 3  | Test                                  | `feat-bug-assessor`  | sonnet · medium | sonnet · high   | opus · medium   |
+<!-- sizes-start fix-matrix -->
+
+| #  | Phase                                  | Agent                | small           | medium          | large           |
+| -- | -------------------------------------- | -------------------- | --------------- | --------------- | --------------- |
+| 1  | Assess                                 | `feat-bug-assessor`  | opus · medium   | opus · medium   | opus · medium   |
+| 2  | Fix                                    | `feat-implementer`   | sonnet · medium | opus · medium   | opus · high     |
+| 3  | Test                                   | `feat-bug-assessor`  | sonnet · medium | sonnet · high   | opus · medium   |
 | 4a | Correctness, spec, standards (lens 7a) | `feat-code-reviewer` | sonnet · medium | opus · medium   | opus · medium   |
-| 4b | Security (lens 7b)                    | `feat-code-reviewer` | sonnet · medium | opus · medium   | opus · high     |
-| 4c | Performance (lens 7c)                 | `feat-code-reviewer` | sonnet · medium | sonnet · medium | opus · medium   |
-| 4d | Over-engineering (lens 7d)            | `feat-code-reviewer` | sonnet · medium | sonnet · medium | sonnet · medium |
-| 5  | Ship                                  | `feat-shipper`       | haiku · medium  | haiku · medium  | haiku · medium  |
+| 4b | Security (lens 7b)                     | `feat-code-reviewer` | sonnet · medium | opus · medium   | opus · high     |
+| 4c | Performance (lens 7c)                  | `feat-code-reviewer` | sonnet · medium | sonnet · medium | opus · medium   |
+| 4d | Over-engineering (lens 7d)             | `feat-code-reviewer` | sonnet · medium | sonnet · medium | sonnet · medium |
+| 5  | Ship                                   | `feat-shipper`       | haiku · medium  | haiku · medium  | haiku · medium  |
+
+<!-- sizes-end fix-matrix -->
 
 **Phase 4 reviewers.** small: one reviewer, lenses 7a+7b+7d. medium: one
 reviewer, 7a+7b (7a+7b+7c for a performance bug). large: 7a and 7b in
@@ -699,17 +710,21 @@ spec. Its `apply` findings are applied, `skip` ones go in the PR body.
 
 ## Agents
 
-| Agent                  | Phase(s)        | small size      | Denied tools                           | Loads                              | Writes                                               |
-| ---------------------- | --------------- | --------------- | -------------------------------------- | ---------------------------------- | ---------------------------------------------------- |
-| `feat-brief-reviewer`  | 1               | sonnet · medium | Edit, Write, NotebookEdit, Agent, Artifact, EnterWorktree, Skill       | —                                  | nothing                                              |
-| `feat-bug-assessor`    | `/fix` 1 (assess mode), 3 (test mode) | opus · medium (assess), sonnet · medium (test) | Edit, NotebookEdit, Agent, Artifact, EnterWorktree | `speckit-bug-assess`, `speckit-bug-test` | assessment.md, test.md                     |
-| `feat-specifier`       | 2               | sonnet · medium | NotebookEdit, Agent, Artifact, EnterWorktree, Skill                    | `speckit-specify`                  | spec.md                                              |
-| `feat-planner`         | 3, 4 (amend)    | opus · high     | NotebookEdit, Agent, Artifact, EnterWorktree, Skill                    | `speckit-plan`                     | plan.md, design docs; accepted findings into spec.md |
-| `feat-design-reviewer` | 4               | sonnet · medium | Edit, Write, NotebookEdit, Agent, Artifact, EnterWorktree       | per lens, on demand                | nothing                                              |
-| `feat-tasker`          | 5               | sonnet · medium | NotebookEdit, Agent, Artifact, EnterWorktree, Skill                    | `speckit-tasks`, `speckit-analyze` | tasks.md, small artifact fixes                       |
-| `feat-implementer`     | 6, 7 (fix mode), any boundary (rebase mode); `/fix` 2 (bug mode), 4 (fix mode) | sonnet · medium | Agent, Artifact, EnterWorktree           | `speckit-implement`; `speckit-bug-fix` in bug mode | code, tasks.md; fix.md in bug mode   |
-| `feat-code-reviewer`   | 7               | sonnet · medium | Edit, Write, NotebookEdit, Agent, Artifact, EnterWorktree       | per lens, on demand                | nothing                                              |
-| `feat-shipper`         | 8; `/fix` 5 (fix mode); `rebase` (rebase mode) | haiku · medium  | NotebookEdit, Agent, Artifact, EnterWorktree, Skill             | —                                  | docs, commits, PR                                    |
+<!-- sizes-start agents-table -->
+
+| Agent                  | Phase(s)                                                                       | small size                                     | Denied tools                                                     | Loads                                              | Writes                                               |
+| ---------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------- | ---------------------------------------------------- |
+| `feat-brief-reviewer`  | 1                                                                              | sonnet · medium                                | Edit, Write, NotebookEdit, Agent, Artifact, EnterWorktree, Skill | —                                                  | nothing                                              |
+| `feat-bug-assessor`    | `/fix` 1 (assess mode), 3 (test mode)                                          | opus · medium (assess), sonnet · medium (test) | Edit, NotebookEdit, Agent, Artifact, EnterWorktree               | `speckit-bug-assess`, `speckit-bug-test`           | assessment.md, test.md                               |
+| `feat-specifier`       | 2                                                                              | sonnet · medium                                | NotebookEdit, Agent, Artifact, EnterWorktree, Skill              | `speckit-specify`                                  | spec.md                                              |
+| `feat-planner`         | 3, 4 (amend)                                                                   | opus · high                                    | NotebookEdit, Agent, Artifact, EnterWorktree, Skill              | `speckit-plan`                                     | plan.md, design docs; accepted findings into spec.md |
+| `feat-design-reviewer` | 4                                                                              | sonnet · medium                                | Edit, Write, NotebookEdit, Agent, Artifact, EnterWorktree        | per lens, on demand                                | nothing                                              |
+| `feat-tasker`          | 5                                                                              | sonnet · medium                                | NotebookEdit, Agent, Artifact, EnterWorktree, Skill              | `speckit-tasks`, `speckit-analyze`                 | tasks.md, small artifact fixes                       |
+| `feat-implementer`     | 6, 7 (fix mode), any boundary (rebase mode); `/fix` 2 (bug mode), 4 (fix mode) | sonnet · medium                                | Agent, Artifact, EnterWorktree                                   | `speckit-implement`; `speckit-bug-fix` in bug mode | code, tasks.md; fix.md in bug mode                   |
+| `feat-code-reviewer`   | 7                                                                              | sonnet · medium                                | Edit, Write, NotebookEdit, Agent, Artifact, EnterWorktree        | per lens, on demand                                | nothing                                              |
+| `feat-shipper`         | 8; `/fix` 5 (fix mode); `rebase` (rebase mode)                                 | haiku · medium                                 | NotebookEdit, Agent, Artifact, EnterWorktree, Skill              | —                                                  | docs, commits, PR                                    |
+
+<!-- sizes-end agents-table -->
 
 `feat-code-reviewer` also runs `/fix`'s phase 4, unchanged, with lenses
 7a–7d only, and `/tiny`'s fresh review with lens 7a. Agent files carry no model or effort: `/feat` and `/fix` pass

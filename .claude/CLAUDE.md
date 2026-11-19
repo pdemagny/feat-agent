@@ -9,20 +9,23 @@ package (`apm.yml`), a Claude Code plugin (`.claude-plugin/`), and
 `install.sh` for development. See README.md and docs/install.md.
 
 When changing it:
-- The size tables in `.apm/skills/feat/SKILL.md` and `.apm/skills/fix/SKILL.md`
-  are the sources of truth for model and effort, and their `Loads` columns
-  list what each row's agent reads. Mirror every change of either in
-  `docs/workflow.md` (its matrix, the `/fix` section's matrix, and the
-  agents table); row 1 (`feat-brief-reviewer`) is also written out in
-  `.apm/skills/brief/SKILL.md`, which spawns it.
+- `.apm/skills/feat/sizes.json` is the source of models, efforts, loads and
+  `/feat`'s reviewer groups. Edit it and run `mise run diagrams`: that
+  regenerates the size tables in `.apm/skills/feat/SKILL.md` and
+  `.apm/skills/fix/SKILL.md`, the matrices and agents table in
+  `docs/workflow.md`, and row 1's sentence in `.apm/skills/brief/SKILL.md`.
+  Never edit between a `sizes-start`/`sizes-end` marker pair by hand;
+  `mise run lint` fails on drift. The reviewer-group prose (under each
+  table and in `docs/workflow.md`) stays hand-written and changes with the
+  groups.
   Agent frontmatter carries no `model`, `effort`, `tools` or `color`
   (`/feat` and `/fix` pass model and effort per spawn); use `disallowedTools`.
   Reviewer groups (`/feat` phases 4 and 7, `/fix` phase 4) live under each
   table.
 - The diagrams are D2 sources in `docs/diagrams/`, rendered to `docs/img/`
-  by `mise run diagrams`; commit both. `models.svg` is drawn from `/feat`'s
-  size table (its reviewer groups are in `docs/diagrams/models.py`), so a
-  change to the table needs a re-render. A change to `/feat`'s phases or
+  by `mise run diagrams`; commit both. `models.svg` is drawn from
+  `sizes.json` by `docs/diagrams/sizes.py --d2`, so a change to the data
+  needs a re-render (`mise run diagrams` does both). A change to `/feat`'s phases or
   gates updates `gates.d2` and `chain.d2`. The `check` workflow fails when
   `docs/img` differs from a fresh render.
 - The rules `/feat` and `/fix` share live in
@@ -34,7 +37,7 @@ When changing it:
 - Adding or removing a third-party skill: update `dependencies` in
   `apm.yml`, `deps` in `install.sh`, the `npx skills add` line in
   `docs/install.md` and its table, and the agent's `skills:` (or the lens in
-  `feat-code-reviewer.md`) and the size table's `Loads` column.
+  `feat-code-reviewer.md`) and `loads` in `sizes.json`.
 - Agent prompts end with a fixed report format; the orchestrator depends on
   it. Change both sides together. `/feat` and `/fix` stay thin: they never read code
   or edit artifacts; new work goes into an agent, not the coordinator.
@@ -56,10 +59,12 @@ When changing it:
   (`.apm/skills/feat/scripts/`) and their bash tests (`tests/`);
   `mise run lint` runs them all and `actionlint` on `.github/workflows/`,
   `mise run test:tracker`, `mise run test:spec-number` and
-  `mise run test:story` the offline tests.
-  `measure.py` is the one Python script: Python 3.11 or later, standard
-  library only (constitution principle V); `mise run lint` compiles it and
-  checks its syntax against 3.11, `mise run test:measure` tests it.
+  `mise run test:story`, `mise run test:sizes` the offline tests.
+  `measure.py` is the one shipped Python script and
+  `docs/diagrams/sizes.py` the repo-only one: Python 3.11 or later,
+  standard library only (constitution principle V); `mise run lint`
+  compiles both and checks their syntax against 3.11,
+  `mise run test:measure` tests `measure.py`.
 - CHANGELOG.md is generated from commit messages: `feat` and `fix`
   subjects become its entries, so write them for users; `!` marks a
   breaking change. Don't edit it by hand.

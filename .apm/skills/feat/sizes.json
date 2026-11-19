@@ -1,0 +1,59 @@
+{
+  "feat": {
+    "rows": [
+      {"id": "1", "label": "Brief review (`/brief`)", "agent": "feat-brief-reviewer", "loads": [],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "medium"}, "large": {"model": "opus", "effort": "medium"}},
+      {"id": "2", "label": "Specify", "agent": "feat-specifier", "loads": ["speckit-specify"],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "medium"}, "large": {"model": "opus", "effort": "high"}},
+      {"id": "3", "label": "Plan", "agent": "feat-planner", "loads": ["speckit-plan"],
+       "small": {"model": "opus", "effort": "high"}, "medium": {"model": "opus", "effort": "high"}, "large": {"model": "opus", "effort": "xhigh"}},
+      {"id": "4a", "label": "Security design", "agent": "feat-design-reviewer", "loads": ["security-and-hardening"],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "opus", "effort": "medium"}, "large": {"model": "opus", "effort": "high"}},
+      {"id": "4b", "label": "Cost design", "agent": "feat-design-reviewer", "loads": [],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "medium"}, "large": {"model": "opus", "effort": "medium"}},
+      {"id": "4c", "label": "Clarity and fit", "agent": "feat-design-reviewer", "loads": [],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "high"}, "large": {"model": "opus", "effort": "medium"}},
+      {"id": "5", "label": "Tasks", "agent": "feat-tasker", "loads": ["speckit-tasks", "speckit-analyze"],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "medium"}, "large": {"model": "opus", "effort": "high"}},
+      {"id": "6", "label": "Implement", "agent": "feat-implementer", "loads": ["speckit-implement"],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "opus", "effort": "medium"}, "large": {"model": "opus", "effort": "high"}},
+      {"id": "7a", "label": "Correctness, spec, standards", "agent": "feat-code-reviewer", "loads": [],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "opus", "effort": "medium"}, "large": {"model": "opus", "effort": "medium"}},
+      {"id": "7b", "label": "Security", "agent": "feat-code-reviewer", "loads": ["security-and-hardening"],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "opus", "effort": "medium"}, "large": {"model": "opus", "effort": "high"}},
+      {"id": "7c", "label": "Performance", "agent": "feat-code-reviewer", "loads": ["performance-optimization"],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "medium"}, "large": {"model": "opus", "effort": "medium"}},
+      {"id": "7d", "label": "Over-engineering", "agent": "feat-code-reviewer", "loads": [],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "medium"}, "large": {"model": "sonnet", "effort": "medium"}},
+      {"id": "7e", "label": "Readability", "agent": "feat-code-reviewer", "loads": [],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "medium"}, "large": {"model": "sonnet", "effort": "medium"}},
+      {"id": "8", "label": "Ship", "agent": "feat-shipper", "loads": [],
+       "small": {"model": "haiku", "effort": "medium"}, "medium": {"model": "haiku", "effort": "medium"}, "large": {"model": "haiku", "effort": "medium"}}
+    ],
+    "groups": {
+      "4": {"small": [["4a", "4b", "4c"]], "medium": [["4a"], ["4b"], ["4c"]], "large": [["4a"], ["4b"], ["4c"]]},
+      "7": {"small": [["7a", "7b"], ["7c", "7d", "7e"]],
+            "medium": [["7a"], ["7b"], ["7c"], ["7d"], ["7e"]], "large": [["7a"], ["7b"], ["7c"], ["7d"], ["7e"]]}
+    }
+  },
+  "fix": {
+    "rows": [
+      {"id": "1", "label": "Assess", "agent": "feat-bug-assessor", "loads": ["speckit-bug-assess"],
+       "small": {"model": "opus", "effort": "medium"}, "medium": {"model": "opus", "effort": "medium"}, "large": {"model": "opus", "effort": "medium"}},
+      {"id": "2", "label": "Fix", "agent": "feat-implementer", "loads": ["speckit-implement", "speckit-bug-fix"],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "opus", "effort": "medium"}, "large": {"model": "opus", "effort": "high"}},
+      {"id": "3", "label": "Test", "agent": "feat-bug-assessor", "loads": ["speckit-bug-test"],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "high"}, "large": {"model": "opus", "effort": "medium"}},
+      {"id": "4a", "label": "Correctness, spec, standards (lens 7a)", "agent": "feat-code-reviewer", "loads": [],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "opus", "effort": "medium"}, "large": {"model": "opus", "effort": "medium"}},
+      {"id": "4b", "label": "Security (lens 7b)", "agent": "feat-code-reviewer", "loads": ["security-and-hardening"],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "opus", "effort": "medium"}, "large": {"model": "opus", "effort": "high"}},
+      {"id": "4c", "label": "Performance (lens 7c)", "agent": "feat-code-reviewer", "loads": ["performance-optimization"],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "medium"}, "large": {"model": "opus", "effort": "medium"}},
+      {"id": "4d", "label": "Over-engineering (lens 7d)", "agent": "feat-code-reviewer", "loads": [],
+       "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "medium"}, "large": {"model": "sonnet", "effort": "medium"}},
+      {"id": "5", "label": "Ship", "agent": "feat-shipper", "loads": [],
+       "small": {"model": "haiku", "effort": "medium"}, "medium": {"model": "haiku", "effort": "medium"}, "large": {"model": "haiku", "effort": "medium"}}
+    ]
+  }
+}

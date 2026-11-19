@@ -102,8 +102,11 @@ missing, stop: "/fix needs logistics' `feat` skill
 
 ## Size table
 
-The single source of truth for `/fix`'s models and efforts: agent files
-carry none. `Loads` is what the agent reads for its job.
+The models and efforts `/fix` passes on every spawn. Generated from
+`sizes.json` in a checkout; edit that, not this table. Agent files carry none.
+`Loads` is what the agent reads for its job.
+
+<!-- sizes-start fix-table -->
 
 | Phase                                     | Agent                | Loads                              | small           | medium          | large           |
 | ----------------------------------------- | -------------------- | ---------------------------------- | --------------- | --------------- | --------------- |
@@ -115,6 +118,8 @@ carry none. `Loads` is what the agent reads for its job.
 | 4c Performance (lens 7c)                  | `feat-code-reviewer` | performance-optimization           | sonnet · medium | sonnet · medium | opus · medium   |
 | 4d Over-engineering (lens 7d)             | `feat-code-reviewer` | —                                  | sonnet · medium | sonnet · medium | sonnet · medium |
 | 5 Ship                                    | `feat-shipper`       | —                                  | haiku · medium  | haiku · medium  | haiku · medium  |
+
+<!-- sizes-end fix-table -->
 
 Assess runs before the size is set, so its row is the same in every
 column; a deeper assessment comes only from "back to 1". 4a–4d are lenses

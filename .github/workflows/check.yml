@@ -32,7 +32,8 @@ jobs:
       - run: mise run test:secret-scan
       - run: mise run test:measure
       - run: mise run test:story
-      # The SVGs in docs/img must match their sources and the size table.
+      - run: mise run test:sizes
+      # The SVGs in docs/img must match their sources and sizes.json.
       - run: mise run diagrams
       - run: git diff --exit-code docs/img
       - run: mise run test:apm
