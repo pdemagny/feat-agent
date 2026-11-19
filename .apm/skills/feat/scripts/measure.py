@@ -264,6 +264,29 @@ def resolve_repo(cwd):
         cur = parent
 
 
+_WF_TASK = re.compile(r"Task ID: ([A-Za-z0-9_-]+)")
+
+
+def agent_files(sdir):
+    """(dir, agent id) for each agent transcript of a session: subagents/ and,
+    for agents a Workflow script spawned, subagents/workflows/<run>/."""
+    sub = os.path.join(sdir, "subagents")
+    dirs = [sub]
+    try:
+        wf = os.path.join(sub, "workflows")
+        dirs += [os.path.join(wf, d) for d in sorted(os.listdir(wf))]
+    except OSError:
+        pass
+    for d in dirs:
+        try:
+            names = sorted(os.listdir(d))
+        except OSError:
+            continue
+        for name in names:
+            if name.startswith("agent-") and name.endswith(".jsonl"):
+                yield d, name[len("agent-") : -len(".jsonl")]
+
+
 def discover(projects):
     """Sessions with at least one agent transcript: dicts with id, path, dir."""
     try:
@@ -281,11 +304,7 @@ def discover(projects):
                 continue
             sid = name[: -len(".jsonl")]
             sdir = os.path.join(fdir, sid)
-            try:
-                agents = os.listdir(os.path.join(sdir, "subagents"))
-            except OSError:
-                continue
-            if any(n.startswith("agent-") and n.endswith(".jsonl") for n in agents):
+            if next(agent_files(sdir), None) is not None:
                 yield {"id": sid, "path": os.path.join(fdir, name), "dir": sdir}
 
 
@@ -594,6 +613,7 @@ def _parse_session(sess, info):
     spawn_types = {}
     spawned = {}  # agent id -> type from its spawn
     failed = Counter()
+    workflows = set()  # task ids of the Workflow runs this session launched
     timeline = {"agents": 0.0, "user": 0.0, "thinking": 0.0, "tools": 0.0}
     answers = 0
     prev = inv["time"]
@@ -639,6 +659,8 @@ def _parse_session(sess, info):
                     error = b.get("is_error") is True
                     if error:
                         failed[name] += 1
+                    if name == "Workflow":
+                        workflows.update(_WF_TASK.findall(message_text({"content": b.get("content")})))
                     if name not in SPAWN_TOOLS:
                         continue
                     if isinstance(result, dict):
@@ -664,8 +686,9 @@ def _parse_session(sess, info):
                 # a background task ended: one of this session's agents, or the
                 # coordinator's own command
                 task = _TASK_ID.search(message_text(msg))
-                ended_agent = task is not None and os.path.isfile(
-                    os.path.join(sess["dir"], "subagents", f"agent-{task.group(1)}.jsonl")
+                ended_agent = task is not None and (
+                    task.group(1) in workflows
+                    or os.path.isfile(os.path.join(sess["dir"], "subagents", f"agent-{task.group(1)}.jsonl"))
                 )
                 part = "agents" if ended_agent else "tools"
             elif origin.get("kind") == "human":
@@ -683,13 +706,10 @@ def _parse_session(sess, info):
     reason = reason or call_reason
 
     agents = []
-    sub = os.path.join(sess["dir"], "subagents")
-    for name in sorted(os.listdir(sub)):
-        if not (name.startswith("agent-") and name.endswith(".jsonl")):
-            continue
-        aid = name[len("agent-") : -len(".jsonl")]
+    for sub, aid in agent_files(sess["dir"]):
         agent, agent_reason = parse_agent(
-            os.path.join(sub, name), os.path.join(sub, f"agent-{aid}.meta.json"), inv["time"], spawned.get(aid)
+            os.path.join(sub, f"agent-{aid}.jsonl"), os.path.join(sub, f"agent-{aid}.meta.json"),
+            inv["time"], spawned.get(aid)
         )
         reason = reason or agent_reason
         if agent is not None:
@@ -765,13 +785,9 @@ def feat_agent_in(sess, after):
     its spawn. Used for a run left out before its agents were read."""
     try:
         spawned = spawned_types(loose_records(sess["path"]))
-        sub = os.path.join(sess["dir"], "subagents")
-        for name in sorted(os.listdir(sub)):
-            if not (name.startswith("agent-") and name.endswith(".jsonl")):
-                continue
-            aid = name[len("agent-") : -len(".jsonl")]
+        for sub, aid in agent_files(sess["dir"]):
             if after is not None:
-                first = next((t for t in map(stamp, loose_records(os.path.join(sub, name))) if t), None)
+                first = next((t for t in map(stamp, loose_records(os.path.join(sub, f"agent-{aid}.jsonl"))) if t), None)
                 if first is None or first < after:
                     continue
             meta = loose_records(os.path.join(sub, f"agent-{aid}.meta.json"))
