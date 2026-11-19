@@ -357,9 +357,9 @@ list (`B` bugs and spec mismatches, `S` security, `P` performance, `C` cuts,
 `R` readability and `[std]` standards), each ending with the reviewer's
 recommendation: `apply`, `skip (<why>)` or `user (<why>)`. The coordinator
 merges them by fixed rules (cut code drops its performance and readability
-findings; the same spot with different advice, or a high-confidence bug the
-reviewer would skip, becomes `user`; a missing recommendation becomes
-`user`).
+findings; the same spot with different advice, a high-confidence bug the
+reviewer would skip, or a security finding the reviewer would skip, becomes
+`user`; a missing recommendation becomes `user`).
 
 On small and medium the gate is soft, and the `apply` findings are
 fixed unasked, unless a finding needs your call (`user`), is a security
