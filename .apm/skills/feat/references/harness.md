@@ -132,10 +132,12 @@ Merge, in order:
    without one.
 5. A `rec` missing or not one of the three values (a `skip` or `user`
    without its why included) becomes `user (no valid recommendation)`.
+6. A Security finding with `rec: skip` becomes `user (<the reviewer's
+   why>)`, so no `S` finding is left unfixed without the user's answer.
 
 At a hard gate, list each `user` finding first under "Your call", with the
 reviewer's why, as "fix or leave?", then the others with their `rec`.
-"ok" fixes every `apply` and leaves every `skip`, `S` findings included;
+"ok" fixes every `apply`, `S` findings included, and leaves every `skip`;
 each `user` finding needs its own answer. A bare "ok" while one is
 unanswered gets one follow-up naming the ids; fix nothing until each is
 answered. When an `S` finding is listed, say under "What you should know"
