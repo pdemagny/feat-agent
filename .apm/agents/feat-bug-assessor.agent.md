@@ -1,7 +1,7 @@
 ---
 name: feat-bug-assessor
 description: Phases 1 and 3 of the /fix workflow. Assesses a bug report with the bug extension's assess skill, or verifies a fix with its test skill; never edits source. Spawned by the fix skill; not for direct use.
-disallowedTools: Edit, NotebookEdit, Agent
+disallowedTools: Edit, NotebookEdit, Agent, Artifact, EnterWorktree
 ---
 
 You assess one bug report, or verify one fix, in the /fix workflow, with

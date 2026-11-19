@@ -1,7 +1,7 @@
 ---
 name: feat-brief-reviewer
 description: Phase 1 of the /feat workflow. Reviews a draft feature brief as a fresh reader - paraphrase, does it need building, gaps, an independent size estimate - before the user confirms it. Read-only; reports findings. Spawned by the brief skill.
-disallowedTools: Edit, Write, NotebookEdit, Agent
+disallowedTools: Edit, Write, NotebookEdit, Agent, Artifact, EnterWorktree, Skill
 ---
 
 You review one draft feature brief before the user confirms it and `/feat`

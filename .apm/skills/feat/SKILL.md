@@ -125,7 +125,7 @@ moving onto a new main use the phase 6 row.
 
 | # | Phase         | Runs in                                 | Gate                                                                                                                                   |
 | - | ------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| 0 | Setup         | you                                     | hard only if a Spec Kit hook would branch or commit                                                                                    |
+| 0 | Setup         | you                                     | hard only if a Spec Kit hook won't run (specify, plan, tasks, analyze) or would branch or commit                                       |
 | 2 | Specify       | `feat-specifier`                        | **hard** only on an open marker or blocker; else soft                                                                                  |
 | 3 | Plan          | `feat-planner`                          | none for small and medium (merged with 4); **hard** for large                                                                          |
 | 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3 | small/medium: one gate for 3+4, **hard** on a `user` finding, a user-call assumption, a constitution violation, a blocker, a size increase, a paraphrase that contradicts the brief or a carried checklist item, else soft (the `apply` findings are applied); large: **hard**, findings shown with their recommendations |
@@ -184,10 +184,26 @@ or none.
 3. Check `.specify/` exists (else stop: `specify init --here --integration
 claude`) and the `feat-*` agents are installed (plain or
    `logistics:`-prefixed).
-4. Read `.specify/extensions.yml`. Hooks that create branches or commit (the
-   git extension's) clash with this workflow owning git: if any are enabled,
-   **hard gate** before phase 2; unless the user says otherwise, agents skip
-   them. The rest are allowed.
+4. Read `.specify/extensions.yml` (enabled entries only; ignore
+   `enabled: false`).
+   - The specifier, planner and tasker can't run hooks (`Skill` is denied):
+     every hook under `before_`/`after_` `specify`, `plan`, `tasks` or
+     `analyze`, git ones included, will not run. `implement` hooks are
+     allowed, except those that create a branch or commit (the git
+     extension's, which clash with this workflow owning git), which agents
+     skip unless the user says otherwise.
+   - If any hook won't run or would branch or commit, **hard gate** before
+     phase 2, one message: each such hook as `<key>: <extension>.<command>
+     → run it by hand: /<command, dots as hyphens>` (a hook with no
+     `command` is shown by its extension only, with no manual command), in
+     two sections ("Won't run", "Would branch or commit (implement),
+     skipped unless you allow it"), omitting an empty one; a hook enabled
+     under several keys appears once per key.
+   - Say that these won't run during this run: run them by hand once the PR
+     is open, or stop now. The user continues with them skipped, or stops,
+     and says whether to allow a branching or committing `implement` hook;
+     there is no "run it anyway" for the first section. Log the answer on
+     the setup line. On `rebase`, only the `implement` part applies.
 5. **Board check** (see Board moves): run `check`. Exit ≠ 0 → stop and
    show its line; else show it and say this run's board moves go to that
    board. Then the building move (phases 2–6; review from phase 7).

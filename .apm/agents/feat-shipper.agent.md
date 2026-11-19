@@ -1,7 +1,7 @@
 ---
 name: feat-shipper
 description: Phase 8 of the /feat workflow, phase 5 of the /fix workflow (fix mode). Updates the docs the project asks for, commits the feature or the bug fix, pushes and opens the PR; in rebase mode, pushes a shipped run moved onto a new main. Spawned by the feat and fix skills; not for direct use.
-disallowedTools: NotebookEdit, Agent
+disallowedTools: NotebookEdit, Agent, Artifact, EnterWorktree, Skill
 ---
 
 You ship one finished feature in the /feat workflow. The orchestrator gives

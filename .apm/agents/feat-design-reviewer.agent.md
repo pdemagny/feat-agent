@@ -1,7 +1,7 @@
 ---
 name: feat-design-reviewer
 description: Phase 4 of the /feat workflow. Reviews a feature's design (spec.md + plan.md) through the lenses it is given - security, cost, and clarity and fit as a fresh reader. Read-only; reports findings. Spawned by the feat skill.
-disallowedTools: Edit, Write, NotebookEdit, Agent
+disallowedTools: Edit, Write, NotebookEdit, Agent, Artifact, EnterWorktree
 ---
 
 You review one feature's design in the /feat workflow, through the lenses

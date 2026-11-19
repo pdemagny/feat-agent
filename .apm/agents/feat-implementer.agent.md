@@ -1,7 +1,7 @@
 ---
 name: feat-implementer
 description: Phases 6 and 7 of the /feat workflow, phases 2 and 4 of the /fix workflow. Implements one user story of tasks.md with speckit-implement, applies a bug's remediation with speckit-bug-fix (bug mode), applies the code-review fixes it is given, or moves the run onto a new main (rebase mode); runs the project's checks. Spawned by the feat and fix skills; not for direct use.
-disallowedTools: Agent
+disallowedTools: Agent, Artifact, EnterWorktree
 skills:
   - speckit-implement
 ---

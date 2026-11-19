@@ -29,7 +29,7 @@ is authoritative; this page mirrors it with explanations.
 | # | Phase         | Runs in                                                                               | Skills used                                                        | Produces                                      | Gate                                                                                                                       |
 | - | ------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | 1 | Brief         | `/brief` (your session), then `feat-brief-reviewer`                                   | `interview-me`                                                     | `specs/briefs/<name>.md`, or a capability map | **hard** (confirm the brief and the review's findings)                                                                     |
-| 0 | Setup         | coordinator                                                                           | —                                                                  | conventions, hooks checked                    | hard only if a Spec Kit hook would branch or commit                                                                        |
+| 0 | Setup         | coordinator                                                                           | —                                                                  | conventions, hooks checked                    | hard only if a Spec Kit hook won't run (specify, plan, tasks, analyze) or would branch or commit |
 | 2 | Specify       | `feat-specifier`                                                                      | `speckit-specify`                                                  | branch/worktree, `spec.md`, `feat-state.md`   | **hard** only on an open question or a blocker; else soft, and its summary opens the next gate                              |
 | 3 | Plan          | `feat-planner`                                                                        | `speckit-plan`                                                     | `plan.md` and design docs                     | none (hard for large, opening with the spec summary after a soft phase 2)                                                  |
 | 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3, then `feat-planner` writes accepted findings | `security-and-hardening` (cost and design checklists in the agent) | a paraphrase, findings D1… with recommendations | one gate with 3: hard only on a finding that needs you (`user`), a user-call assumption, a constitution violation, a blocker, a size increase, a paraphrase that contradicts the brief or an unchecked checklist item after a soft phase 2, else soft and the `apply` findings are applied (always hard for large) |
@@ -183,8 +183,21 @@ as `specs/briefs/<name>.md` in this checkout, then in every worktree `git
 worktree list` names; one match is used and named, several are put to you,
 none stops the run with every path searched. It then reads `CLAUDE.md`/`AGENTS.md` and project
 memory (they override the skill), checks Spec Kit and the agents, and reads
-`.specify/extensions.yml`: hooks that would create branches or commit are
-put to you before anything runs. With [board tracking](#board-tracking) it
+`.specify/extensions.yml` (enabled entries only).
+
+- The specifier, planner and tasker can't run hooks (`Skill` is denied), so
+  every hook under `before_`/`after_` `specify`, `plan`, `tasks` or `analyze`,
+  git ones included, won't run; an `implement` hook that would create a
+  branch or commit is skipped unless you allow it.
+- If any is found you get one hard gate before anything runs, listing each as
+  `<key>: <extension>.<command> → run it by hand: /<command>` (dots as
+  hyphens; a hook with no `command` is shown by its extension only) in two
+  sections, "Won't run" and "Would branch or commit (implement)".
+- They won't run during this run: run them by hand once the PR is open, or
+  stop now; there is no "run it anyway" for the first section. On `rebase`
+  only the `implement` part applies.
+
+With [board tracking](#board-tracking) it
 runs the board check and moves the issue to In progress.
 
 ### 2 Specify (`feat-specifier`)
@@ -681,21 +694,21 @@ spec. Its `apply` findings are applied, `skip` ones go in the PR body.
 
 | Agent                  | Phase(s)        | small size      | Denied tools                           | Loads                              | Writes                                               |
 | ---------------------- | --------------- | --------------- | -------------------------------------- | ---------------------------------- | ---------------------------------------------------- |
-| `feat-brief-reviewer`  | 1               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | —                                  | nothing                                              |
-| `feat-bug-assessor`    | `/fix` 1 (assess mode), 3 (test mode) | opus · medium (assess), sonnet · medium (test) | Edit, NotebookEdit, Agent | `speckit-bug-assess`, `speckit-bug-test` | assessment.md, test.md                     |
-| `feat-specifier`       | 2               | sonnet · medium | NotebookEdit, Agent                    | `speckit-specify`                  | spec.md                                              |
-| `feat-planner`         | 3, 4 (amend)    | opus · high     | NotebookEdit, Agent                    | `speckit-plan`                     | plan.md, design docs; accepted findings into spec.md |
-| `feat-design-reviewer` | 4               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | per lens, on demand                | nothing                                              |
-| `feat-tasker`          | 5               | sonnet · medium | NotebookEdit, Agent                    | `speckit-tasks`, `speckit-analyze` | tasks.md, small artifact fixes                       |
-| `feat-implementer`     | 6, 7 (fix mode), any boundary (rebase mode); `/fix` 2 (bug mode), 4 (fix mode) | sonnet · medium | Agent           | `speckit-implement`; `speckit-bug-fix` in bug mode | code, tasks.md; fix.md in bug mode   |
-| `feat-code-reviewer`   | 7               | sonnet · medium | Edit, Write, NotebookEdit, Agent       | per lens, on demand                | nothing                                              |
-| `feat-shipper`         | 8; `/fix` 5 (fix mode); `rebase` (rebase mode) | haiku · medium  | NotebookEdit, Agent             | —                                  | docs, commits, PR                                    |
+| `feat-brief-reviewer`  | 1               | sonnet · medium | Edit, Write, NotebookEdit, Agent, Artifact, EnterWorktree, Skill       | —                                  | nothing                                              |
+| `feat-bug-assessor`    | `/fix` 1 (assess mode), 3 (test mode) | opus · medium (assess), sonnet · medium (test) | Edit, NotebookEdit, Agent, Artifact, EnterWorktree | `speckit-bug-assess`, `speckit-bug-test` | assessment.md, test.md                     |
+| `feat-specifier`       | 2               | sonnet · medium | NotebookEdit, Agent, Artifact, EnterWorktree, Skill                    | `speckit-specify`                  | spec.md                                              |
+| `feat-planner`         | 3, 4 (amend)    | opus · high     | NotebookEdit, Agent, Artifact, EnterWorktree, Skill                    | `speckit-plan`                     | plan.md, design docs; accepted findings into spec.md |
+| `feat-design-reviewer` | 4               | sonnet · medium | Edit, Write, NotebookEdit, Agent, Artifact, EnterWorktree       | per lens, on demand                | nothing                                              |
+| `feat-tasker`          | 5               | sonnet · medium | NotebookEdit, Agent, Artifact, EnterWorktree, Skill                    | `speckit-tasks`, `speckit-analyze` | tasks.md, small artifact fixes                       |
+| `feat-implementer`     | 6, 7 (fix mode), any boundary (rebase mode); `/fix` 2 (bug mode), 4 (fix mode) | sonnet · medium | Agent, Artifact, EnterWorktree           | `speckit-implement`; `speckit-bug-fix` in bug mode | code, tasks.md; fix.md in bug mode   |
+| `feat-code-reviewer`   | 7               | sonnet · medium | Edit, Write, NotebookEdit, Agent, Artifact, EnterWorktree       | per lens, on demand                | nothing                                              |
+| `feat-shipper`         | 8; `/fix` 5 (fix mode); `rebase` (rebase mode) | haiku · medium  | NotebookEdit, Agent, Artifact, EnterWorktree, Skill             | —                                  | docs, commits, PR                                    |
 
 `feat-code-reviewer` also runs `/fix`'s phase 4, unchanged, with lenses
 7a–7d only, and `/tiny`'s fresh review with lens 7a. Agent files carry no model or effort: `/feat` and `/fix` pass
 both on every spawn, from their size tables (`/brief` for
 `feat-brief-reviewer`). Tool limits are deny lists (`disallowedTools`) rather
-than allow lists, so a new tool is available to an agent unless denied. No agent but the shipper commits (the implementer's rebase mode makes
+than allow lists, so a new tool is available to an agent unless denied. Every agent denies `Artifact` and `EnterWorktree` (`mise run lint` checks it), and the five that never invoke a skill by name also deny `Skill`. The saving from these denials depends on your setup (which tools and skills your Claude Code loads, and whether the run is interactive, background or headless). No agent but the shipper commits (the implementer's rebase mode makes
 one temporary WIP commit, undone before it reports and never pushed), and
 no agent spawns further agents.
 Every report ends with `Wrote:`, absolute paths: the specifier, planner and

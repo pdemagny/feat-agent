@@ -1,7 +1,7 @@
 ---
 name: feat-planner
 description: Phases 3 and 4 of the /feat workflow. Writes plan.md and the design artifacts for an approved spec with speckit-plan, then writes accepted design-review findings into spec and plan. Spawned by the feat skill; not for direct use.
-disallowedTools: NotebookEdit, Agent
+disallowedTools: NotebookEdit, Agent, Artifact, EnterWorktree, Skill
 skills:
   - speckit-plan
 ---
@@ -43,10 +43,8 @@ report alone, once every write has returned: never report a file you
 haven't seen written. The orchestrator checks every `Wrote:` path on disk
 before it accepts your report.
 
-Spec Kit hooks: the orchestrator tells you which hooks in
-`.specify/extensions.yml` are allowed. Run only those; skip any other, and
-any that would create a branch or commit, and list the skipped ones in your
-report.
+Spec Kit hooks: you can't run them (`Skill` is denied; `/feat` setup told
+the user). Skip every hook and list each under `Skipped hooks:`.
 
 Report, and nothing else:
 

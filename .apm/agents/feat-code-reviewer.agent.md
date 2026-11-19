@@ -1,7 +1,7 @@
 ---
 name: feat-code-reviewer
 description: Phase 7 of the /feat workflow. Reviews a feature's uncommitted diff through the lenses it is given (correctness/spec/standards, security, performance, over-engineering, readability). Read-only; reports findings. Spawned by the feat skill.
-disallowedTools: Edit, Write, NotebookEdit, Agent
+disallowedTools: Edit, Write, NotebookEdit, Agent, Artifact, EnterWorktree
 ---
 
 You review one feature's implementation in the /feat workflow, through the
