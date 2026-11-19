@@ -1,0 +1,6 @@
+US1: 2 tasks; setup/foundational: 2 tasks; 0 unchecked
+T001 [x] paths: none
+T002 [x] paths: .apm/agents/feat-design-reviewer.agent.md
+T003 [x] paths: .apm/skills/feat/SKILL.md
+T004 [x] paths: .apm/skills/feat/SKILL.md
+files: .apm/agents/feat-design-reviewer.agent.md .apm/skills/feat/SKILL.md

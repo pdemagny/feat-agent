@@ -22,6 +22,7 @@ run = [
   "shellcheck tests/tracker/run.sh tests/tracker/bin/gh",
   "shellcheck tests/spec-number/run.sh tests/spec-number/bin/gh",
   "shellcheck tests/secret-scan/run.sh .apm/skills/feat/scripts/secret-scan.sh",
+  "shellcheck tests/story/run.sh",
   "shellcheck tests/measure/run.sh tests/measure/bin/*",
   "actionlint",
   "python3 -m py_compile tests/tracker/fake_github.py docs/diagrams/models.py .apm/skills/feat/scripts/measure.py",
@@ -51,6 +52,7 @@ for d in .claude/agents .claude/skills; do
 done
 test -f .claude/skills/feat/scripts/tracker.sh
 test -f .claude/skills/feat/scripts/secret-scan.sh
+test -f .claude/skills/feat/scripts/story.sh
 test -f .claude/skills/feat/scripts/measure.py
 test -f .claude/skills/feat/references/harness.md
 test -f .claude/skills/feat/references/rebase.md
@@ -78,6 +80,10 @@ run = "bash tests/measure/run.sh"
 [tasks."test:secret-scan"]
 description = "Run the secret-scan script's offline tests (scratch git repos)"
 run = "bash tests/secret-scan/run.sh"
+
+[tasks."test:story"]
+description = "Run the story script's offline tests (real and synthetic tasks.md fixtures)"
+run = "bash tests/story/run.sh"
 
 [tasks.docs]
 description = "Build the documentation website (README.md and docs/, see hugo.toml) into public/"

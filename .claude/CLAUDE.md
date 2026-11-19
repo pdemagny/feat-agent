@@ -55,7 +55,8 @@ When changing it:
 - Shell: `shellcheck` must stay clean on `install.sh`, the scripts
   (`.apm/skills/feat/scripts/`) and their bash tests (`tests/`);
   `mise run lint` runs them all and `actionlint` on `.github/workflows/`,
-  `mise run test:tracker` and `mise run test:spec-number` the offline tests.
+  `mise run test:tracker`, `mise run test:spec-number` and
+  `mise run test:story` the offline tests.
   `measure.py` is the one Python script: Python 3.11 or later, standard
   library only (constitution principle V); `mise run lint` compiles it and
   checks its syntax against 3.11, `mise run test:measure` tests it.

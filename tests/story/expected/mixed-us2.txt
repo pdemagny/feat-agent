@@ -1,0 +1,3 @@
+US2: 1 tasks; 0 unchecked
+T007 [x] paths: a/b.sh c.d
+files: a/b.sh c.d
