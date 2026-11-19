@@ -487,7 +487,8 @@ chmod a-w "$(dirname "$target")"
 # repo cannot be resolved, so it is left out as `unexpected record shape`,
 # repo `unknown`, the error text never printed. sess-sur-1, a finished /fix
 # run in odd whose last coordinator call has the model id claude-opus\ud800-5
-# (a lone surrogate): printed with `?` in its place. Exit 0, then 1 with
+# (a lone surrogate): printed with `?` in its place. sess-note-1 (the
+# `notification` case below) is the second counted run. Exit 0, then 1 with
 # --strict. No golden file: the lines below, and no traceback.
 current="edge"
 for want in 0 1; do
@@ -497,13 +498,43 @@ for want in 0 1; do
   out="$(cd "$work/app" && CLAUDE_CONFIG_DIR="$work/edge" python3 -I "$script" "${args[@]}" 2>&1)" || rc=$?
   [ "$rc" -eq "$want" ] || fail "exit $rc, not $want with ${args[*]}: $out"
   for line in \
-    "runs: 1 counted (1 finished, 0 unfinished, 0 resumed), 1 left out" \
+    "runs: 2 counted (2 finished, 0 unfinished, 0 resumed), 1 left out" \
     "  sess-nul-1  2026-03-21  unexpected record shape  (Claude Code 2.1.330)  unknown" \
     "unweighted models: claude-opus?-5 (weighted as 5)"; do
     grep -qxF -- "$line" <<<"$out" || fail "no line: $line: $out"
   done
   if grep -q 'SECRET-\|Traceback' <<<"$out"; then fail "output holds fixture or error text: $out"; fi
 done
+printf 'ok %s\n' "$current"
+
+# notification: --session sess-note-1 (fixtures/edge), a finished /fix run
+# where no report record arrives, only `task-notification` records, as when an
+# agent's end is all the coordinator sees. A notification whose task id names
+# one of the session's agent transcripts ends "agents working"; any other task
+# (the coordinator's own background command) ends "coordinator tools".
+#   09:00:00 invocation
+#   09:00:10 reply, spawns feat-shipper     thinking 10 s
+#   09:00:11 spawn result, async_launched   tools     1 s
+#   09:02:11 notification, task n11 (agent) agents  120 s
+#   09:02:20 reply, background Bash         thinking  9 s
+#   09:02:21 its tool result                tools     1 s
+#   09:03:21 notification, task bash77      tools    60 s
+#   09:03:30 reply, text                    thinking  9 s
+# agents 120 s = 2.0 min, 120/210 = 57%; user 0; thinking 28 s = 0.5 min,
+# 28/210 = 13%; tools 62 s = 1.0 min, 62/210 = 30%; duration 210 s = 3.5 min.
+current="notification"
+rc=0
+out="$(cd "$work/app" && CLAUDE_CONFIG_DIR="$work/edge" python3 -I "$script" --session sess-note-1 2>&1)" || rc=$?
+[ "$rc" -eq 0 ] || fail "exit $rc: $out"
+for line in \
+  "  agents working                   2.0    57%" \
+  "  waiting for the user             0.0     0%" \
+  "  coordinator thinking             0.5    13%" \
+  "  coordinator tools                1.0    30%" \
+  "  run duration                     3.5"; do
+  grep -qxF -- "$line" <<<"$out" || fail "no line: $line: $out"
+done
+if grep -q 'SECRET-\|Traceback' <<<"$out"; then fail "output holds fixture or error text: $out"; fi
 printf 'ok %s\n' "$current"
 
 # window: one date bound only; the missing side prints as `start` or `now`
