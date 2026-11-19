@@ -44,7 +44,10 @@ report is their only input.
 Prompts are read by a model on every run, so each added line MUST earn its
 tokens. A rule in an existing file SHOULD be preferred to a new file, and a
 shell one-liner to a script. Scripts MUST be bash, `shellcheck`-clean and
-covered by offline tests under `tests/`.
+covered by offline tests under `tests/`; where bash would have to aggregate
+JSON, a script MAY instead be Python 3.11 or later using the standard
+library only, compiled by `mise run lint` and covered by offline tests
+under `tests/` the same way.
 
 *Rationale*: prompt size is a cost on every spawn, and untested shell
 breaks on the first unusual input.
@@ -82,4 +85,4 @@ amended to match.
   review gate hard. Changes made without a plan (`/fix`, direct PRs) are
   held to these principles in PR review.
 
-**Version**: 1.1.0 | **Ratified**: 2026-11-16 | **Last Amended**: 2026-11-16
+**Version**: 1.2.0 | **Ratified**: 2026-11-16 | **Last Amended**: 2026-11-19
