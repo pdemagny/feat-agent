@@ -1,0 +1,5 @@
+{
+  "tokens": {"cache_read": 0.2},
+  "models": {"haiku": 2},
+  "prices": {"opus": 400, "sonnet": 300}
+}

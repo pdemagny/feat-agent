@@ -1,0 +1,153 @@
+measure: /feat and /fix runs in @ROOT@/app and its worktrees
+from @ROOT@/config/projects
+runs: 7 counted (5 finished, 1 unfinished, 1 resumed), 0 left out
+weights: input 1, cache read 0.1, output 5, cache write 1h 2, cache write 5m 1.25; haiku 1, sonnet 3, opus 5
+
+== /feat: before 2026-03-01: 0 runs | since 2026-03-01: 4 runs ==
+
+Coordinator                     before   since    diff
+  model calls                  no runs       5
+  spawn an agent               no runs       2
+  chores                       no runs       1
+  text only                    no runs       2
+  context, first call          no runs    4510
+  context, median of calls     no runs    5610
+  context, max of calls        no runs    6080
+  cost share                   no runs     65%
+  failed tool calls (total over runs)
+    runs                       no runs       4
+    Bash                       no runs       2
+    Edit                       no runs       1
+
+Agents                          before   since    diff
+  feat-planner
+    runs                       no runs       4
+    spawns/run                 no runs       1
+    calls/spawn                no runs       2
+    ctx first                  no runs    3000
+    cost share                 no runs     18%
+    model min                  no runs     3.7
+    tool min                   no runs     0.2
+  feat-design-reviewer
+    runs                       no runs       1
+    spawns/run                 no runs       1
+    calls/spawn                no runs       1
+    ctx first                  no runs    1000
+    cost share                 no runs     12%
+    model min                  no runs     2.0
+    tool min                   no runs     0.0
+  feat-shipper
+    runs                       no runs       4
+    spawns/run                 no runs       1
+    calls/spawn                no runs       2
+    ctx first                  no runs    2000
+    cost share                 no runs     11%
+    model min                  no runs     2.3
+    tool min                   no runs     0.5
+
+Wall clock                      before   since    diff
+  agents working, min          no runs     7.0
+  agents working, share        no runs     72%
+  waiting for the user, min    no runs     0.9
+  waiting for the user, share  no runs     10%
+  coordinator thinking, min    no runs     1.7
+  coordinator thinking, share  no runs     18%
+  coordinator tools, min       no runs     0.2
+  coordinator tools, share     no runs      1%
+  run duration, min            no runs     9.2
+  user answers                 no runs       1
+
+First request (characters, from each type's first spawn in a run)
+                                                  before   since    diff
+  feat-planner
+    tools                                        no runs     167
+    skills listing                               no runs      21
+    system prompt (includes Claude Code's own)   no runs      40
+    instructions files                           no runs       2
+    instructions                                 no runs      37
+    total                                        no runs     265
+    tool schemas
+      Read                                       no runs      86
+      Grep                                       no runs      83
+      Bash                                       no runs      81
+  feat-design-reviewer
+    tools                                        no runs      81
+    skills listing                               no runs       0
+    system prompt (includes Claude Code's own)   no runs      17
+    instructions files                           no runs       0
+    instructions                                 no runs       0
+    total                                        no runs      98
+    tool schemas
+      Bash                                       no runs      81
+  feat-shipper  not recorded
+
+Tokens (per run)                before   since    diff
+  input                        no runs    5070
+  cache write                  no runs    4500
+  cache read                   no runs   27.4k
+  output                       no runs     750
+  cost units                   no runs  83,350
+
+== /fix: before 2026-03-01: 0 runs | since 2026-03-01: 1 run ==
+
+Coordinator                     before   since    diff
+  model calls                  no runs       3
+  spawn an agent               no runs       2
+  chores                       no runs       0
+  text only                    no runs       1
+  context, first call          no runs    1010
+  context, median of calls     no runs    1010
+  context, max of calls        no runs    1010
+  cost share                   no runs     53%
+  failed tool calls (total over runs)
+    runs                       no runs       1
+    none
+
+Agents                          before   since    diff
+  feat-implementer
+    runs                       no runs       1
+    spawns/run                 no runs       1
+    calls/spawn                no runs       2
+    ctx first                  no runs    1500
+    cost share                 no runs     29%
+    model min                  no runs     1.5
+    tool min                   no runs     0.1
+  feat-shipper
+    runs                       no runs       1
+    spawns/run                 no runs       1
+    calls/spawn                no runs       2
+    ctx first                  no runs    1000
+    cost share                 no runs     18%
+    model min                  no runs     0.7
+    tool min                   no runs     0.2
+
+Wall clock                      before   since    diff
+  agents working, min          no runs     3.0
+  agents working, share        no runs     90%
+  waiting for the user, min    no runs     0.0
+  waiting for the user, share  no runs      0%
+  coordinator thinking, min    no runs     0.3
+  coordinator thinking, share  no runs      9%
+  coordinator tools, min       no runs     0.0
+  coordinator tools, share     no runs      1%
+  run duration, min            no runs     3.3
+  user answers                 no runs       0
+
+First request (characters, from each type's first spawn in a run)
+                                                  before   since    diff
+  feat-implementer  not recorded
+  feat-shipper  not recorded
+
+Tokens (per run)                before   since    diff
+  input                        no runs    2550
+  cache write                  no runs       0
+  cache read                   no runs    5500
+  output                       no runs     290
+  cost units                   no runs   7,870
+
+unweighted models: claude-mystery-1 (weighted as 5)
+unfinished runs (not in the medians):
+  sess-feat-4  2026-03-06  /feat  @ROOT@/app
+resumed runs (not in the medians):
+  sess-feat-5  2026-03-07  /feat  finished  @ROOT@/app
+exit 0

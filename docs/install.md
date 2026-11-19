@@ -18,6 +18,7 @@ Claude Code only. Three ways to install; the design behind them:
 | Spec Kit CLI `specify`          | phases 2–6 are Spec Kit skills; `/tiny` doesn't need it                               | `uv tool install specify-cli`                   |
 | Spec Kit bug extension, `/fix` only (tested with bug 1.0.1 and 1.0.2) | `/fix`'s assess, fix and test phases are its skills       | `specify extension add bug` in each project     |
 | APM (`apm`) or Node.js (`npx`)  | APM installs everything; `npx` installs the third-party skills for the other two ways | `uv tool install apm-cli`; <https://nodejs.org> |
+| Python 3.11 or later, for `measure.py` only | measures what your runs cost ([measure.md](measure.md)); nothing else needs it | your package manager; <https://www.python.org> |
 
 `uv tool install` puts commands in `~/.local/bin`; if `apm` or `specify`
 isn't found afterwards, run `uv tool update-shell` and open a new shell.
@@ -158,6 +159,11 @@ git clone https://github.com/pdemagny/logistics
 It only reads, and works whichever way you installed. Each `MISSING` line
 says how to fix it; without a project dir, the Spec Kit lines say
 `skipped`. Exit code 0 means ready.
+
+It also says whether Python 3.11 or later is there. Only
+[`measure.py`](measure.md) needs it, so the line is a note that never
+changes the exit code: `note python3 3.11 or later not found (needed by
+measure.py only: docs/measure.md)`.
 
 With a project dir it also lists the bug extension's skills. They are
 needed by `/fix` only, so neither of these lines changes the exit code:

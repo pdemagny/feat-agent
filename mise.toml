@@ -15,15 +15,17 @@ go = "1.27.1"                   # Hugo fetches its theme as a Go module
 d2 = "0.9.0"                    # renders the diagrams in docs/img (`mise run diagrams`)
 
 [tasks.lint]
-description = "shellcheck the shell scripts and their tests, actionlint the workflows, compile the Python test stub, validate the Claude Code plugin"
+description = "shellcheck the shell scripts and their tests, actionlint the workflows, compile the Python test stub and measure.py (checked against Python 3.11), validate the Claude Code plugin"
 run = [
   "shellcheck install.sh",
-  "shellcheck .apm/skills/feat/scripts/*",
+  "shellcheck .apm/skills/feat/scripts/*.sh",
   "shellcheck tests/tracker/run.sh tests/tracker/bin/gh",
   "shellcheck tests/spec-number/run.sh tests/spec-number/bin/gh",
   "shellcheck tests/secret-scan/run.sh .apm/skills/feat/scripts/secret-scan.sh",
+  "shellcheck tests/measure/run.sh tests/measure/bin/*",
   "actionlint",
-  "python3 -m py_compile tests/tracker/fake_github.py docs/diagrams/models.py",
+  "python3 -m py_compile tests/tracker/fake_github.py docs/diagrams/models.py .apm/skills/feat/scripts/measure.py",
+  "python3 -c 'import ast, sys; ast.parse(open(sys.argv[1]).read(), feature_version=(3, 11))' .apm/skills/feat/scripts/measure.py",
   "claude plugin validate .",
   "! grep -Eiq 'specifier|planner|tasker|spec\\.md|brief|phase [0-9]|/feat' .apm/skills/feat/references/harness.md .apm/skills/feat/references/rebase.md",
   "test \"$(wc -l < .apm/skills/tiny/SKILL.md)\" -le 200 || { echo '/tiny is over 200 lines: keep it tiny'; exit 1; }",
@@ -48,6 +50,7 @@ for d in .claude/agents .claude/skills; do
 done
 test -f .claude/skills/feat/scripts/tracker.sh
 test -f .claude/skills/feat/scripts/secret-scan.sh
+test -f .claude/skills/feat/scripts/measure.py
 test -f .claude/skills/feat/references/harness.md
 test -f .claude/skills/feat/references/rebase.md
 test -f .claude/skills/fix/SKILL.md
@@ -61,6 +64,15 @@ run = "bash tests/tracker/run.sh"
 [tasks."test:spec-number"]
 description = "Run the spec-number script's offline tests (local git remote, stub gh)"
 run = "bash tests/spec-number/run.sh"
+
+[tasks.measure]
+description = "Measure what /feat and /fix runs cost, from this machine's session transcripts (mise run measure -- --help)"
+run = "python3 -I .apm/skills/feat/scripts/measure.py"
+quiet = true
+
+[tasks."test:measure"]
+description = "Run measure.py's offline tests (synthetic transcripts, golden outputs)"
+run = "bash tests/measure/run.sh"
 
 [tasks."test:secret-scan"]
 description = "Run the secret-scan script's offline tests (scratch git repos)"

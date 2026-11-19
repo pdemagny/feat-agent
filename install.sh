@@ -126,6 +126,12 @@ case "$cmd" in
       else echo "MISSING  $label ($fix)"; missing=1; fi
     }
     for t in "${tools[@]}"; do expect "tool $t" "install it" command -v "$t"; done
+    # Not counted as missing: only measure.py needs Python.
+    if python3 -c 'import sys; sys.exit(sys.version_info < (3, 11))' >/dev/null 2>&1; then
+      echo "ok       python3 3.11 or later (measure.py)"
+    else
+      echo "note     python3 3.11 or later not found (needed by measure.py only: docs/measure.md)"
+    fi
     expect "gh authenticated" "gh auth login" gh auth status
     if has_plugin; then
       echo "ok       plugin logistics (skills and agents)"

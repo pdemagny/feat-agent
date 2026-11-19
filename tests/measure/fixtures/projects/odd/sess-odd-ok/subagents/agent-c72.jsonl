@@ -1,0 +1,4 @@
+{"type":"user","timestamp":"2026-03-17T14:02:14.000Z","isSidechain":true,"agentId":"c72","message":{"role":"user","content":"SECRET-prompt-shipper"}}
+{"type":"assistant","timestamp":"2026-03-17T14:02:44.000Z","isSidechain":true,"message":{"id":"msg-c72-1","model":"claude-haiku-5","content":[{"type":"tool_use","id":"tu-c72-1","name":"Bash","input":{"command":"SECRET-git-push"}}],"usage":{"input_tokens":1000,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":50}}}
+{"type":"user","timestamp":"2026-03-17T14:02:54.000Z","isSidechain":true,"message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"tu-c72-1","content":"SECRET-push-output"}]}}
+{"type":"assistant","timestamp":"2026-03-17T14:03:04.000Z","isSidechain":true,"message":{"id":"msg-c72-2","model":"claude-haiku-5","content":[{"type":"text","text":"SECRET-shipped"}],"usage":{"input_tokens":10,"cache_creation_input_tokens":0,"cache_read_input_tokens":1000,"output_tokens":10}}}

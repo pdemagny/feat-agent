@@ -1,0 +1,4 @@
+{
+  "tokens": {"output": 4, "cache_write_5m": 1},
+  "models": {"sonnet": 2, "opus": 4, "claude-sonnet-5": 6}
+}
