@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Stub python3 for the install-check case of tests/measure/run.sh: exits 1
+# when MEASURE_PYTHON=old (no Python 3.11 or later), else 0. Runs no Python.
+if [ "${MEASURE_PYTHON:-}" = old ]; then exit 1; fi
+exit 0

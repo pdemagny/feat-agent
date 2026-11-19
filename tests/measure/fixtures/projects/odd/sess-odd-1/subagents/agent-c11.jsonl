@@ -1,0 +1,2 @@
+{"type":"user","timestamp":"2026-03-11T09:00:11.000Z","isSidechain":true,"agentId":"c11","message":{"role":"user","content":"SECRET-prompt-shipper"}}
+{"type":"assistant","timestamp":"2026-03-11T09:00:41.000Z","isSidechain":true,"message":{"id":"msg-c11-1","model":"claude-haiku-5","content":[{"type":"text","text":"SECRET-shipped"}]}}

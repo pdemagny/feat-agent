@@ -115,6 +115,7 @@ Also on the website: [pdemagny.github.io/logistics](https://pdemagny.github.io/l
 | [docs/install.md](docs/install.md) | Prerequisites, the three ways to install, the setup check, board tracking, update, uninstall |
 | [docs/usage.md](docs/usage.md) | Brief, build, fix a bug, make a trivial change, answer gates, resume, change the size, tune models and effort |
 | [docs/workflow.md](docs/workflow.md) | Every phase, gate and agent: the size × phase matrix, what runs when and how |
+| [docs/measure.md](docs/measure.md) | Measure what your `/feat` and `/fix` runs cost from your transcripts: running `measure.py`, reading its figures, weights and prices |
 | [docs/design.md](docs/design.md) | Why it is built this way: Claude Code mechanics, rejected alternatives |
 | [Roadmap](https://github.com/users/pdemagny/projects/2) | Known bugs and what is planned |
 | [CONTRIBUTING.md](https://github.com/pdemagny/logistics/blob/main/CONTRIBUTING.md) | Reporting bugs, proposing changes, working on logistics |

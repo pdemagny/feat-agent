@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Stub claude for the install-check case of tests/measure/run.sh, so the real
+# CLI is never run: `claude plugin list` lists no plugin, everything exits 0.
+exit 0

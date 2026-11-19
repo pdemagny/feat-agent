@@ -1,0 +1,48 @@
+measure: /feat and /fix runs, session sess-feat-1
+from @ROOT@/config/projects
+runs: 1 counted (1 finished, 0 unfinished, 0 resumed), 0 left out
+weights: input 1, cache read 0.1, output 5, cache write 1h 2, cache write 5m 1.25; haiku 1, sonnet 3, opus 5
+
+== /feat run sess-feat-1, 2026-03-02, finished ==
+
+Coordinator
+  model calls                        5
+  spawn an agent                     2
+  chores                             1
+  text only                          2
+  context, first call             5010
+  context, median of calls        5210
+  context, max of calls           5210
+  cost share                       75%
+  failed tool calls  Bash 1
+
+Agents
+  type                          spawns  calls/spawn  ctx first  cost share  model min  tool min
+  feat-planner                       1            2       3000         16%        4.3       0.2
+  feat-shipper                       1            2       2000         10%        2.3       0.5
+
+Wall clock                         min  share
+  agents working                   8.0    63%
+  waiting for the user             2.0    16%
+  coordinator thinking             2.5    20%
+  coordinator tools                0.2     2%
+  run duration                    12.7
+  user answers                       1
+
+First request (characters, from each type's first spawn in a run)
+  feat-planner
+    tools                                            167    63%
+    skills listing                                    21     8%
+    system prompt (includes Claude Code's own)        40    15%
+    instructions (2 files)                            37    14%
+    total                                            265
+    tool schemas: Read 86, Bash 81
+  feat-shipper  not recorded
+
+Tokens (per run)
+  input                           5070
+  cache write                     5200
+  cache read                     25.4k
+  output                           770
+  cost units                    93,010
+exit 0

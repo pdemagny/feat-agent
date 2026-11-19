@@ -698,3 +698,29 @@ file they created or changed in that spawn; the implementer lists the
 files it created plus its artifacts (never files it only modified or
 deleted); the read-only reviewers say `none`. The coordinator checks them
 on disk before accepting the report.
+
+## Baseline
+
+What `/feat` and `/fix` runs cost before the changes meant to make them
+cheaper, measured with [`measure.py`](measure.md) so a later change can be
+judged against it (`--compare-since` the day it merged). The figures are the
+medians of the `all repos` block of a `measure.py --all` run over the
+maintainer's own runs: read them as one person's workload, not a benchmark.
+
+- **Date**: _to be filled by the maintainer: the day of the `--all` run_
+- **Weights** (the defaults):
+
+  ```text
+  weights: input 1, cache read 0.1, output 5, cache write 1h 2, cache write 5m 1.25; haiku 1, sonnet 3, opus 5
+  ```
+
+- **Runs**: _to be filled by the maintainer: the `runs:` line's counts_
+
+> **Figures: to be filled by the maintainer** from the `all repos` block of
+> a real `--all` run (per skill: coordinator, agents, wall clock, first
+> request, tokens and cost units). Nothing here is estimated.
+
+Before sharing such output: it holds repo paths, the home directory and
+session ids. Post only the `all repos` block's figures, without the
+per-repo blocks or the unfinished, resumed and left-out lists
+([measure.md](measure.md#before-sharing-the-output)).

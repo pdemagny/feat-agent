@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Stub gh for the install-check case of tests/measure/run.sh, so `gh auth
+# status` stays offline: every command succeeds and prints nothing.
+exit 0

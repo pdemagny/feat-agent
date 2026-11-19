@@ -1,0 +1,19 @@
+Measure what /feat and /fix runs cost, from the session transcripts
+Claude Code keeps on this machine. Read-only and offline.
+
+options:
+  -h, --help            show this help message and exit
+  --project PATH        runs of the repo at PATH (default: the repo of the
+                        current directory, with its worktrees)
+  --all                 every repo: one block per repo, then the total
+  --since YYYY-MM-DD    runs invoked on or after this local date
+  --until YYYY-MM-DD    runs invoked on or before this local date
+  --session ID          one run's own figures instead of medians (any repo)
+  --compare-since YYYY-MM-DD
+                        medians before this date next to those since it, with
+                        the difference
+  --weights FILE        JSON file overriding weights, optionally with prices
+  --strict              exit 1 when any run in the selection was left out
+
+weights: input 1, cache read 0.1, output 5, cache write 1h 2, cache write 5m 1.25; haiku 1, sonnet 3, opus 5
+exit 0

@@ -1,0 +1,42 @@
+measure: /feat and /fix runs in @ROOT@/other and its worktrees
+from @ROOT@/config/projects, 2026-04-10 to 2026-04-10
+runs: 1 counted (1 finished, 0 unfinished, 0 resumed), 0 left out
+weights: input 1, cache read 0.1, output 5, cache write 1h 2, cache write 5m 1.25; haiku 1, sonnet 3, opus 5
+
+== /fix: 1 finished run (medians) ==
+
+Coordinator
+  model calls                        3
+  spawn an agent                     2
+  chores                             0
+  text only                          1
+  context, first call             1010
+  context, median of calls        1010
+  context, max of calls           1010
+  cost share                       58%
+  failed tool calls (total over 1 run)  none
+
+Agents
+  type                      runs  spawns/run  calls/spawn  ctx first  cost share  model min  tool min
+  feat-implementer             1           1            2       1500         26%        1.5       0.1
+  feat-shipper                 1           1            2       1000         16%        0.7       0.2
+
+Wall clock                         min  share
+  agents working                   3.0    90%
+  waiting for the user             0.0     0%
+  coordinator thinking             0.3     9%
+  coordinator tools                0.0     1%
+  run duration                     3.3
+  user answers                       0
+
+First request (characters, from each type's first spawn in a run)
+  feat-implementer  not recorded
+  feat-shipper  not recorded
+
+Tokens (per run)
+  input                           2550
+  cache write                        0
+  cache read                      5500
+  output                           330
+  cost units                     8,870
+exit 0

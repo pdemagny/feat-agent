@@ -33,7 +33,7 @@ Where things are:
 
 ```
 .apm/skills/feat/             the orchestrator: phases, gates, size table (source of truth)
-.apm/skills/feat/scripts/     tracker.sh (board moves), spec-number.sh (numbers the spec dir)
+.apm/skills/feat/scripts/     tracker.sh (board moves), spec-number.sh (numbers the spec dir), measure.py (run cost)
 .apm/skills/feat/references/  harness.md: the rules /feat and /fix share (gates, state file, board, resume)
 .apm/skills/fix/              the bugfix orchestrator: assess, fix, test, review, ship; its own size table
 .apm/skills/brief/            phase 1: interview, size, brief or capability map
@@ -68,9 +68,9 @@ work in this repo. The ones that bite most:
 
 ## Before you open a pull request
 
-- `mise run lint`, `mise run test:apm`, `mise run test:tracker` and
-  `mise run test:spec-number` pass. The `check` workflow runs the same on
-  every pull request.
+- `mise run lint`, `mise run test:apm`, `mise run test:tracker`,
+  `mise run test:spec-number` and `mise run test:measure` pass. The `check`
+  workflow runs the same on every pull request.
 - For a change to a skill or agent prompt, run it on a scratch project and
   say in the PR what you ran and what happened. There is no automated test
   for prompts.

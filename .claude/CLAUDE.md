@@ -56,6 +56,9 @@ When changing it:
   (`.apm/skills/feat/scripts/`) and their bash tests (`tests/`);
   `mise run lint` runs them all and `actionlint` on `.github/workflows/`,
   `mise run test:tracker` and `mise run test:spec-number` the offline tests.
+  `measure.py` is the one Python script: Python 3.11 or later, standard
+  library only (constitution principle V); `mise run lint` compiles it and
+  checks its syntax against 3.11, `mise run test:measure` tests it.
 - CHANGELOG.md is generated from commit messages: `feat` and `fix`
   subjects become its entries, so write them for users; `!` marks a
   breaking change. Don't edit it by hand.
