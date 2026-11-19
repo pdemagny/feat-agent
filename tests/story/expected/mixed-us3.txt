@@ -1,0 +1,3 @@
+US3: 0 tasks; polish: 1 tasks; 1 unchecked
+T008 [ ] paths: mise.toml
+files: mise.toml

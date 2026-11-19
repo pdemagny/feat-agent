@@ -1,0 +1,8 @@
+setup/foundational: 2 tasks: T001 T002
+US1: 2 tasks: T003 T004
+US2: 3 tasks: T005 T006 T007
+US3: 1 tasks: T008
+US4: 1 tasks: T009
+US5: 7 tasks: T010 T011 T012 T013 T014 T015 T016
+polish: 3 tasks: T017 T018 T019
+total: 19 tasks

@@ -74,7 +74,7 @@ call, and `EnterWorktree`.
 
 ## How it works
 
-<p align="center"><img src="docs/img/gates.svg" alt="Sequence diagram of a small or medium feature: you, Claude Code and the agents. You always confirm the brief, and decide when a code review finding needs your call. The run also stops when the spec has open questions, when the plan and design review need your call (you then check the spec too), and when the consistency check finds serious gaps. Before each phase, if main moved, the run moves onto it and stops only for a conflict that changes behaviour; after the pull request, /feat rebase brings a conflicting PR onto the current main and pushes it." width="560"></p>
+<p align="center"><img src="docs/img/gates.svg" alt="Sequence diagram of a small or medium feature: you, Claude Code and the agents. You always confirm the brief, and decide when a code review finding needs your call. The run also stops when the spec has open questions, when the plan and design review need your call (you then check the spec too), and when the consistency check finds serious gaps or tasks.md doesn't match the task list. Before each phase, if main moved, the run moves onto it and stops only for a conflict that changes behaviour; after the pull request, /feat rebase brings a conflicting PR onto the current main and pushes it." width="560"></p>
 
 Agents do the work, each phase in a fresh one. Solid orange arrows are gates
 where the run always waits for you; dashed ones wait only when something

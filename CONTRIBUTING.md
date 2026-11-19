@@ -69,7 +69,8 @@ work in this repo. The ones that bite most:
 ## Before you open a pull request
 
 - `mise run lint`, `mise run test:apm`, `mise run test:tracker`,
-  `mise run test:spec-number` and `mise run test:measure` pass. The `check`
+  `mise run test:spec-number`, `mise run test:story` and
+  `mise run test:measure` pass. The `check`
   workflow runs the same on every pull request.
 - For a change to a skill or agent prompt, run it on a scratch project and
   say in the PR what you ran and what happened. There is no automated test

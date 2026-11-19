@@ -1,0 +1,8 @@
+US1: 3 tasks; setup/foundational: 3 tasks; 3 unchecked
+T001 [ ] paths: none
+T002 [x] paths: docs/a.md docs/b.md
+T003 [x] paths: lib/x.sh
+T004 [ ] paths: src/real.py
+T005 [x] paths: none
+T006 [ ] paths: README.md
+files: docs/a.md docs/b.md lib/x.sh src/real.py README.md

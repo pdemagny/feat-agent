@@ -33,7 +33,7 @@ is authoritative; this page mirrors it with explanations.
 | 2 | Specify       | `feat-specifier`                                                                      | `speckit-specify`                                                  | branch/worktree, `spec.md`, `feat-state.md`   | **hard** only on an open question or a blocker; else soft, and its summary opens the next gate                              |
 | 3 | Plan          | `feat-planner`                                                                        | `speckit-plan`                                                     | `plan.md` and design docs                     | none (hard for large, opening with the spec summary after a soft phase 2)                                                  |
 | 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3, then `feat-planner` writes accepted findings | `security-and-hardening` (cost and design checklists in the agent) | a paraphrase, findings D1… with recommendations | one gate with 3: hard only on a finding that needs you (`user`), a user-call assumption, a constitution violation, a blocker, a size increase, a paraphrase that contradicts the brief or an unchecked checklist item after a soft phase 2, else soft and the `apply` findings are applied (always hard for large) |
-| 5 | Tasks         | `feat-tasker`                                                                         | `speckit-tasks`, `speckit-analyze`                                 | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, analyze not run, a size increase or an unanswered checklist item; always for large                  |
+| 5 | Tasks         | `feat-tasker`                                                                         | `speckit-tasks`, `speckit-analyze`                                 | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, analyze not run, a size increase, an unanswered checklist item or tasks.md not matching the tasker's report (`story.sh`); always for large               |
 | 6 | Implement     | `feat-implementer` ×1 per user story, in turn                                         | `speckit-implement`                                                | the code, tasks ticked when their checks ran, a Not verified list | soft (hard per story for large; hard on a design problem)                                                                  |
 | 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies the fixes         | `security-and-hardening`, `performance-optimization`               | findings B, S, P, C, R with recommendations; fixes applied | small/medium: **hard** on a finding that needs you (`user`), an `S` finding or an unmet criterion, else soft; large: **hard** |
 | 8 | Ship          | `feat-shipper`                                                                        | —                                                                  | docs updated, commits, push, PR               | none                                                                                                                       |
@@ -98,7 +98,7 @@ gets its own brief and size column.
 |                      | small                                                                                        | medium                                           | large                                                       | huge                                       |
 | -------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------ |
 | **When**             | up to ~30 tasks; no new service, permissions, network exposure or dependency; docs-only work | ~31–60 tasks, or a small one adding any of those | more than ~60 tasks                                         | capabilities that could ship independently |
-| **Hard gates**       | brief, 7 (+2 on a question, +3/4 on a finding or checklist item, +5 on CRITICAL/HIGH, +7 on a finding that needs you) | brief, 7 (+2, +3/4, +5 and +7 as for small)    | brief, 3, 4, 5, each story in 6, 7 (+2 on a question)       | the map                                    |
+| **Hard gates**       | brief, 7 (+2 on a question, +3/4 on a finding or checklist item, +5 on CRITICAL/HIGH or a task mismatch, +7 on a finding that needs you) | brief, 7 (+2, +3/4, +5 and +7 as for small)    | brief, 3, 4, 5, each story in 6, 7 (+2 on a question)       | the map                                    |
 | **Design reviewers** | 1                                                                                            | 3                                                | 3                                                           | per capability                             |
 | **Code reviewers**   | 2                                                                                            | 5                                                | 5                                                           | per capability                             |
 | **PRs**              | 1                                                                                            | 1                                                | 1                                                           | 1 per capability                           |
@@ -292,6 +292,10 @@ spec, plan and tasks by hand and says so (`Analyze: not run`). The gate is
 hard only on CRITICAL/HIGH findings, analyze not run, a size increase, or
 checklist items the checklist answer you already gave doesn't cover
 (`speckit-implement` would stop on them).
+The coordinator also runs `story.sh` on `tasks.md` and compares its task IDs
+per group with the tasker's report: a difference, or a script error, is a
+hard gate showing both sides, and the task count for the size check comes
+from the script.
 Last cheap moment to change direction.
 
 **Size changes** are checked at the plan (size trigger) and here (task
@@ -301,7 +305,10 @@ the next gate; `size <s>` reverses it.
 
 ### 6 Implement (`feat-implementer` per story)
 One implementer per user story, one after the other (setup tasks with the
-first, polish with the last). Each runs `speckit-implement` over its tasks,
+first, polish with the last). Each prompt carries `story.sh`'s view of the
+story (task IDs, checked state, paths), as data and refreshed on a retry or
+resume, and the implementer sends independent tool calls together in one
+turn. Each runs `speckit-implement` over its tasks,
 reads only what they need, runs build, tests and linters, never weakens a
 check, never commits. Failing checks go back once; a needed design change is
 a hard gate. **Large:** a gate after each story.
