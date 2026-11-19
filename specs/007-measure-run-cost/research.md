@@ -71,17 +71,24 @@ Code 2.1.304 to 2.1.328. The shapes relied on are in
   thinking; `tool_result` → coordinator tools, except the result of an
   `Agent`/`Task` call that is the agent's report (its `toolUseResult` is not
   `status: "async_launched"` and the block is not `is_error`) → agents
-  working; `origin.kind == "peer"` → agents working; `origin.kind ==
-  "task-notification"` → coordinator tools; `origin.kind == "human"` → waiting
-  for the user. Every other record (attachments, system, meta and compact
-  summaries, local command output, queued commands) ends no gap. Start = the
+  working; `origin.kind == "peer"` → agents working, although the record is
+  `isMeta`; `origin.kind == "task-notification"` → agents working when its
+  `<task-id>` names one of the session's agent transcripts, else coordinator
+  tools; `origin.kind == "human"` → waiting for the user. Every other record
+  (attachments, system, other meta records and compact summaries, local
+  command output, queued commands) ends no gap. Start = the
   invocation record's timestamp (R1); duration = last event − start.
 - **Rationale**: in the versions checked, agents run in the background: the
   spawn's tool result says `async_launched` at once, and the report arrives
   later as a `user` record with `origin.kind == "peer"` naming the agent. An
   older synchronous spawn returns the report as the tool result itself, hence
-  the exception. A background shell finishing arrives as a
-  `task-notification` (producer `session-task`): the coordinator's own tool.
+  the exception. A background task finishing arrives as a
+  `task-notification`. Corrected on 2026-11-19 against 158 real sessions,
+  structure only: every report record is `isMeta`, and 591 of 598
+  notifications name an agent, 217 of them before any report record; counting
+  them as the coordinator's own tool put a median 10 minutes of agent time
+  under coordinator tools, and skipping meta records put all of it under
+  coordinator thinking.
   Gaps are attributed to what ends them, so the parts sum to the duration by
   construction.
 - **Alternatives considered**: summing agent durations (counts parallel agents

@@ -308,6 +308,7 @@ _TAG_RAW = re.compile(rb"<command-name>\s*/?(?:logistics:)?(?:feat|fix)\s*</comm
 _TAG = re.compile(r"<command-name>\s*/?(?:logistics:)?(feat|fix)\s*</command-name>")
 _ARGS = re.compile(r"<command-args>(.*?)</command-args>", re.DOTALL)
 _AGENT_ID = re.compile(r"[A-Za-z0-9_-]+")
+_TASK_ID = re.compile(r"<task-id>([A-Za-z0-9_-]+)</task-id>")
 
 
 def has_tag(path):
@@ -606,7 +607,10 @@ def _parse_session(sess, info):
         if kind == "assistant":
             part = "thinking"
         elif kind == "user":
-            if rec.get("isMeta") is True or rec.get("isCompactSummary") is True:
+            if rec.get("isCompactSummary") is True:
+                continue
+            # an agent's report is a meta record too: it is the one meta record that counts
+            if rec.get("isMeta") is True and as_dict(rec.get("origin")).get("kind") != "peer":
                 continue
             part = None
         else:
@@ -657,7 +661,13 @@ def _parse_session(sess, info):
                 if sender is not None and (not isinstance(sender, str) or not _AGENT_ID.fullmatch(sender)):
                     reason = reason or "agent transcript missing"
             elif origin.get("kind") == "task-notification":
-                part = "tools"
+                # a background task ended: one of this session's agents, or the
+                # coordinator's own command
+                task = _TASK_ID.search(message_text(msg))
+                ended_agent = task is not None and os.path.isfile(
+                    os.path.join(sess["dir"], "subagents", f"agent-{task.group(1)}.jsonl")
+                )
+                part = "agents" if ended_agent else "tools"
             elif origin.get("kind") == "human":
                 part = "user"
                 answers += 1

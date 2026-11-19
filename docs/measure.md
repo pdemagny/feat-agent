@@ -133,10 +133,12 @@ mean over that run's spawns of the type.
 **Wall clock**, in minutes and as a share of the run's duration, split
 along the coordinator's own timeline, each gap between two of its events
 going to what ended it:
-- `agents working`: an agent's report arrived (parallel agents count once);
+- `agents working`: an agent's report arrived, or the notice that an agent
+  ended (parallel agents count once);
 - `waiting for the user`: a message you typed;
 - `coordinator thinking`: a model reply;
-- `coordinator tools`: a tool result.
+- `coordinator tools`: a tool result, or the notice that a background
+  command of the coordinator's ended.
 
 The four add up to `run duration`, from the invocation to the run's last
 event. `user answers` counts the messages you typed during the run.

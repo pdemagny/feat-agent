@@ -58,6 +58,7 @@ Three shapes are used:
    only whether the first word is `resume` is used. The first invocation is
    the run's start: earlier main-file records are not part of the run.
 2. An agent's report: `origin: {"kind":"peer","name":"feat-planner","from":"<agent id>"}`.
+   It carries `isMeta: true`: it is the one meta record that ends a gap.
 3. A tool result: `message.content[]` with `{"type":"tool_result","tool_use_id":"toolu_01","is_error":true?}`
    and, beside it, `toolUseResult`; for an `Agent` call,
    `toolUseResult.agentId` names the agent file and `toolUseResult.status` is
@@ -66,7 +67,11 @@ Three shapes are used:
 An agent id from `toolUseResult.agentId` or `origin.from` is used only if it
 matches `[A-Za-z0-9_-]+`; any other is treated as a missing agent transcript.
 
-Also read: `origin: {"kind":"task-notification"}` (a background task ended).
+Also read: `origin: {"kind":"task-notification"}` (a background task ended),
+whose text holds `<task-id>…</task-id>`. When that id names one of the
+session's agent transcripts, the record is an agent ending (agents working);
+any other task is the coordinator's own background command (coordinator
+tools). Only the id is read, and it is never printed.
 User records with no `origin` (local commands, their output, compact
 summaries) end no gap and invoke nothing; a tagged record with no `origin`
 leaves the run out unless it is `isCompactSummary` or `isMeta`.
