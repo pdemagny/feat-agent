@@ -32,7 +32,7 @@ is authoritative; this page mirrors it with explanations.
 | 0 | Setup         | coordinator                                                                           | —                                                                  | conventions, hooks checked                    | hard only if a Spec Kit hook would branch or commit                                                                        |
 | 2 | Specify       | `feat-specifier`                                                                      | `speckit-specify`                                                  | branch/worktree, `spec.md`, `feat-state.md`   | **hard** only on an open question or a blocker; else soft, and its summary opens the next gate                              |
 | 3 | Plan          | `feat-planner`                                                                        | `speckit-plan`                                                     | `plan.md` and design docs                     | none (hard for large, opening with the spec summary after a soft phase 2)                                                  |
-| 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3, then `feat-planner` writes accepted findings | `security-and-hardening` (cost and design checklists in the agent) | a paraphrase, findings D1…                    | one gate with 3: hard only on a real finding, a user-call assumption, a constitution violation, a blocker, a size increase, a paraphrase that contradicts the brief or an unchecked checklist item after a soft phase 2 (always hard for large) |
+| 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3, then `feat-planner` writes accepted findings | `security-and-hardening` (cost and design checklists in the agent) | a paraphrase, findings D1… with recommendations | one gate with 3: hard only on a finding that needs you (`user`), a user-call assumption, a constitution violation, a blocker, a size increase, a paraphrase that contradicts the brief or an unchecked checklist item after a soft phase 2, else soft and the `apply` findings are applied (always hard for large) |
 | 5 | Tasks         | `feat-tasker`                                                                         | `speckit-tasks`, `speckit-analyze`                                 | `tasks.md`, analysis clean                    | hard on CRITICAL/HIGH, analyze not run, a size increase or an unanswered checklist item; always for large                  |
 | 6 | Implement     | `feat-implementer` ×1 per user story, in turn                                         | `speckit-implement`                                                | the code, tasks ticked when their checks ran, a Not verified list | soft (hard per story for large; hard on a design problem)                                                                  |
 | 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5, then `feat-implementer` applies the fixes         | `security-and-hardening`, `performance-optimization`               | findings B, S, P, C, R with recommendations; fixes applied | small/medium: **hard** on a finding that needs you (`user`), an `S` finding or an unmet criterion, else soft; large: **hard** |
@@ -247,15 +247,21 @@ and implementation-readiness reviewers of the
 (Apache-2.0). The paraphrase opens the gate, so you can check it against
 what you meant; one that contradicts the brief makes the gate hard.
 
-Each `D…` gets a recommendation. Large: you accept or
-reject each; if the planner amended the plan after the phase 3 gate, this
+The reviewer recommends on each finding (`apply`, `skip` or `user`), and
+`/feat` never sets a recommendation itself. `user` marks a finding that
+removes or changes a story, a requirement or an acceptance criterion the
+brief asked for, overturns a spec assumption, or weakens a control the spec
+or plan sets. Large: always hard; you accept or reject each, with `user`
+findings first; if the planner amended the plan after the phase 3 gate, this
 gate says so under "What you should know". Small and medium: one gate for
 phases 3 and 4 ("Plan and design review"); after a soft phase 2 it opens with
-the spec summary, before the paraphrase. It is hard only on a finding above
-nice-to-have, an assumption that needs your call, a constitution violation, a
-blocker, a size increase or an unchecked checklist item carried from a soft
-phase 2; otherwise the recommendations are applied, the soft report carries
-the spec summary, and "ok" accepts them all. The planner writes the accepted
+the spec summary, before the paraphrase. It is hard only on a finding that
+needs you (`user`), an assumption that needs your call, a constitution
+violation, a blocker, a size increase or an unchecked checklist item carried
+from a soft phase 2; otherwise one status line says how many findings were
+applied and skipped (with the security ones named) and the run goes on. On a
+hard gate "ok" applies every `apply` and leaves every `skip`, and each `user`
+finding needs its own answer. The planner writes the accepted
 ones, and any spec change you asked for at this gate (an overturned
 assumption, a reworded requirement), in one amend pass, into spec.md (as
 requirements) and plan.md;

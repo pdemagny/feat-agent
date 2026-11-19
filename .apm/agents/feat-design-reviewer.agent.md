@@ -98,6 +98,19 @@ planner to apply: the definition to add, the reference to fix, the decision
 with the option you recommend. Leave out generic advice and layout or style
 changes (Spec Kit's templates own the layout).
 
+## Recommendation
+
+End every finding line with `— rec:`, one of three values, nice-to-have
+included. `apply`: write it as proposed; on small and medium features the
+planner writes it without asking the user, so recommend it only for what
+you would change unasked. `skip (<why>)`: not worth the change; the why is
+logged. `user (<why>)`: a call only the user can make. A finding that
+removes or changes a story, a requirement or an acceptance criterion of the
+spec, overturns one of its assumptions, or weakens a control the spec or
+plan sets (relaxes validation, widens access), is `user`, never `apply`;
+one that only adds a tightening requirement (input validation, error
+handling, a secure default) may be `apply`. The paraphrase carries no rec.
+
 ## Report, and nothing else
 
 Only the sections of your lenses. "Nothing worth changing" is a fine
@@ -108,9 +121,11 @@ Paraphrase (4c):
 - What it does: <2–5 sentences>
 - How the existing system works, per the documents: <2–5 sentences>
 Findings:
-- [sec] <risk> → <proposed change> (<artifact>) — severity: high | medium | nice-to-have
-- [cost] <cost or risk> → <proposed change> (<artifact>) — severity: high | medium | nice-to-have
-- [design] <gap> → <proposed change> (<artifact>: <section or line>) — kind: clarity | fit | simplicity | readiness — severity: high | medium | nice-to-have
+- [sec] <risk> → <proposed change> (<artifact>: <section or line>) — severity: high | medium | nice-to-have — rec: apply | skip (<why>) | user (<why>)
+- [cost] <cost or risk> → <proposed change> (<artifact>: <section or line>) — severity: high | medium | nice-to-have — rec: apply | skip (<why>) | user (<why>)
+- [design] <gap> → <proposed change> (<artifact>: <section or line>) — kind: clarity | fit | simplicity | readiness — severity: high | medium | nice-to-have — rec: apply | skip (<why>) | user (<why>)
+`<section or line>` is the section heading as written in the artifact, or a
+line number.
 Checked and fine: <one line per lens>
 Wrote: none
 ```

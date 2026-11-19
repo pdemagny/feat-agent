@@ -124,16 +124,17 @@ on branch `<name>`, in a worktree under
 ## Phase 3–4: Plan and design review — needs your call
 **What I did:** feat-design-reviewer ×3 on spec + plan: 4a (opus · medium), 4b (sonnet · medium), 4c (sonnet · high)
 **How a fresh reader understood it:** … (check it against what you meant)
-**What you should know:** …
+**What you should know:** D2 needs you
 **Your call:**
-1. D1 [sec] … — I recommend accepting
-2. D2 [cost] … — I recommend rejecting: …
-3. D3 [design] plan says `config.Load` validates the file; it doesn't → validate in the new command — I recommend accepting
+1. D2 [cost] … — apply or leave? reviewer: drops FR-004, which the brief asked for
+2. D1 [sec] … — rec: apply
+3. D3 [design] plan says `config.Load` validates the file; it doesn't → validate in the new command — rec: apply
 **Next:** phase 5 Tasks
 ```
 
-On small and medium features, plan and design review share one gate, and
-"ok" accepts every recommendation. A size increase is always asked on its
+On small and medium features, plan and design review share one gate, which
+stops only when something needs your call. "ok" applies every `apply` and
+leaves every `skip`; a `user` finding needs its own answer. A size increase is always asked on its
 own; a decrease is applied and logged.
 
 When the spec leaves no question open, phase 2 doesn't stop. The next gate
@@ -142,7 +143,7 @@ checklist question, and "ok" accepts those too. A spec change you ask for
 there is written by the planner together with the findings; "back to 2" is
 for a rewrite.
 
-Answer in plain words ("accept D1, reject D2: behind the VPN"). Rejections
+Answer in plain words ("apply D1, leave D2: behind the VPN"). Rejections
 are logged with your reason and never proposed again. You can also say:
 
 | Say                            | Effect                                                       |

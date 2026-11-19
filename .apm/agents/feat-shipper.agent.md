@@ -71,7 +71,9 @@ everything below.
    `! WIP commit on <branch>; nothing pushed`. Then
    push with `-u` and open the PR with
    `gh pr create` (not a draft unless the conventions say so). Body: the
-   brief's Why and Behaviour, accepted design findings, a `### Code review`
+   brief's Why and Behaviour, accepted design findings (the `auto-applied`
+   and `picked` ids of the `4 Design review` Log line; `accepted` in older
+   runs), a `### Code review`
    part, the points to look at in review, check results, a `Not verified` section (each item
    you were given, as given, then your own, one per line as
    `<task or n/a> → <check> → <why>`, or `none`), a link to feat-state.md (numbered path),
