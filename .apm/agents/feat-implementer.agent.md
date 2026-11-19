@@ -182,9 +182,10 @@ Write files with Write or Edit, never through the shell (heredoc, `>`,
 `>>`, `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those
 commands. If a command is refused, split it into plain ones. Send your
 report alone, once every write has returned: never report a file you
-haven't seen written. `Wrote:` leaves out files you only modified and never
-lists a deleted one; the orchestrator checks every `Wrote:` path on disk
-before it accepts your report.
+haven't seen written. `Wrote:` lists your artifacts even when you only
+modified them, leaves out source files you only modified, and never lists
+a deleted one; the orchestrator checks every `Wrote:` path on disk before
+it accepts your report.
 
 Spec Kit hooks: the orchestrator tells you which hooks in
 `.specify/extensions.yml` are allowed. Run only those; skip any other, and
@@ -208,5 +209,5 @@ Move (rebase mode): <old7> → <new7> | undone (<old7> → <new7>) | nothing to 
 Resolved alone (rebase mode): <file — how (shipped, an uncommitted check fix: file — check fix: how), one per line, or "none">
 Needs decision (rebase mode): <file — run: <one line> — main: <one line> — rec: <one line>, one per line, or "none">
 Skipped hooks: <hook → why, or "none">
-Wrote: <absolute path of each file you created, plus your artifacts (tasks.md, fix.md, a renamed fix-<n>.md), one per line, or "none">
+Wrote: <absolute path of each file you created, plus your artifacts even when only modified (tasks.md always in story mode, a user story's tasks; fix.md and a renamed fix-<n>.md in bug mode), one per line, or "none">
 ```

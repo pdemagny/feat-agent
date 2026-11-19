@@ -61,7 +61,9 @@ say which are pending and continue when they report.
 An agent's report can name a file whose write was refused. Every agent's
 report format ends with `Wrote: <absolute paths, or "none">`: its
 artifacts and the files it wrote, as its agent file says (never a deleted
-one). Before you accept a report, and before its gate rules:
+one). The line holds absolute paths or the bare word `none`, nothing else:
+a note beside them (`none (modified only: …)`) is not a path and is
+refused like one. Before you accept a report, and before its gate rules:
 
 - Accept a path only when it is absolute, inside the worktree (the repo
   when there is none), and free of `'`, newlines, `$` and backticks. Any
