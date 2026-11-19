@@ -707,18 +707,127 @@ judged against it (`--compare-since` the day it merged). The figures are the
 medians of the `all repos` block of a `measure.py --all` run over the
 maintainer's own runs: read them as one person's workload, not a benchmark.
 
-- **Date**: _to be filled by the maintainer: the day of the `--all` run_
+- **Date**: 2026-11-19, on transcripts written by Claude Code 2.1.308 to
+  2.1.328.
 - **Weights** (the defaults):
 
   ```text
   weights: input 1, cache read 0.1, output 5, cache write 1h 2, cache write 5m 1.25; haiku 1, sonnet 3, opus 5
   ```
 
-- **Runs**: _to be filled by the maintainer: the `runs:` line's counts_
+  One model had no weight and took the highest:
+  `unweighted models: claude-fable-5-2 (weighted as 5)`.
+- **Runs**: 104 counted (97 finished, 7 unfinished, 0 resumed), 0 left out.
+  The medians are over the finished ones: 78 of `/feat`, 19 of `/fix`.
 
-> **Figures: to be filled by the maintainer** from the `all repos` block of
-> a real `--all` run (per skill: coordinator, agents, wall clock, first
-> request, tokens and cost units). Nothing here is estimated.
+### Coordinator
+
+| Per run (median)             | `/feat` | `/fix` |
+| ---------------------------- | ------: | -----: |
+| model calls                  |      62 |     45 |
+| … that spawn an agent        |      14 |      8 |
+| … chores only                |      21 |     21 |
+| … text only                  |      26 |     13 |
+| context, first call          |   51.8k |  58.2k |
+| context, median of its calls |  112.9k |  86.5k |
+| context, max of its calls    |  167.3k | 118.5k |
+| share of the run's cost      |     15% |    30% |
+
+Failed tool calls are totals, not medians. `/feat`, over 78 runs: Bash 167,
+Edit 18, Agent 11, ExitWorktree 3, EnterWorktree 1. `/fix`, over 19 runs:
+Bash 33, Agent 12, EnterWorktree 1, ExitWorktree 1.
+
+### Agents
+
+Each row is a median over the runs where the type appears (`runs`), so the
+cost shares need not add to 100%. `feat-sec-reviewer` and
+`feat-cost-reviewer` are the design reviewers of earlier versions, since
+merged into `feat-design-reviewer`.
+
+`/feat`:
+
+| Type                 | runs | spawns/run | calls/spawn | ctx first | cost share | model min | tool min |
+| -------------------- | ---: | ---------: | ----------: | --------: | ---------: | --------: | -------: |
+| feat-implementer     |   78 |          6 |        40.8 |     38.6k |        47% |       4.2 |      2.7 |
+| feat-planner         |   78 |          2 |        30.2 |     36.2k |        18% |       6.9 |      0.4 |
+| feat-code-reviewer   |   78 |          5 |          11 |     34.9k |         8% |       1.6 |      0.2 |
+| feat-design-reviewer |   50 |          3 |        12.8 |     33.5k |         4% |       1.9 |      0.1 |
+| feat-sec-reviewer    |   28 |          1 |           5 |     36.6k |         2% |       0.7 |      0.2 |
+| feat-tasker          |   78 |          1 |           8 |     41.2k |         2% |       1.7 |      0.1 |
+| feat-cost-reviewer   |   28 |          1 |           3 |     29.1k |         1% |       0.3 |      0.0 |
+| feat-specifier       |   78 |          1 |           5 |     39.2k |         1% |       0.9 |      0.1 |
+| feat-shipper         |   78 |          1 |          25 |     34.3k |         1% |       1.7 |      0.7 |
+| Explore              |    2 |          1 |         9.5 |     16.1k |         1% |       0.8 |      0.4 |
+| general-purpose      |    1 |          1 |           6 |     36.5k |         0% |       0.2 |      0.2 |
+
+`/fix`:
+
+| Type               | runs | spawns/run | calls/spawn | ctx first | cost share | model min | tool min |
+| ------------------ | ---: | ---------: | ----------: | --------: | ---------: | --------: | -------: |
+| feat-implementer   |   19 |          2 |          27 |     40.1k |        35% |       3.5 |      1.1 |
+| feat-bug-assessor  |   19 |          3 |        16.3 |     35.8k |        18% |       1.4 |      0.5 |
+| feat-code-reviewer |   19 |          1 |          14 |     35.7k |        11% |       2.2 |      0.1 |
+| feat-shipper       |   19 |          1 |          14 |     35.7k |         2% |       0.7 |      0.9 |
+| general-purpose    |    1 |          1 |           8 |     35.8k |         1% |       0.5 |      0.2 |
+| claude-code-guide  |    1 |          1 |           4 |     28.1k |         0% |       0.4 |      0.4 |
+
+### Wall clock
+
+| Per run (median)     | `/feat` min | share | `/fix` min | share |
+| -------------------- | ----------: | ----: | ---------: | ----: |
+| agents working       |        81.1 |   49% |       21.4 |   35% |
+| waiting for the user |        55.7 |   44% |       40.0 |   58% |
+| coordinator thinking |         7.4 |    5% |        4.3 |    7% |
+| coordinator tools    |         0.5 |    0% |        0.7 |    1% |
+| run duration         |       156.6 |       |       73.7 |       |
+| user answers         |           4 |       |          4 |       |
+
+### First request
+
+What the first request of each type's first spawn in a run is made of, in
+characters (medians).
+
+`/feat`:
+
+| Type                 |   tools | skills listing | system prompt | instructions |   total |
+| -------------------- | ------: | -------------: | ------------: | -----------: | ------: |
+| feat-implementer     |   53482 |        25093.5 |          3876 |         5574 |   88225 |
+| feat-planner         | 53563.5 |        25093.5 |          4056 |         5574 |   88405 |
+| feat-code-reviewer   |   51821 |        25093.5 |          9584 |         5574 |   92272 |
+| feat-design-reviewer |   51984 |          25649 |          7169 |         6059 |   91051 |
+| feat-sec-reviewer    |   51821 |          24925 |          2470 |         4559 | 83309.5 |
+| feat-tasker          | 53563.5 |        25093.5 |          3146 |         5574 |   87495 |
+| feat-cost-reviewer   |   48280 |          24925 |          2111 |         4559 |   79430 |
+| feat-specifier       | 53563.5 |        25093.5 |          3249 |         5574 |   87598 |
+| feat-shipper         |   53482 |        25087.5 |          4637 |         5574 |   88725 |
+| Explore              | 13783.5 |          23840 |        3299.5 |            0 |   40923 |
+| general-purpose      |   58828 |          29794 |          3158 |         6214 |   97994 |
+
+`/fix`:
+
+| Type               | tools | skills listing | system prompt | instructions | total |
+| ------------------ | ----: | -------------: | ------------: | -----------: | ----: |
+| feat-implementer   | 53899 |          25658 |          6178 |         6533 | 92428 |
+| feat-bug-assessor  | 52906 |          25658 |          9789 |         6533 | 95046 |
+| feat-code-reviewer | 52238 |          25658 |         10011 |         6533 | 94600 |
+| feat-shipper       | 53899 |          25658 |          7554 |         6533 | 93804 |
+| general-purpose    | 58651 |          25658 |          3158 |         6693 | 94160 |
+| claude-code-guide  |  7941 |              0 |         59913 |         6533 | 74387 |
+
+The tool schemas of a `/feat` implementer's first request, by name: Artifact
+37883.5, EnterWorktree 4042, Bash 3541, Read 1948, Skill 1832, ToolSearch
+1469, Edit 993, SubagentHandback 892, Write 668, DeferredToolPlaceholder
+204, advisor 91. The other `feat-*` types carry the same two largest ones.
+
+### Tokens
+
+| Per run (median) |    `/feat` |     `/fix` |
+| ---------------- | ---------: | ---------: |
+| input            |       1067 |        391 |
+| cache write      |       2.2M |     599.0k |
+| cache read       |      50.6M |      13.5M |
+| output           |     450.8k |     129.7k |
+| cost units       | 44,600,754 | 12,268,203 |
 
 Before sharing such output: it holds repo paths, the home directory and
 session ids. Post only the `all repos` block's figures, without the
