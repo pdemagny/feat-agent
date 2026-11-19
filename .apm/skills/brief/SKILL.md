@@ -163,9 +163,7 @@ Every brief, every size: spawn `feat-brief-reviewer` (or
 `logistics:feat-brief-reviewer` as a plugin) with the Agent tool, giving
 it the brief's absolute path, the project root and, from a map, the map's
 path. Nothing about the interview: it reads the brief as the specifier
-will. Pass `model` and `effort` for the size you proposed (this mirrors row
-1 of `/feat`'s size table): small and medium `sonnet` · `medium`, large
-`opus` · `medium`. If the agent isn't installed, say so at the gate and
+will. Pass `model` and `effort` for the size you proposed (this mirrors row 1 of `/feat`'s size table): <!-- sizes-start brief-review -->small and medium `sonnet` · `medium`, large `opus` · `medium`<!-- sizes-end brief-review -->. If the agent isn't installed, say so at the gate and
 skip the review; don't review inline: the context that wrote the brief
 can't read it fresh.
 
