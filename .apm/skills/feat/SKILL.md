@@ -128,7 +128,7 @@ moving onto a new main use the phase 6 row.
 | 0 | Setup         | you                                     | hard only if a Spec Kit hook would branch or commit                                                                                    |
 | 2 | Specify       | `feat-specifier`                        | **hard** only on an open marker or blocker; else soft                                                                                  |
 | 3 | Plan          | `feat-planner`                          | none for small and medium (merged with 4); **hard** for large                                                                          |
-| 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3 | small/medium: one gate for 3+4, hard on a finding, a user-call assumption, a blocker, size increase or checklist item; large: **hard** |
+| 4 | Design review | `feat-design-reviewer` ×1 (small) or ×3 | small/medium: one gate for 3+4, **hard** on a `user` finding, a user-call assumption, a constitution violation, a blocker, a size increase, a paraphrase that contradicts the brief or a carried checklist item, else soft (the `apply` findings are applied); large: **hard**, findings shown with their recommendations |
 | 5 | Tasks         | `feat-tasker`                           | **hard** on CRITICAL/HIGH findings, analyze not run, a size increase or an unanswered checklist item, and always for large; else soft  |
 | 6 | Implement     | `feat-implementer`, one per user story  | soft unless checks fail; **hard after each story** for large                                                                           |
 | 7 | Code review   | `feat-code-reviewer` ×2 (small) or ×5   | small/medium: **hard** on a `user` or `S` finding or a `not met` criterion, else soft (the `apply` findings are fixed); large: **hard**, findings shown with their recommendations |
@@ -280,34 +280,82 @@ spawned after it reports, with no second stop for the amend.
 
 Spawn `feat-design-reviewer` per the size table's groups, each with its
 lenses. Give it the paths only, never the planner's report: lens 4c is a
-fresh reader on purpose. Merge the findings into `D1…`, drop duplicates,
-give each a recommendation.
+fresh reader on purpose. Merge the findings into `D1…`; each keeps the
+`rec` that ends its line. Never set `apply` or `skip` yourself. Apply merge
+rules 2, 3 and 5 of the harness (Review findings), where the same spot is
+the same artifact and an identical section heading or line, and the same
+section is the same tag (`[sec]`, `[cost]`, `[design]`); rules 1 and 4 don't
+apply. Findings with different tags on the same spot stay separate, each
+with its own `rec`. A missing or invalid `rec` becomes
+`user (no valid recommendation)`. Work from the reviewer's report; never
+read the spec or plan to decide a gate.
 
 Every gate of this phase starts with the 4c paraphrase, as reported: the user checks it against what they meant. If it
 contradicts the brief, the gate is hard.
 
-**Large**: hard gate, the user accepts or rejects each finding. **Small and
-medium**: one gate for phases 3 and 4, headed "Plan and design review":
-after a soft phase 2 the spec summary first (the `**The spec …**` block
-read from the Log: stories, requirements, numbered spec assumptions each
-with its recommendation, then the checklist question), then
-the paraphrase, approach, what it touches, assumptions, any size increase
-(asked first), the findings with their recommendations. It is hard if there
-is a finding above nice-to-have, an assumption with `needs user: yes`, a
-constitution violation, a blocker, a size increase or an unchecked checklist
-item carried from a soft phase 2 (ask now; phase 5 would otherwise stop on
-it); otherwise soft, and the recommendations are applied. "ok" accepts all
-recommendations. After a soft phase 2, a soft gate's report still carries
-the spec summary, and the spec assumptions are logged as kept at their
-recommendations.
+**Soft** (small and medium): print the 4c paraphrase (after the spec block
+when phase 2 was soft), then one line:
+`Phase 4 Design review — soft: <n> findings, <a> applied, <s> skipped[; security: <[sec] ids with rec apply>][; security skipped: <[sec] ids with rec skip>]; none needs your call. Next: phase 5 Tasks`.
+Leave out `; security: …` and `; security skipped: …` when empty; never name
+severity; zero findings prints `0 findings, 0 applied, 0 skipped`. The
+`apply` findings go to `feat-planner` continued with `SendMessage`; the
+`skip` ones are left. With no `apply` finding send nothing to the planner
+and go straight to phase 5.
 
-Accepted findings and the spec changes asked at this gate (an overturned
+**Gate**, first match wins:
+
+| Size         | Condition                                                                                                                                                                                                                                      | Gate     |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| large        | always                                                                                                                                                                                                                                         | **hard** |
+| small/medium | a `D` finding with `rec: user`, an assumption with `needs user: yes`, a constitution violation, a blocker, a size increase, a paraphrase that contradicts the brief, an unchecked checklist item carried from a soft phase 2, or a failed report check (harness, Reported files) | **hard** |
+| small/medium | otherwise                                                                                                                                                                                                                                      | **soft** |
+
+On small and medium, one gate covers phases 3 and 4, headed "Plan and
+design review". It shows, in order: after a soft phase 2 the spec summary
+(the `**The spec …**` block read from the Log: stories, requirements,
+numbered spec assumptions each with its recommendation, then the checklist
+question), then the paraphrase, approach, what it touches, assumptions, any
+size increase (asked first), then the findings (the soft line when soft,
+the hard list below when hard). An unchecked checklist item carried from a
+soft phase 2 is asked now; phase 5 would otherwise stop on it. After a soft
+phase 2, a soft gate's report still carries the spec summary, and the spec
+assumptions are logged as kept at their recommendations, with the checklist
+answer, as today.
+
+**Hard**: print the gate in the harness shape, titled `Phase 3–4: Plan and
+design review — needs your call` on small and medium (`Phase 4: Design review
+— needs your call` on large). What you should know says why it stops (`large`,
+`<ids> need you`, `assumption <n> needs you`,
+`constitution: <principle>`, `blocker`, `size increase`, `paraphrase
+contradicts the brief`, `checklist item`, `report check failed`). Your
+call lists each `user` finding first as "apply or leave?" with the
+reviewer's why, then every other finding with its `rec` (on large too, even
+when none is `user`). "ok" applies every
+`apply` finding and leaves every `skip`; each `user` finding needs its own
+answer, and a bare "ok" while one is unanswered gets one follow-up naming
+the ids; nothing goes to the planner until each is answered (harness,
+Review findings, with "fix" read as "apply"; its `S` notice does not apply
+here). The picked findings and any spec change asked go to a fresh
+`feat-planner`.
+
+Accepted findings (the `apply` findings on a soft gate, the picked ones on a
+hard gate) and the spec changes asked at this gate (an overturned
 assumption, a reworded requirement) go to `feat-planner` in one amend pass
 (continued after a soft gate, spawned fresh after a hard one), written into
 spec.md and plan.md, quoting each change (the user's answer, or the new
 wording). A change that rewrites stories is "back to 2". On large, when the
 planner amended the plan after the phase 3 gate, say so under "What you
 should know" (one line: what the amend changed).
+
+**Log**: the harness's Review findings Log words, with this phase's line.
+Soft: `- [x] 4 Design review — auto-applied <ids | none>; skipped <id> (reviewer: "<why>"), …`.
+Hard: `- [x] 4 Design review — picked <ids> | none picked; rejected <id> (user: "<words>"), <id> (as recommended), …`
+(`as recommended` only for a `skip` left by "ok"). Then one indented line
+per finding: `    - <id> <artifact>: <section> — <a few words> — rec: <value>`
+(a `[sec]` finding gives its title only). The accepted design findings are
+the `auto-applied` and `picked` ids: phase 7 gives the accepted `[sec]` ones
+to lens 7b. `skipped` and rejected `D` findings reach later reviewers as
+rejected findings.
 
 ## 5. Tasks
 
