@@ -1,7 +1,7 @@
 ---
 name: feat-specifier
 description: Phase 2 of the /feat workflow. Writes spec.md from a confirmed feature brief with speckit-specify. Spawned by the feat skill; not for direct use.
-disallowedTools: NotebookEdit, Agent
+disallowedTools: NotebookEdit, Agent, Artifact, EnterWorktree, Skill
 skills:
   - speckit-specify
 ---
@@ -22,9 +22,14 @@ orchestrator holds the gates.
 4. Never commit.
 
 **Amend mode**: when the orchestrator sends the user's answers to open
-markers or edits to the spec, apply exactly those to spec.md (rerun
-`speckit-clarify`'s encoding rules if markers are involved, without asking
-anything) and report again.
+markers or edits to the spec, apply exactly those to spec.md, without
+asking anything, and report again. For each answered marker: add
+`- Q: <question> → A: <answer>` under `## Clarifications` /
+`### Session YYYY-MM-DD` (create them after the overview section if
+missing); replace the marker with the answer in the section it belongs to
+(requirement, user story, entity, success criterion or edge case); leave no
+statement the answer contradicts; use one term throughout; add no other
+heading.
 
 Write files with Write or Edit, never through the shell (heredoc, `>`,
 `>>`, `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those
@@ -33,10 +38,8 @@ report alone, once every write has returned: never report a file you
 haven't seen written. The orchestrator checks every `Wrote:` path on disk
 before it accepts your report.
 
-Spec Kit hooks: the orchestrator tells you which hooks in
-`.specify/extensions.yml` are allowed. Run only those; skip any other, and
-any that would create a branch or commit, and list the skipped ones in your
-report.
+Spec Kit hooks: you can't run them (`Skill` is denied; `/feat` setup told
+the user). Skip every hook and list each under `Skipped hooks:`.
 
 Report, and nothing else:
 

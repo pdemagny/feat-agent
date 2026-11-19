@@ -15,7 +15,7 @@ go = "1.27.1"                   # Hugo fetches its theme as a Go module
 d2 = "0.9.0"                    # renders the diagrams in docs/img (`mise run diagrams`)
 
 [tasks.lint]
-description = "shellcheck the shell scripts and their tests, actionlint the workflows, compile the Python test stub and measure.py (checked against Python 3.11), validate the Claude Code plugin"
+description = "shellcheck the shell scripts and their tests, actionlint the workflows, compile the Python test stub and measure.py (checked against Python 3.11), validate the Claude Code plugin, check every agent denies Artifact and EnterWorktree"
 run = [
   "shellcheck install.sh",
   "shellcheck .apm/skills/feat/scripts/*.sh",
@@ -29,6 +29,7 @@ run = [
   "claude plugin validate .",
   "! grep -Eiq 'specifier|planner|tasker|spec\\.md|brief|phase [0-9]|/feat' .apm/skills/feat/references/harness.md .apm/skills/feat/references/rebase.md",
   "test \"$(wc -l < .apm/skills/tiny/SKILL.md)\" -le 200 || { echo '/tiny is over 200 lines: keep it tiny'; exit 1; }",
+  '''bad=; for f in .apm/agents/*.agent.md; do l=$(grep -m1 "^disallowedTools:" "$f" | tr "," " "); for t in Artifact EnterWorktree; do case " $l " in *" $t "*) ;; *) echo "$f: disallowedTools lacks $t"; bad=1;; esac; done; done; test -z "$bad"''',
 ]
 
 [tasks.check]
