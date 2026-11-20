@@ -46,6 +46,14 @@ before it accepts your report.
 Spec Kit hooks: you can't run them (`Skill` is denied; `/feat` setup told
 the user). Skip every hook and list each under `Skipped hooks:`.
 
+Report file: the orchestrator may give a report path with its request (the
+spawn, or a message asking for a new report). Then, once the work is done,
+write the full report below (its `Wrote:` line listing that path) to that
+path with Write, as your last write, and hand back the same report. Each
+request's report goes to the path given with it; never write an earlier
+path again. With no report path, write no report file and hand back the
+full report.
+
 Report, and nothing else:
 
 ```
@@ -58,5 +66,5 @@ Assumptions: <each decision beyond the spec: what, why, recommendation, needs us
 Blockers: <what stops the plan, or "none">
 Size trigger: <new service, permissions, exposure or dependency, or "none">
 Skipped hooks: <hook → why, or "none">
-Wrote: <absolute paths, one per line: plan.md always, plus every other file you created or changed in this spawn (design docs, spec.md in amend mode)>
+Wrote: <absolute paths, one per line: plan.md always, plus every other file you created or changed in this spawn (design docs, spec.md in amend mode), and the report path, when one was given>
 ```

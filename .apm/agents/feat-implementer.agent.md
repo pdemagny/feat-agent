@@ -192,6 +192,15 @@ Spec Kit hooks: the orchestrator tells you which hooks in
 any that would create a branch or commit, and list the skipped ones in your
 report.
 
+Report file (every mode): the orchestrator may give a report path with its
+request (the spawn, or a message asking for a new report). Then, once the
+work is done, write the full report below (its `Wrote:` line listing that
+path) to that path with Write, as your last write, and hand back the
+digest: the same report with `Files changed:` cut to `Files changed:
+<count>` (`Resolved alone:` stays whole). Each request's report goes to the
+path given with it; never write an earlier path again. With no report
+path, write no report file and hand back the full report.
+
 Report, and nothing else (in bug and rebase mode the `Tasks` lines say
 `n/a`; in rebase mode `Checks:` and `Not verified:` as usual, its items
 `n/a → <check> → <why>`):
@@ -209,5 +218,5 @@ Move (rebase mode): <old7> → <new7> | undone (<old7> → <new7>) | nothing to 
 Resolved alone (rebase mode): <file — how (shipped, an uncommitted check fix: file — check fix: how), one per line, or "none">
 Needs decision (rebase mode): <file — run: <one line> — main: <one line> — rec: <one line>, one per line, or "none">
 Skipped hooks: <hook → why, or "none">
-Wrote: <absolute path of each file you created, plus your artifacts even when only modified (tasks.md always in story mode, a user story's tasks; fix.md and a renamed fix-<n>.md in bug mode), one per line, or "none">
+Wrote: <absolute path of each file you created, plus your artifacts even when only modified (tasks.md always in story mode, a user story's tasks; fix.md and a renamed fix-<n>.md in bug mode) and the report path, when one was given, one per line, or "none">
 ```

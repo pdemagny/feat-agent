@@ -1,0 +1,16 @@
+**Applied without asking (reviewer's recommendation)**
+- none
+**Picked by the user**
+- B1 sizes.py:30-31,66,73,78 — trailing \n bypasses NAME_RE/ID_RE (re.match + $) → fullmatch + test
+- S1 docs/diagrams/sizes.py — D1 validation only partly built (trailing-newline bypass)
+- B2 sizes.py:105-108 — non-list group entry crashes, exit 1 reads as drift
+- C1 sizes.py:314-339 — hand-rolled arg parsing → argparse (~-15 lines) (user: "apply, argparse is pretty standard and clear to humans and machine alike, and there are already other changes to apply, so if it cuts, let's go")
+- R1 sizes.py brief_sentence — nested conditional lambda → def join_sizes
+- R2 sizes.py agents_table — next(iter(distinct)) one-liner → explicit branches
+- R5 sizes.py:1-12 — rewrap docstring and lines over 110 chars
+- R6 sizes.py agents_table/d2 — single-letter names → agent_col, small_col
+**Not applied**
+- S2 docs/diagrams/sizes.py — label holding a sizes marker passes validation — rejected (as recommended)
+- C2 sizes.py d2() — style template .format indirection — rejected (as recommended)
+- R3 sizes.py — assigned lambdas (E731) — rejected (as recommended)
+- R4 sizes.py render() — implicit fallback return — rejected (as recommended)

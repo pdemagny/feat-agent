@@ -71,8 +71,10 @@ Two other shapes were considered:
 - **Subagents may spawn subagents** (up to three levels). Writing agents
   disallow `Agent` to keep cost bounded; no feat agent spawns further
   agents.
-- **Read-only reviewers** get no Edit/Write; their Bash is for git and grep
-  only, by instruction.
+- **Read-only reviewers** get no Edit; their Write is for their report
+  file only, by instruction, checked by `state.sh snapshot`/`unchanged`
+  around each batch (a change elsewhere is a hard gate); their Bash is for
+  git and grep only, by instruction.
 - **`effort` in an inline skill's frontmatter** has no documented duration,
   so effort is set only on subagents.
 

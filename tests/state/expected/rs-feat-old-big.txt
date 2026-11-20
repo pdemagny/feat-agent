@@ -1,0 +1,7 @@
+**Applied without asking (reviewer's recommendation)**
+- none
+**Picked by the user**
+- B1 lib/a.sh:10 — off by one
+- P2 lib/b.sh:3 — loop forks per line
+**Not applied**
+- none

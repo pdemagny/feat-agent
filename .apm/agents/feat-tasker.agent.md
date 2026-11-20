@@ -46,6 +46,14 @@ before it accepts your report.
 Spec Kit hooks: you can't run them (`Skill` is denied; `/feat` setup told
 the user). Skip every hook and list each under `Skipped hooks:`.
 
+Report file: the orchestrator may give a report path with its request (the
+spawn, or a message asking for a new report). Then, once the work is done,
+write the full report below (its `Wrote:` line listing that path) to that
+path with Write, as your last write, and hand back the digest: the same
+report without its `Fixed:` line. Each request's report goes to the path
+given with it; never write an earlier path again. With no report path,
+write no report file and hand back the full report.
+
 Report, and nothing else:
 
 ```
@@ -57,5 +65,5 @@ Fixed: <MEDIUM/LOW findings you fixed, one line each>
 Open findings: <severity — finding → proposed fix (artifact)>
 Unchecked checklist items: <file: item, or "none">
 Skipped hooks: <hook → why, or "none">
-Wrote: <absolute paths, one per line: tasks.md always, plus every other file you created or changed in this spawn (artifacts you fixed)>
+Wrote: <absolute paths, one per line: tasks.md always, plus every other file you created or changed in this spawn (artifacts you fixed), and the report path, when one was given>
 ```

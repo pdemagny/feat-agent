@@ -33,7 +33,7 @@ Where things are:
 
 ```
 .apm/skills/feat/             the orchestrator: phases, gates, size table; sizes.json (the source of models, efforts, loads)
-.apm/skills/feat/scripts/     tracker.sh (board moves), spec-number.sh (numbers the spec dir), measure.py (run cost)
+.apm/skills/feat/scripts/     tracker.sh (board moves), spec-number.sh (numbers the spec dir), story.sh (a story's tasks), state.sh (writes and queries the state file, report paths), secret-scan.sh, measure.py (run cost)
 .apm/skills/feat/references/  harness.md: the rules /feat and /fix share (gates, state file, board, resume)
 .apm/skills/fix/              the bugfix orchestrator: assess, fix, test, review, ship; its own size table
 .apm/skills/brief/            phase 1: interview, size, brief or capability map
@@ -42,7 +42,7 @@ Where things are:
 apm.yml                       APM package: metadata and the third-party skill dependencies
 .claude-plugin/               Claude Code plugin and marketplace manifests
 install.sh                    developer install (symlinks), deps, check, uninstall
-tests/                        offline tests for the two scripts (stub gh, fake GraphQL endpoint)
+tests/                        offline tests for the scripts (stub gh, fake GraphQL endpoint, scratch repos)
 specs/, .specify/bugs/        records of the /feat and /fix runs that built this repo
 mise.toml                     pinned tools and tasks (lint, check, test:*, docs, diagrams, dev:*)
 docs/                         the user documentation, published with README.md as the website
@@ -70,7 +70,8 @@ work in this repo. The ones that bite most:
 
 - `mise run lint`, `mise run test:apm`, `mise run test:tracker`,
   `mise run test:spec-number`, `mise run test:story`,
-  `mise run test:sizes` and `mise run test:measure` pass. The `check`
+  `mise run test:state`, `mise run test:sizes` and `mise run
+  test:measure` pass. The `check`
   workflow runs the same on every pull request.
 - For a change to a skill or agent prompt, run it on a scratch project and
   say in the PR what you ran and what happened. There is no automated test

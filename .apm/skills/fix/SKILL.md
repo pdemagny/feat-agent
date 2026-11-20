@@ -34,7 +34,8 @@ missing, stop: "/fix needs logistics' `feat` skill
   step 7.
 - *The state file is created*: when setup step 7 creates it.
 - *Title* and *input section*: `# /fix state: <bug title>`; `## Report`,
-  the argument as given.
+  the argument as given, on one line (a multi-line symptom's lines joined
+  with spaces).
 - *Size line*: `not set | small | medium | large`.
 - *Agents line*: `none (every spawn is fresh)`.
 - *Current phase values*: `<N> <name>` (0–5), `done (shipping)`,
@@ -43,19 +44,21 @@ missing, stop: "/fix needs logistics' `feat` skill
 - *Issue ref*: the `Issue:` line of the state file (`none`: no issue, so
   no board moves and no `Fixes` line). It is the report's issue, or the one
   created after the assess gate (phase 1, "Issue creation").
-- *Done marker*: `Current phase:` starts with `done`, except a `done
-  (shipping)` run whose branch has no upstream yet (an interrupted ship:
-  `git for-each-ref --format='%(upstream)' refs/heads/fix-<slug>` prints an
-  empty line).
-- *Artifacts the orchestrator reads*: the state file; assessment.md, fix.md
-  or test.md only to quote a line the user must decide on.
+- *State script*: `<this skill's base dir>/../feat/scripts/state.sh`
+  (harness, State file).
+- *Resume queries*: `S cycle '<state file>' && S retry-used '<state
+  file>'` when the run is in phase 3 (Cycle and retry); else none.
+- *Report keys* (harness, Report files): `1-assess`, `2-fix`, `3-test`,
+  `4-<lenses>` (`4-7a+7b+7d`, …), `4-fixes`, `5-ship`; a move: `move`;
+  `rebase`: `move`, `ship`.
+- *Artifacts the orchestrator reads*: the state file once on resume
+  (harness, Resume); assessment.md, fix.md or test.md only to quote a line
+  the user must decide on.
 - *Commands besides the tracker*: git for the worktree and the diff;
   `gh issue view <ref> --json number,title,url`;
   `gh api repos/<o>/<r>/issues/<N> --jq .author_association`;
   `gh repo view --json nameWithOwner,visibility`;
-  `gh pr list --head <branch> --state all --json state --jq '.[].state'`;
-  `git ls-remote --heads origin fix-<slug>`; `git for-each-ref
-  --format='%(upstream)' refs/heads/fix-<slug>`; `ls -d -- '<path>' …` on a
+  `git ls-remote --heads origin fix-<slug>`; `ls -d -- '<path>' …` on a
   report's accepted `Wrote:` paths (harness, Reported files).
 - *Artifact owners*: assessor: assessment.md (re-assess, "back to 1");
   implementer: code and fix.md.
@@ -80,10 +83,6 @@ missing, stop: "/fix needs logistics' `feat` skill
   - on resume: in 1–3, once that gate has passed;
   - after "back to N": N in 1–3, from 4 or 5.
 - *Review move*: when phase 4 starts; on resume in 4–5.
-- *Resume search*: `.specify/bugs/*/feat-state.md` in this checkout and
-  every path of `git worktree list --porcelain`, without the done marker;
-  one → resume (EnterWorktree with `path` when it is another worktree),
-  several → ask.
 - *Base-check boundaries*:
   - the start of every phase from 2 on;
   - phase 3 after review fixes;
@@ -96,9 +95,6 @@ missing, stop: "/fix needs logistics' `feat` skill
 - *Number check*: none.
 - *Secret-scan script*: `<this skill's base
   dir>/../feat/scripts/secret-scan.sh`.
-- *Rebase search*: `.specify/bugs/<slug>/feat-state.md` (glob
-  `.specify/bugs/*/feat-state.md`) whose `Current phase:` starts with
-  `done` (committed `done (shipping)`).
 
 ## Size table
 
@@ -150,6 +146,19 @@ needs your call.
 Gate message shape and hard/soft semantics are the harness's. Every
 report's `Wrote:` line is checked first (harness, Reported files): a failed
 check makes that phase's gate hard, before any row below.
+
+**State file calls** (harness, State file; `S` is `bash '<state
+script>'`, every argument single-quoted). Each phase from 2 to 5 (5: the
+command under 5. Ship) starts with one Bash command: the `log` lines of the gate just passed, `S set
+'<state file>' 'Current phase' '<N> <name>'`, then `S refused-base
+'<state file>'` for the base check, and in phase 3 `S cycle '<state
+file>' && S retry-used '<state file>'`, then `S report-path '<state
+file>' '<key>'` for each of the phase's spawns (the *Report keys*), and in
+phase 4 `S snapshot '<state file>'` last (harness, Report files), joined
+with `&&`. A "back to N" is the same command, its `- [x] back to N —
+<reason>` line first. Every other spawn gets its report path the same way,
+chained onto the `log` or `set` made before it. No open `- [ ] <N>
+<phase>` line is written.
 
 ## Gate commands
 
@@ -249,18 +258,23 @@ Code plugin.
    - If setup found `.logistics.yml` and the worktree has none, log `- [!]
      tracker: .logistics.yml is not in the worktree; commit and push it
      (board moves skipped)` and flag it at the first gate.
-   - Create the state file in the harness template with this skill's
-     values (`Size: not set`, `Agents: none (every spawn is fresh)`, `Map:
-     none`, `Issue:` the issue ref or `none`, `## Report` the argument as
-     given), and the Log line `- [x] 0 Setup — <board check>; slug <slug>;
-     bug extension <version from .specify/extensions/bug/extension.yml>;
-     report author <association>`, plus any `[!]` lines kept so far.
+   - Create the state file in one Bash command: `S init fix '<state
+     file>' '<title>' '<the argument, its lines joined with spaces>'
+     'Branch=fix-<slug>' 'Worktree=<path>' 'Size=not set' 'Agents=none
+     (every spawn is fresh)' 'Current phase=1 Assess' 'Conventions=<…>'
+     'Allowed Spec Kit hooks=<…>' 'Map=none' 'Issue=<the issue ref or
+     none>' && S log '<state file>' '- [x] 0 Setup — <board check>; slug
+     <slug>; bug extension <version from
+     .specify/extensions/bug/extension.yml>; report author
+     <association>'`, plus any `[!]` lines kept so far as more `log`
+     arguments, then `&& S report-path '<state file>' '1-assess'` for
+     phase 1's spawn.
 
 ## Resume
 
 `/fix resume` follows the harness's Resume with these values:
-- **Search**: per the *resume search* (several → list slug, phase and
-  worktree, and ask); none → say there is no unfinished `/fix` run and
+- **Search**: `S find fix` (harness, Resume; several → list slug, phase
+  and worktree, and ask); none → say there is no unfinished `/fix` run and
   stop. A shipped run is skipped (its committed state says `done
   (shipping)` and its branch has an upstream); one whose ship stopped
   before committing has `5 Ship` back in the local copy, and one waiting
@@ -273,7 +287,8 @@ Code plugin.
 - **Continue** at the recorded phase; finished phases (their Log lines)
   are not redone. The phase itself restarts with a fresh spawn, as every
   spawn is: its gate is then shown from the new report. The test cycle
-  and retry come from the Log (phase 3). If the assess gate passed with
+  and retry come from the resume call's `cycle` and `retry-used` (phase
+  3). If the assess gate passed with
   `Issue: none`, board tracking, and no Log line for issue creation
   (`created`, `no issue` or a `[!]` from `create-issue`), don't run
   `create-issue` again on your own: the earlier run may have created the
@@ -282,7 +297,8 @@ Code plugin.
 - Recap the run in one paragraph before that phase's spawn; the current
   gate then follows from its report.
 
-Every spawn below gets, besides what the harness lists: the bug dir, the
+Every spawn below gets, besides what the harness lists: its report path
+(harness, Report files), the bug dir, the
 slug, the size (or "not set yet"), the mode, and the allowed hooks
 (`before_bug_*`/`after_bug_*` and the others setup allowed).
 
@@ -294,8 +310,8 @@ approved so far, and on a re-assess the user's added evidence. Its report
 is the assess-mode format of the agent file.
 
 **Reported files first** (harness, Reported files): the `Assessment:` path
-must be on `Wrote:`, and `Assessment: none` comes with `Wrote: none`; a
-failed check is hard, recommend "back to 1".
+must be on `Wrote:`, and `Assessment: none` lists no path on `Wrote:` but
+its report path; a failed check is hard, recommend "back to 1".
 
 **Stop first** (checked before any other gate row): `Assessment: none`,
 `Verdict: invalid`, or `Is a bug: no — …` whatever the verdict (the
@@ -308,10 +324,10 @@ agree). The run ends at this gate:
   "<symptom>"` (plugin form `/logistics:brief`).
 - No issue is created, moved or edited (no board move: the building move
   never happens), and no later phase starts.
-- Write `Current phase: done (invalid)` for `Verdict: invalid` or
-  `Assessment: none`, else `done (not a bug)`, with the Log line `- [x] 1
-  Assess — stopped: <Is a bug value or the extension's reason>` (e.g.
-  `stopped: no — missing feature; pointed to /brief #12`).
+- `S set '<state file>' 'Current phase' 'done (invalid)'` for `Verdict:
+  invalid` or `Assessment: none`, else `'done (not a bug)'`, `&& S log`
+  the line `- [x] 1 Assess — stopped: <Is a bug value or the extension's
+  reason>` (e.g. `stopped: no — missing feature; pointed to /brief #12`).
 
 The same stop, with `done (not a bug)` and the Log line `- [x] 1 Assess —
 stopped: out of scope (<refactor | backport | several bugs>)`, when the
@@ -370,11 +386,12 @@ hard whatever else the report says.
 - Log the user's choice (`- [x] 1 Assess — security: advisory | issue
   (user: "<words>")`).
 
-When the gate passes: set `Size:` to the proposed size (or the one the user
-gave with `size <s>`, logged) and the state file's title to the
-assessment's `Title`, and log `- [x] 1 Assess — <soft | hard> gate:
-<verdict>, <confidence> confidence, <reproduction status>, <N>
-remediation(s); size <s>`; then issue creation, then the building move.
+When the gate passes, one command: `S set '<state file>' Size '<the
+proposed size, or the one the user gave with size <s>, logged>' && S set
+'<state file>' title '<the assessment's Title>' && S log '<state file>'
+'- [x] 1 Assess — <soft | hard> gate: <verdict>, <confidence> confidence,
+<reproduction status>, <N> remediation(s); size <s>'`; then issue
+creation, then the building move.
 
 **Issue creation**, only once the gate has passed for a
 real bug (never after the stop above):
@@ -391,8 +408,8 @@ real bug (never after the stop above):
   <owner/repo the user confirmed at the gate>` once (never retried: a retry
   could duplicate it; the script itself retries only without a missing
   `bug` label). On `tracker: created <owner>/<repo>#<N>` (maybe followed by
-  a note) write `Issue: <owner>/<repo>#<N>` in the state file and log the
-  line; the issue is labelled `bug` and its body holds the symptom, the
+  a note) run `S set '<state file>' Issue '<owner>/<repo>#<N>'` and log the
+  line in the same command; the issue is labelled `bug` and its body holds the symptom, the
   root cause and the trail link. Exit ≠ 0: log `- [!] <its line>`, keep
   `Issue: none` (no moves, no `Fixes` line), flag it at the next gate and go on.
 
@@ -438,17 +455,15 @@ environment or evidence the user supplied, and the not verified items:
 those of the latest `implementer` line (harness; none when it says `none`
 or there is none). Its report is the test-mode format of the agent file.
 
-**Cycle and retry**, read from the state file's Log, **only the lines
-after the last `back to` line** (a line starting with `- [x] back to `),
-so a re-assess starts a fresh cycle and resume needs no other field:
-- *First cycle*: no `4 Code review` line there.
-- *Retry used*: a `3 Test — failed (retry 1 of 1)` line there.
-- The cycle passed to the assessor: `after review fixes` when not the
-  first cycle, else `retry` when the retry is used, else `first`.
+**Cycle and retry**: the phase 3 call (State file calls; on resume, the
+resume call) prints both. The cycle passed to the assessor is `cycle`'s
+output (`first`, `retry` or `after review fixes`); the retry is used when
+`retry-used` prints `yes`. The script reads the Log only since the most
+recent `- [x] back to ` line, so a re-assess starts a fresh cycle.
 
 **Gate**, first match wins. Every row with a verdict first logs it as
-`- [x] 3 Test — <verdict>…`: the shipper reads the shipped verdict from
-these lines.
+`- [x] 3 Test — <verdict>…`: the shipper's `shipped-verdict` reads these
+lines.
 
 | Report says | Gate |
 | --- | --- |
@@ -458,7 +473,7 @@ these lines.
 | an item given is absent from `Not verified items:` (matched on each item's `<check>` part, exactly as passed, or the line is missing when items were given) | **hard**: show those items and the verdict; recommend a re-test (a fresh spawn, same cycle, same items) that logs no `3 Test — failed` line and so uses no retry and no cycle; going on is the user's explicit decision, then the verdict's row applies |
 | `Verdict: verified` | **soft**: log `- [x] 3 Test — verified`; then phase 4, or phase 5 when this test followed review fixes |
 | `Verdict: partial` | **hard**: log `- [x] 3 Test — partial: <missing>`; show `Missing for verified`; the user supplies that environment or evidence (a fresh spawn, same cycle, with it), or decides explicitly to go on (see "Shipping without `verified`" in Gate commands) |
-| `Verdict: failed`, first cycle, retry unused | no stop: log `- [x] 3 Test — failed (retry 1 of 1): <Still failing>; retry fix` and go back to phase 2 with a fresh implementer, the test report's path (`Test report:`, `test.md`) and its `Still failing` line |
+| `Verdict: failed`, `cycle` printed `first` and `retry-used` `no` | no stop: log `- [x] 3 Test — failed (retry 1 of 1): <Still failing>; retry fix` and go back to phase 2 with a fresh implementer, the test report's path (`Test report:`, `test.md`) and its `Still failing` line |
 | `Verdict: failed` otherwise (retry used, or after review fixes) | **hard**: log `- [x] 3 Test — failed: <Still failing>`; show `Still failing` and the test report link; recommend "back to 1" (re-assess with the failed reports as added evidence); the user may also decide explicitly (see below) |
 
 When the user goes on past unaccounted items, log `- [x] 3 Test —
@@ -477,8 +492,10 @@ its feature dir, the note "no spec.md: for the spec pass use assessment.md
 (Proposed Remediation, Tests to add or update) and fix.md", the diff
 command, its lens names, the size, no accepted `[sec]` findings, and as
 context the rejected findings so far and the assessment's remediation
-alternatives not chosen. Reviewers verify their own findings and list what
-they dismissed. Merge into one list: `B…` bugs and spec mismatches, `S…`
+alternatives not chosen, under one `snapshot`; once all have reported,
+`ls -d` on their `Wrote:` paths `&& S unchanged '<state file>' '<token>'`
+(harness, Report files). Reviewers verify their own findings and list what
+they dismissed, in their report file. Merge into one list: `B…` bugs and spec mismatches, `S…`
 security, `P…` performance, `C…` cuts and `[std]` standards findings,
 one line each, bugs and security first; each finding keeps its `rec`.
 Apply the merge rules (harness, Review findings).
@@ -500,8 +517,13 @@ outcome before leaving the phase, per the harness. The `apply` findings
 mode (row 2), in order: bugs and security, cuts, performance (each
 measured before and after, kept only if it beats the noise with tests
 green), readability (one at a time, existing tests untouched); `skip`
-findings are not applied. Tell it its `<who>`, `implementer`. Log its report
-and its `Not verified:` list as `4 implementer`; a report without the line
+findings are not applied. Tell it its `<who>`, `implementer`, and give it
+the report path from `S report-path '<state file>' '4-fixes'`, chained
+onto the outcome's `log`. Log its report
+as `- [x] 4 implementer — <its Fixes (fix mode): value, as reported>;
+checks: <its Checks: results>` ending with its `Not verified:` list
+(harness, State file): the shipper's `review-summary` finds the reverted
+fixes and performance numbers in that value. A report without the line
 makes the phase 3 gate that follows hard (harness). Then phase 3 again with
 a fresh spawn, cycle `after review fixes`: `verified` must hold again before
 ship, and a `failed` there is a hard gate, with no retry. Nothing to apply
@@ -509,9 +531,12 @@ or picked: phase 5.
 
 ## 5. Ship
 
-First write `Current phase: done (shipping)` and `- [x] 5 Ship` into the
-state file, so the copy the shipper commits is already done. Then spawn
-`feat-shipper` (fix mode, row 5) with the state file, the conventions, the
+First `S set '<state file>' 'Current phase' 'done (shipping)' && S
+refused-base '<state file>' && S log '<state file>' '- [x] 5 Ship' && S
+report-path '<state file>' '5-ship'`,
+so the copy the shipper commits is already done. Then spawn
+`feat-shipper` (fix mode, row 5) with that report path, the state
+file, the *state script* (`State script:`), the conventions, the
 worktree, the default branch, the bug dir, the secret-scan script
 (`<this skill's base dir>/../feat/scripts/secret-scan.sh`), the issue ref (none when
 `Issue: none`: then the PR has no `Fixes` line; else `Fixes <ref>`) and
@@ -522,10 +547,10 @@ a single `!` line: give it to the user as is. When that line is a command
 for the user to run (`! cd <worktree> && git …`: git or gh blocked here),
 it commits the state file as done: leave it done (resume finds the run
 while its branch has no upstream). When nothing will be committed (`!
-secret scan: …` or another hard failure), set `Current phase: 5 Ship` back in the local copy so
-`/fix resume` finds the run. After the PR
-you may write `Current phase: done (PR #N)` in the local copy only
-(uncommitted). Never merge.
+secret scan: …` or another hard failure), `S set '<state file>' 'Current
+phase' '5 Ship'` in the local copy so `/fix resume` finds the run. After
+the PR you may `S set '<state file>' 'Current phase' 'done (PR #N)'` in
+the local copy only (uncommitted). Never merge.
 
 `PR: conflict`: run harness "Moving onto a new main, At ship", then read
 the report as above; the state file stays `done (shipping)`.
