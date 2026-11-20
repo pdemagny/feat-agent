@@ -15,7 +15,7 @@ go = "1.27.1"                   # Hugo fetches its theme as a Go module
 d2 = "0.9.0"                    # renders the diagrams in docs/img (`mise run diagrams`)
 
 [tasks.lint]
-description = "shellcheck the shell scripts and their tests, actionlint the workflows, compile the Python test stub and measure.py (checked against Python 3.11), check the size tables' copies match sizes.json, validate the Claude Code plugin, check every agent denies Artifact and EnterWorktree"
+description = "shellcheck the shell scripts and their tests, actionlint the workflows, grep the skills for the state-file wording state.sh replaced, compile the Python test stub and measure.py (checked against Python 3.11), check the size tables' copies match sizes.json, validate the Claude Code plugin, check every agent denies Artifact and EnterWorktree"
 run = [
   "shellcheck install.sh",
   "shellcheck .apm/skills/feat/scripts/*.sh",
@@ -23,6 +23,7 @@ run = [
   "shellcheck tests/spec-number/run.sh tests/spec-number/bin/gh",
   "shellcheck tests/secret-scan/run.sh .apm/skills/feat/scripts/secret-scan.sh",
   "shellcheck tests/story/run.sh",
+  "shellcheck tests/state/run.sh tests/state/bin/gh",
   "shellcheck tests/sizes/run.sh",
   "shellcheck tests/measure/run.sh tests/measure/bin/*",
   "actionlint",
@@ -31,6 +32,7 @@ run = [
   "python3 -I docs/diagrams/sizes.py --check",
   "claude plugin validate .",
   "! grep -Eiq 'specifier|planner|tasker|spec\\.md|brief|phase [0-9]|/feat' .apm/skills/feat/references/harness.md .apm/skills/feat/references/rebase.md",
+  "! cat .apm/skills/feat/SKILL.md .apm/skills/fix/SKILL.md .apm/skills/feat/references/harness.md .apm/skills/feat/references/rebase.md .apm/agents/feat-shipper.agent.md | tr '\\n' ' ' | tr -s ' ' | grep -Eq 'after the last .back to|latest phase 2 line|latest .move — stayed on|latest .7 Code review. line|Edit it back|gh pr list --head|git grep -h|(write|set) .(Current phase|Size|Issue):|anything but the \\*state file\\*'",
   "test \"$(wc -l < .apm/skills/tiny/SKILL.md)\" -le 200 || { echo '/tiny is over 200 lines: keep it tiny'; exit 1; }",
   '''bad=; for f in .apm/agents/*.agent.md; do l=$(grep -m1 "^disallowedTools:" "$f" | tr "," " "); for t in Artifact EnterWorktree; do case " $l " in *" $t "*) ;; *) echo "$f: disallowedTools lacks $t"; bad=1;; esac; done; done; test -z "$bad"''',
 ]
@@ -55,6 +57,7 @@ done
 test -f .claude/skills/feat/scripts/tracker.sh
 test -f .claude/skills/feat/scripts/secret-scan.sh
 test -f .claude/skills/feat/scripts/story.sh
+test -f .claude/skills/feat/scripts/state.sh
 test -f .claude/skills/feat/scripts/measure.py
 test -f .claude/skills/feat/sizes.json
 test -f .claude/skills/feat/references/harness.md
@@ -87,6 +90,10 @@ run = "bash tests/secret-scan/run.sh"
 [tasks."test:story"]
 description = "Run the story script's offline tests (real and synthetic tasks.md fixtures)"
 run = "bash tests/story/run.sh"
+
+[tasks."test:state"]
+description = "Run the state script's offline tests (fixture state files, golden outputs, scratch repos and worktrees, stub gh)"
+run = "bash tests/state/run.sh"
 
 [tasks."test:sizes"]
 description = "Run sizes.py's offline tests (fixture sizes.json and stale copies, scratch roots)"

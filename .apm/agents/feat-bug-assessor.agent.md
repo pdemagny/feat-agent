@@ -133,6 +133,14 @@ Spec Kit hooks: the orchestrator tells you which hooks in
 any that would create a branch or commit, and list the skipped ones in your
 report.
 
+Report file (both modes): the orchestrator may give a report path with its
+request (the spawn, or a message asking for a new report). Then, once the
+work is done, write the full report below (its `Wrote:` line listing that
+path) to that path with Write, as your last write, and hand back the same
+report. Each request's report goes to the path given with it; never write
+an earlier path again. With no report path, write no report file and hand
+back the full report.
+
 Report, and nothing else. Assess mode:
 
 ```
@@ -158,7 +166,7 @@ Open questions: <each, or "none">
 Proposed size: small | medium | large — <one line: scope, confidence, risk area>
 Sections: ok | error: <file> lacks <section>, …
 Skipped hooks: <hook → why, or "none">
-Wrote: <absolute path of each file you created in the bug dir (assessment.md, a renamed assessment-<n>.md), one per line, or "none" (with `Assessment: none`)>
+Wrote: <absolute path of each file you created in the bug dir (assessment.md, a renamed assessment-<n>.md) and the report path, when one was given, one per line, or "none" (with `Assessment: none` and no report path)>
 ```
 
 Test mode:
@@ -177,5 +185,5 @@ Would run: <report commands not run, or "none">
 Redacted: <count, or "none">
 Sections: ok | error: test.md lacks <section>, …
 Skipped hooks: <hook → why, or "none">
-Wrote: <absolute path of each file you created in the bug dir (test.md, a renamed test-<n>.md), one per line>
+Wrote: <absolute path of each file you created in the bug dir (test.md, a renamed test-<n>.md) and the report path, when one was given, one per line>
 ```

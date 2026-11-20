@@ -1,0 +1,9 @@
+**Applied without asking (reviewer's recommendation)**
+- none
+**Picked by the user**
+- B1 secret-scan.sh:92 — file name with a space reported with a trailing tab
+- [std]1 secret-scan.sh:22-23 — header comment understates what sourcing defines
+- S1 .apm/skills/feat/scripts/secret-scan.sh — key-literal rule misses some separators and value characters
+**Not applied**
+- S2 .apm/skills/feat/scripts/secret-scan.sh — gitattributes can hide a file from the staged scan (pre-existing) — rejected (user: "S2: leave")
+**Ship go-ahead**: (user: "PR: ok")

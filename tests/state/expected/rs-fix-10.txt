@@ -1,0 +1,11 @@
+**Applied without asking (reviewer's recommendation)**
+- none
+**Picked by the user**
+- B1
+- B2
+- B3
+- S1
+- [std]1
+- C1
+**Not applied**
+- B4 — rejected (shipper `Wrote:` omits edited docs; user: "ok" to skip — they are on `Docs updated:` and always exist)

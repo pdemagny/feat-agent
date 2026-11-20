@@ -16,9 +16,10 @@ by `mise run diagrams`; this page adds the explanations.
   the size, writes the brief (or a capability map for huge ideas) and has
   `feat-brief-reviewer` read it fresh before you confirm it.
 - **Coordinator**: the session running `/feat`, started from a clean
-  context. It holds every gate and edits only `feat-state.md`; it never
-  reads code, runs checks or edits artifacts, and it runs git only to
-  compare bases and find runs. Every call it makes re-reads
+  context. It holds every gate and changes only `feat-state.md`, through
+  the `state.sh` script (never by hand); it never reads code, report files,
+  runs checks or edits artifacts, and it runs git only to compare bases and
+  find runs. Every call it makes re-reads
   its whole context, so it stays thin on purpose.
 - **Phase agents**: the `feat-*` subagents. Each does one job, can't talk to
   you, starts with no conversation history, and gets what it needs (paths,
@@ -48,6 +49,21 @@ quote, newline, `$` or backtick, then checks each path exists (`ls -d`,
 never reading the files) and that the report's artifact path is on the
 line. A failure fails the phase: a hard gate that shows the reason, with
 no automatic retry ("back to N" reruns it).
+
+**Report files.** Before each spawn, `state.sh report-path` gives the agent
+a path, `<artifact dir>/reports/<key>.md` (`3-test-2.md` on a rerun; a
+report file is never overwritten). The agent writes its full report there,
+lists the path on `Wrote:`, and hands back a digest: the same format minus
+the lines no gate reads (the code reviewer's `Dismissed:`, the design
+reviewer's `Checked and fine:`, the implementer's list of notable files,
+the tasker's `Fixed:`; the others drop nothing). The coordinator never
+reads a report file. `reports/` holds a `.gitignore` with `*`, so it is
+never committed. The code and design reviewers may write their report file
+and nothing else: `state.sh snapshot` before each batch of reviewers and
+`state.sh unchanged` after it catch any other change to the worktree, a
+hard gate that lists the paths that changed. An agent given no report path
+(`/tiny`'s reviewer, `/brief`'s) reports in full and writes nothing.
+
 After a soft phase 2, the next gate (3/4, or 3 on large) opens with the spec
 summary.
 
@@ -214,10 +230,11 @@ the remote head rather than a stale local copy, then creates branch
 renamed if EnterWorktree picked another name) and enters it, so every agent
 starts there. The spec dir is `specs/<short-name>/` until phase 8 numbers it. The specifier runs `speckit-specify` from the brief and
 reports stories, requirements, open `[NEEDS CLARIFICATION]` markers with
-recommended answers, assumptions and unchecked checklist items. The
-coordinator moves the brief into `feat-state.md` (deleting the brief file
+recommended answers, assumptions and unchecked checklist items. Before
+spawning it, the coordinator copies the brief into `feat-state.md`
+(`state.sh init`); once it has reported, it deletes the brief file
 only when it is `specs/briefs/<short-name>.md` in the checkout `/feat`
-started in; any other stays, and the final message names it) and gates. The gate is hard
+started in (any other stays, and the final message names it), and gates. The gate is hard
 only when the spec has an open marker or the specifier reports a blocker (or
 the report holds something surprising, such as a remark about size), at
 every size. Otherwise it is soft: one line, `Phase 2 Specify — soft`, and
@@ -352,7 +369,8 @@ the reviewers with their lenses:
   never changing behaviour. Adapted from Addy Osmani's
   `code-simplification` ([addyosmani/agent-skills](https://github.com/addyosmani/agent-skills), MIT).
 
-Reviewers verify their findings and list what they dismissed. You get one
+Reviewers verify their findings and list what they dismissed, in their
+report file. You get one
 list (`B` bugs and spec mismatches, `S` security, `P` performance, `C` cuts,
 `R` readability and `[std]` standards), each ending with the reviewer's
 recommendation: `apply`, `skip (<why>)` or `user (<why>)`. The coordinator
@@ -445,7 +463,14 @@ worktree, size, current phase, conventions, allowed hooks, the issue if any, the
 log of every gate with what you accepted and rejected (and why) and every
 performance attempt with its numbers, and each implementer's Not verified
 list (the latest one per implementer counts). Every agent reads it; `/feat resume`
-starts from it; the PR links to it. It's updated at each gate.
+starts from it; the PR links to it. It's updated at each gate, only
+through [`state.sh`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/scripts/state.sh):
+`init` creates it, `set` changes one header field, `log` appends Log
+lines, and fixed queries answer what the coordinator and the shipper
+used to read from the Log in prose (the test cycle and retry, the shipped
+verdict, phase 2's mode on resume, a refused base, the resume and rebase
+searches, the PR body's code review part). The agents' report files sit
+beside it, in `reports/`, never committed.
 
 ## When main moves
 
@@ -532,7 +557,8 @@ which is what the coordinator reads for this section (generated from `sizes.json
 ### Roles
 
 - **Coordinator**: the session running `/fix`. As in `/feat`, it holds the
-  gates, edits only the state file, never reads code or runs checks; it
+  gates, changes only the state file (through `state.sh`), never reads
+  code, report files or runs checks; it
   quotes a line of assessment.md, fix.md or test.md only when you must
   decide on it.
 - **`feat-bug-assessor`**: runs `speckit-bug-assess` (phase 1) or
@@ -663,7 +689,8 @@ default for a security bug). Without an issue there are no moves and no
 
 `.specify/bugs/<slug>/feat-state.md`, beside the extension's reports, in
 `/feat`'s format (`# /fix state: <bug title>`, a `## Report` section
-instead of the brief). It is committed with the trail, already marked
+instead of the brief). It is committed with the trail (state file,
+assessment, fix and test files; never `reports/`), already marked
 `done (shipping)`. `/fix resume` searches it in this checkout and in every
 worktree of `git worktree list`, enters that worktree, and asks when
 several runs are unfinished.
@@ -737,8 +764,10 @@ Every report ends with `Wrote:`, absolute paths: the specifier, planner and
 tasker always list their artifact (spec.md, plan.md, tasks.md) plus every
 file they created or changed in that spawn; the implementer lists the
 files it created plus its artifacts (never files it only modified or
-deleted); the read-only reviewers say `none`. The coordinator checks them
-on disk before accepting the report.
+deleted); the code and design reviewers list only their report file. Each
+agent given a report path lists it too (the shipper under the numbered
+dir); with none, the reviewers say `none`. The coordinator checks them on
+disk before accepting the report.
 
 ## Baseline
 

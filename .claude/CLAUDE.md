@@ -59,7 +59,8 @@ When changing it:
   (`.apm/skills/feat/scripts/`) and their bash tests (`tests/`);
   `mise run lint` runs them all and `actionlint` on `.github/workflows/`,
   `mise run test:tracker`, `mise run test:spec-number` and
-  `mise run test:story`, `mise run test:sizes` the offline tests.
+  `mise run test:story`, `mise run test:state`, `mise run test:sizes` the
+  offline tests.
   `measure.py` is the one shipped Python script and
   `docs/diagrams/sizes.py` the repo-only one: Python 3.11 or later,
   standard library only (constitution principle V); `mise run lint`

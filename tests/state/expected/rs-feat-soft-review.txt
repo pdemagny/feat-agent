@@ -1,0 +1,13 @@
+**Applied without asking (reviewer's recommendation)**
+- B1 state.sh:120 — `log` drops the last line
+- P1 state.sh:300 — forks per Log line — 410ms → 120ms (`go test -bench Load`)
+- [std]1 state.sh:1 — header lacks the synopsis
+**Picked by the user**
+- none
+**Not applied**
+- C1 state.sh:500 — inline `find_after` — skipped (reviewer: "churn; not worth it")
+- R3 state.sh:10 — single-letter names — skipped (reviewer: "matches the file's style")
+- R2 state.sh:40 — rename `x` → `line` — reverted (an existing test would change)
+**Acceptance criteria not tested**
+- SC-002 (needs a live run)
+- SC-006

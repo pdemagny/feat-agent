@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Stub gh for tests/state: logs its argv and answers `pr list --head <branch>`
+# from the case dir, printing what the script's --jq filter would print.
+#   pr-<branch>    the PR states, one per line (missing: no PR)
+#   fail-<branch>  `pr list` for that branch exits 1
+set -euo pipefail
+case_dir="${STATE_GH_CASE:?STATE_GH_CASE not set}"
+printf '%s\n' "$*" >>"$case_dir/calls"
+
+if [ "${1:-} ${2:-}" != "pr list" ]; then
+  echo "stub gh: unexpected call: $*" >&2
+  exit 1
+fi
+head=""
+prev=""
+for a in "$@"; do
+  if [ "$prev" = --head ]; then head="$a"; fi
+  prev="$a"
+done
+[ -n "$head" ] || { echo "stub gh: no --head" >&2; exit 1; }
+if [ -e "$case_dir/fail-$head" ]; then echo "HTTP 502" >&2; exit 1; fi
+if [ -e "$case_dir/pr-$head" ]; then cat "$case_dir/pr-$head"; fi
