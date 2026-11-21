@@ -1,0 +1,7 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 2 Fix
+# /fix state: Off-by-one on the last page
+--
+    - answer: approved (user: "go")
+    - passed: gate: valid, high confidence, reproduced, 1 remediation(s); size small; risk area none; performance bug no

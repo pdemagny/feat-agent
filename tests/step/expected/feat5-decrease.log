@@ -1,0 +1,7 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 6 Implement
+# /feat state: Test feature
+--
+- [x] size small — was medium: 6 tasks
+- [x] 5 Tasks [soft] — 6 tasks; story.sh: match; analyze ran

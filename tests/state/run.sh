@@ -502,6 +502,110 @@ run review-summary "$fx/no-log.md" 4
 expect_error "has no ## Log"
 ok
 
+# --- tagged gate lines (step.sh's Log lines) -----------------------------------
+
+# Each tagged-*.md is a copy of an untagged fixture written the way step.sh
+# writes: tagged gate lines, answer: and outcome: sub-lines, wrote: facts.
+# Every query must answer on the copy as on the original.
+tagged_pairs=(
+  "feat-011-size-data.md|tagged-feat-011.md|7"
+  "feat-old-big.md|tagged-feat-old-big.md|7"
+  "feat-old-normal.md|tagged-feat-old-normal.md|7"
+  "feat-soft-review.md|tagged-feat-soft-review.md|7"
+  "fix-10-agents-report-files.md|tagged-fix-10.md|4"
+  "fix-22-secret-scan-blocks.md|tagged-fix-22.md|4"
+  "fix-cycles.md|tagged-fix-cycles.md|4"
+  "fix-retry-before-back.md|tagged-fix-retry-before-back.md|4"
+)
+
+new_case "tagged copies: every query answers as on the original"
+for c in "${tagged_pairs[@]}"; do
+  orig="${c%%|*}" rest="${c#*|}"
+  tagged="${rest%%|*}" phase="${rest#*|}"
+  for q in phase2-mode cycle retry-used shipped-verdict refused-base; do
+    run "$q" "$fx/$orig"
+    want_rc="$rc" want="$out"
+    run "$q" "$fx/$tagged"
+    if [ "$rc" != "$want_rc" ] || [ "$out" != "$want" ]; then
+      fail "$q on $tagged: '$out', want '$want' (as $orig)"
+    fi
+  done
+  run review-summary "$fx/$orig" "$phase"
+  want="$out"
+  run review-summary "$fx/$tagged" "$phase"
+  expect_rc 0
+  [ "$out" = "$want" ] || fail "review-summary on $tagged differs from $orig"
+done
+ok
+
+new_case "tagged: a soft phase 2 with an override: hard sub-line reads hard"
+copy tagged-feat-old-normal.md ov.md
+run phase2-mode "$f"
+expect_ok "soft 4 open"
+sed '/^    - Requirements: 3 FRs$/a\
+    - override: hard — the user wants to read the spec' "$fx/tagged-feat-old-normal.md" >"$f"
+run phase2-mode "$f"
+expect_ok "hard"
+ok
+
+new_case "tagged: an override after a record that follows the soft gate still reads hard"
+copy tagged-feat-old-normal.md ov2.md
+sed '/^    - Requirements: 3 FRs$/a\
+- [x] size medium — was normal (user)\
+    - override: hard — the user wants to read the spec' "$fx/tagged-feat-old-normal.md" >"$f"
+run phase2-mode "$f"
+expect_ok "hard"
+ok
+
+new_case "tagged: gate G passes when answered, not when the answer is stop"
+copy tagged-feat-old-normal.md g.md
+printf '%s\n' '    - answer: stop (user: "later")' >>"$f"
+run phase2-mode "$f"
+expect_ok "soft 4 open"
+copy tagged-feat-old-normal.md g.md
+printf '%s\n' '- [!] step: step: error: boom' '    - answer: approved (user: "ok")' >>"$f"
+run phase2-mode "$f"
+expect_ok "soft 4 closed"
+copy tagged-feat-old-normal.md g.md
+printf '%s\n' '- [x] 4 Design review [soft] — auto-applied D1' >>"$f"
+run phase2-mode "$f"
+expect_ok "soft 4 closed"
+copy tagged-feat-old-normal.md g.md
+printf '%s\n' '- [!] 2 Specify — unparsable: 2-specify-2.md: line 4 (Stories); reformat 1 of 1' >>"$f"
+run phase2-mode "$f"
+expect_ok "soft 4 open"
+ok
+
+new_case "tagged: dropped ids left out, wrote: and answer: sub-lines are no findings"
+copy tagged-feat-old-big.md dr.md
+printf '%s\n' '- [x] back to 7 — again' \
+  '- [x] 7 Code review [hard] — 3 findings to pick' \
+  '    - P1 f.sh:2 — slow — rec: apply' \
+  '    - C1 f.sh:2 — cut the loop — rec: apply' \
+  '    - R1 g.sh:3 — rename — rec: apply' \
+  '    - dropped: P1 (cut by C1)' \
+  '    - wrote: f.sh' \
+  '    - override: hard — want to see it' \
+  '- [!] step: step: error: boom' \
+  '    - answer: picked C1, R1 (user: "ok")' \
+  '    - outcome: picked P1, C1, R1' >>"$f"
+run review-summary "$f" 7
+expect_rc 0
+expect_file "$ex/rs-tagged-dropped.txt"
+ok
+
+new_case "tagged: answer: ship with partial is the shipped verdict"
+copy tagged-fix-retry-before-back.md sw.md
+# shellcheck disable=SC2016 # the words are literal on purpose
+printf '%s\n' '    - answer: ship with partial (user: "it'\''s fine; $(x) `y`")' >>"$f"
+run shipped-verdict "$f"
+# shellcheck disable=SC2016 # the words are literal on purpose
+expect_ok 'partial — ship with partial (user: "it'\''s fine; $(x) `y`")'
+printf '%s\n' '- [x] back to 2 — redo' >>"$f"
+run shipped-verdict "$f"
+expect_ok 'none'
+ok
+
 # --- report files ---------------------------------------------------------------
 
 new_case "report-path: first use, numbering, never an existing path"

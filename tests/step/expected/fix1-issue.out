@@ -1,0 +1,3 @@
+hard:
+- issue to create
+answer call:	1	@TOP@/specs/x/reports/1-assess.md	sum=1-assess.md:@SUM@

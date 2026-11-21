@@ -1,0 +1,10 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 7 Code review
+# /feat state: Test feature
+--
+- [x] 7 Code review [hard] — B1, B2, B3 need you
+    - B1 src/a.sh:7 — a typo in the error message — rec: user (no valid recommendation)
+    - B2 src/a.sh:8 — the exit code is lost — rec: user (no valid recommendation)
+    - B3 src/a.sh:9 — a quoted glob — rec: user (no valid recommendation)
+    - [std]1 src/a.sh — hard: tabs, not spaces — rec: apply

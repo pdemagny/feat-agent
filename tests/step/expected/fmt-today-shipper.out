@@ -1,0 +1,12 @@
+reformat
+unparsable line: 8-ship.md: Wrote: @TOP@/specs/x/reports/8-ship.md
+spawn: feat-shipper
+  row: 8
+  mode: reformat
+  model: haiku
+  effort: medium
+  report: @TOP@/specs/x/reports/8-ship-2.md
+  continue: fresh
+  from: @TOP@/specs/x/reports/8-ship.md
+  unparsable: 8-ship.md: line 8 (Wrote)
+boundary:	8	@TOP@/specs/x/reports/8-ship-2.md

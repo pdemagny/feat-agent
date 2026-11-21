@@ -1,0 +1,10 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 2 Specify
+# /feat state: Test feature
+--
+- [x] 2 Specify [hard] — no spec; blocker; size remark
+    - Stories: none
+    - Requirements: 0
+    - Spec assumptions: none
+    - Unchecked checklist items: none

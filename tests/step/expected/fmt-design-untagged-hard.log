@@ -1,0 +1,6 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 4 Design review
+# /feat state: Test feature
+--
+- [x] 4 Design review [hard] — unparsable: 4-4a+4b+4c-2.md: line 5 (Findings)

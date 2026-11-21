@@ -1,0 +1,10 @@
+soft
+move: 1a2b3c4 → 5d6e7f8 (before 3 Plan); checks pass
+spawn: feat-planner
+  row: 3
+  mode: first
+  model: sonnet
+  effort: medium
+  report: @TOP@/specs/x/reports/3-plan.md
+  continue: fresh
+boundary:	3	@TOP@/specs/x/reports/3-plan.md	agent=<id>

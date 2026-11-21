@@ -1,0 +1,9 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 7 Code review
+# /feat state: Test feature
+--
+    - answer: approved (user: "go, keep the flag")
+    - answer: leave B2 (user: "keep the flag")
+    - outcome: picked B1, C1, R1; rejected B2 (user: "keep the flag"); untested: AC-2 an empty list prints nothing
+    - dropped: P1 (cut by C1)

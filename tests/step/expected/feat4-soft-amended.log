@@ -1,0 +1,6 @@
+- Size: small
+- Agents: specifier s1, planner p1 (for SendMessage)
+- Current phase: 5 Tasks
+# /feat state: Test feature
+--
+- [x] 3 Plan — amended (D1, D2); assumptions needing you: none; constitution: pass; blockers: none; size trigger: none

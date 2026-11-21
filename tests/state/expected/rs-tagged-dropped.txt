@@ -1,0 +1,7 @@
+**Applied without asking (reviewer's recommendation)**
+- none
+**Picked by the user**
+- C1 f.sh:2 — cut the loop
+- R1 g.sh:3 — rename
+**Not applied**
+- none

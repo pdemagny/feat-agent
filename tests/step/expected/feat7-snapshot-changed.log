@@ -1,0 +1,9 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 7 Code review
+# /feat state: Test feature
+--
+- [x] 7 Code review [hard] — files changed outside the reports; changed: README.md; B2 need you; S1 security
+    - B1 src/a.sh:3 — off-by-one on the last page — rec: apply
+    - B2 src/a.sh:40-44 — scope creep: a --verbose flag — rec: user (the user may want it)
+    - S1 src/auth.sh — a token reaches the log

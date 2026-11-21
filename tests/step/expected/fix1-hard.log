@@ -1,0 +1,6 @@
+- Size: not set
+- Agents: none (every spawn is fresh)
+- Current phase: 1 Assess
+# /fix state: a reported bug
+--
+- [x] 1 Assess [hard] — security risk area; open questions: 1; proposed size medium; confidence medium; not reproduced; remediations: 2

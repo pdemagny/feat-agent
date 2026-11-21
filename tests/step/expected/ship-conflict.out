@@ -1,0 +1,13 @@
+soft
+state: @TOP@/specs/012-x/feat-state.md
+read: @SKILL@/references/move.md
+spawn: feat-implementer
+  row: 6
+  mode: rebase
+  model: sonnet
+  effort: medium
+  report: @TOP@/specs/012-x/reports/move.md
+  continue: fresh
+  action: move
+  shipped: no
+boundary:	8	@TOP@/specs/012-x/reports/8-ship.md	@TOP@/specs/012-x/reports/move.md	sum=8-ship.md:@SUM@

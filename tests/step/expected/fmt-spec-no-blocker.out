@@ -1,0 +1,11 @@
+reformat
+spawn: feat-specifier
+  row: 2
+  mode: reformat
+  model: sonnet
+  effort: medium
+  report: @TOP@/specs/x/reports/2-specify-2.md
+  continue: fresh
+  from: @TOP@/specs/x/reports/2-specify.md
+  unparsable: 2-specify.md: no Blocker: line
+boundary:	2	@TOP@/specs/x/reports/2-specify-2.md

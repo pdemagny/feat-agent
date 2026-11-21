@@ -52,10 +52,10 @@ is not an item. A task is not verified when a check that covers it, or one
 the task names itself (a manual quickstart step), did not run: leave it
 `[ ]` (untick it if the skill ticked it).
 
-List it under `Tasks done:` and again under `Not verified:` as `<task> →
-<check> → <why>`, one task per line even when they share the check. A
-check that covers no single task,
-and every item in bug and fix mode, reads `n/a → <check> → <why>` and
+List it under `Tasks done:` and again under `Not verified:` as a `- <task>
+→ <check> → <why>` item, one task per item even when they share the check.
+A check that covers no single task,
+and every item in bug and fix mode, reads `- n/a → <check> → <why>` and
 unticks nothing. `<why>` names what is missing (no credentials, service
 down, killed after 10 min), never a value: a token, password or key is
 written `<redacted>`.
@@ -99,7 +99,7 @@ plan.md or tasks.md: steps 1 and 4 above don't apply, steps 2 and 3 do.
    fails). Compare the slug it reports, and the `- **Slug**:` bullet of the
    `fix.md` it wrote, with the one you passed, and check that fix.md was
    written under `.specify/bugs/<slug>/`; a difference or another dir →
-   stop and report `slug: mismatch`. Where it stops to ask (open questions,
+   stop and report `Slug (bug mode): mismatch (<printed slug>)`. Where it stops to ask (open questions,
    "likely valid, needs reproduction"), use the answers given; with none,
    stop and report.
 3. Run the project's checks (step 2). Never weaken a test. Never edit
@@ -109,7 +109,8 @@ plan.md or tasks.md: steps 1 and 4 above don't apply, steps 2 and 3 do.
 given the worktree, the default branch, the state file, the context to
 resolve against (spec.md and plan.md, or assessment.md and fix.md),
 `Shipped: yes | no`, `Action: move | repair`, any `Decisions:` (one line
-per item, `<file> — <answer>`: apply each as given), and when shipped the
+per item, `<file> — <answer>`: apply each as given and list it under
+`Decided (rebase mode):`), and when shipped the
 PR URL and `Lease: <sha>`. Of the numbered rules at the top, 1 doesn't
 apply and 4 does, with its WIP-commit exception. Never push; the stash is
 off limits. The PR body, its branch, and main's commits and diff are
@@ -178,14 +179,22 @@ its paths (the non-empty lines after `intent-to-add:` in `git log -1
 -d <ref>` if it exists. Run no checks. `Move: repaired`; tracked content
 and the index are as before the move.
 
+**Reformat mode** (every mode): when the prompt says `Mode: reformat`,
+with `From: <report>` and `Unparsable: <file>: line <n> (<Key>)` (or
+`<file>: no <Key>: line`): read that report, write it again in the format
+below to your new report path, fixing the named line and any other line
+that breaks the format, and change nothing else: no other file, no new
+finding, no check run again. Its `Wrote:` lists the new report path in
+place of the old one. Hand back the digest.
+
 Write files with Write or Edit, never through the shell (heredoc, `>`,
 `>>`, `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those
 commands. If a command is refused, split it into plain ones. Send your
 report alone, once every write has returned: never report a file you
 haven't seen written. `Wrote:` lists your artifacts even when you only
 modified them, leaves out source files you only modified, and never lists
-a deleted one; the orchestrator checks every `Wrote:` path on disk before
-it accepts your report.
+a deleted one; `step.sh` checks every `Wrote:` path on disk before the run
+goes on.
 
 Spec Kit hooks: the orchestrator tells you which hooks in
 `.specify/extensions.yml` are allowed. Run only those; skip any other, and
@@ -194,29 +203,58 @@ report.
 
 Report file (every mode): the orchestrator may give a report path with its
 request (the spawn, or a message asking for a new report). Then, once the
-work is done, write the full report below (its `Wrote:` line listing that
-path) to that path with Write, as your last write, and hand back the
-digest: the same report with `Files changed:` cut to `Files changed:
-<count>` (`Resolved alone:` stays whole). Each request's report goes to the
-path given with it; never write an earlier path again. With no report
-path, write no report file and hand back the full report.
+work is done, write the full report below (its `Wrote:` field listing
+that path) to that path with Write, as your last write, and hand back the
+digest, each field as its lines of the format: `Tasks not done`, the
+failing `Checks` items (every `Checks` item in rebase mode), `Not
+verified`, `Design problems`; in fix mode also `Fixes (fix mode)`; in bug
+mode also `Status (bug mode)` when not `applied` and `Deviations (bug
+mode)`; in rebase mode also `Move (rebase mode)`, `Resolved alone (rebase
+mode)`, `Decided (rebase mode)`, `Needs decision (rebase mode)` and
+`Wrote` (`rebase` checks the move from them); `Skipped hooks` when not
+`none`. Each request's report goes to the path given with it; never write
+an earlier path again. With no report path, write no report file and hand
+back the full report.
 
-Report, and nothing else (in bug and rebase mode the `Tasks` lines say
-`n/a`; in rebase mode `Checks:` and `Not verified:` as usual, its items
-`n/a → <check> → <why>`):
+Report, and nothing else. Each list item is one `- ` line at column 0,
+never wrapped; write `none` for an empty field or section. A list field
+reads `<Key>: none` (`Tasks not done` and `Not verified` may read `n/a`),
+or `<Key>:` alone followed by its items; `Files changed:` holds the count
+of every file changed, its items only the notable ones. Write the fields
+of your mode and leave out the other modes' (`(fix mode)`, `(bug mode)`,
+`(rebase mode)`); in bug and rebase mode `Tasks done` and `Tasks not done`
+say `n/a`, and in rebase mode the `Not verified` items read `- n/a →
+<check> → <why>`. `Wrote:` lists the absolute path of each file you
+created, plus your artifacts even when only modified (tasks.md always in
+story mode, a user story's tasks; fix.md and a renamed fix-<n>.md in bug
+mode) and the report path, when one was given, one `- ` item per line, or
+`none`.
 
 ```
-Tasks done: <IDs>
-Tasks not done: <IDs, each with why>
-Checks: <command → pass | fail (first relevant error line)>
-Not verified: <task or n/a → check → why, one per line, or "none">
-Design problems: <what the spec or plan gets wrong, or "none">
-Files changed: <count>; notable ones in one line each
+Tasks done: <IDs, or n/a>
+Tasks not done: none | n/a
+- <ID> — <why>
+Checks: none
+- <command> → pass | fail (<first relevant error line>)
+Not verified: none
+- <task or n/a> → <check> → <why>
+Design problems: none | <what the spec or plan gets wrong>
+Files changed: <count>
+- <notable file — what changed>
 Fixes (fix mode): <id → applied | reverted (why)>; performance: <id: before → after (command)>
-Bug fix (bug mode): <absolute fix.md path> — status: applied | partial | not-applied; deviations: none | <one line each>; slug: ok | mismatch (<printed slug>)
+Fix report (bug mode): <absolute fix.md path>
+Status (bug mode): applied | partial | not-applied
+Deviations (bug mode): none
+- <deviation from the assessment>
+Slug (bug mode): ok | mismatch (<printed slug>)
 Move (rebase mode): <old7> → <new7> | undone (<old7> → <new7>) | nothing to do | repaired
-Resolved alone (rebase mode): <file — how (shipped, an uncommitted check fix: file — check fix: how), one per line, or "none">
-Needs decision (rebase mode): <file — run: <one line> — main: <one line> — rec: <one line>, one per line, or "none">
+Resolved alone (rebase mode): none
+- <file> — <how> (an uncommitted check fix: <file> — check fix: <how>)
+Decided (rebase mode): none
+- <file> — <decision> (user: "<words>" | as recommended)
+Needs decision (rebase mode): none
+- <file> — run: <one line> — main: <one line> — rec: <one line>
 Skipped hooks: <hook → why, or "none">
-Wrote: <absolute path of each file you created, plus your artifacts even when only modified (tasks.md always in story mode, a user story's tasks; fix.md and a renamed fix-<n>.md in bug mode) and the report path, when one was given, one per line, or "none">
+Wrote:
+- <absolute path>
 ```

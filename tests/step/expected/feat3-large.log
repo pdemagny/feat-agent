@@ -1,0 +1,6 @@
+- Size: large
+- Agents: none (every spawn is fresh)
+- Current phase: 3 Plan
+# /feat state: Test feature
+--
+- [x] 3 Plan [hard] — large; assumption 2 needs you; assumption 4 needs you; constitution: V. Standard library only; checklist item; assumptions needing you: 2, 4; constitution: V. Standard library only; blockers: none; size trigger: service

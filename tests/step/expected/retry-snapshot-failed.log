@@ -1,0 +1,7 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 3 Plan
+# /feat state: Test feature
+--
+- [x] 3 Plan — merged with 4; assumptions needing you: none; constitution: pass; blockers: none; size trigger: none
+- [!] step: step: error: state: error: injected failure

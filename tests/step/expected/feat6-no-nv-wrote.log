@@ -1,0 +1,8 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 6 Implement
+# /feat state: Test feature
+--
+- [x] 6 US1 — Not verified line missing
+    - wrote: src/new.sh
+- [x] 6 Implement [hard] — US1: Not verified line missing

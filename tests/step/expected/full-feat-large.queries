@@ -1,0 +1,15 @@
+phase2-mode: soft 3 closed
+cycle: first
+retry-used: no
+shipped-verdict: none
+refused-base: 5d6e7f8
+review-summary 7:
+**Applied without asking (reviewer's recommendation)**
+- none
+**Picked by the user**
+- B1 src/a.sh:3 — off-by-one on the last page
+- S1 src/auth.sh — a token reaches the log
+**Not applied**
+- B2 src/a.sh:40-44 — scope creep: a --verbose flag — rejected (user: "keep the flag")
+**Acceptance criteria not tested**
+- AC-2 an empty list prints nothing

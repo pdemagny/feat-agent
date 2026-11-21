@@ -1,0 +1,6 @@
+- Size: not set
+- Agents: none (every spawn is fresh)
+- Current phase: 1 Assess
+# /fix state: a reported bug
+--
+- [!] 1 Assess — unparsable: 1-assess.md: no Risk area: line; reformat 1 of 1

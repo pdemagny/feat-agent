@@ -1,0 +1,14 @@
+soft
+base: moved @OLD@ @NEW@
+read: @SKILL@/references/move.md
+spawn: feat-implementer
+  row: 6
+  mode: rebase
+  model: sonnet
+  effort: medium
+  report: @TOP@/specs/x/reports/move.md
+  continue: fresh
+  action: move
+  shipped: no
+boundary:	move	@TOP@/specs/x/reports/move.md
+answer call:	2	@TOP@/specs/x/reports/2-specify.md	sum=2-specify.md:@SUM@

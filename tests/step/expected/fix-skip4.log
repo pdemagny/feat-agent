@@ -1,0 +1,7 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 4 Code review
+# /fix state: a reported bug
+--
+    - answer: skip 4 (user: "no review")
+- [x] 4 Code review [hard] — skipped; security risk area

@@ -1,0 +1,8 @@
+hard:
+- empty diff
+resume: 7 Code review
+phase2-mode: none
+base: same
+untracked, not in the diff: specs/x/feat-state.md
+untracked, not in the diff: src/new.sh
+answer call:	7

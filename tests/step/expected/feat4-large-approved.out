@@ -1,0 +1,10 @@
+answered
+base: same
+spawn: feat-tasker
+  row: 5
+  mode: first
+  model: opus
+  effort: high
+  report: @TOP@/specs/x/reports/5-tasks.md
+  continue: fresh
+boundary:	5	@TOP@/specs/x/reports/5-tasks.md	agent=<id>

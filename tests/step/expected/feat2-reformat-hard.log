@@ -1,0 +1,6 @@
+- Size: medium
+- Agents: specifier a1, planner a2 (for SendMessage)
+- Current phase: 2 Specify
+# /feat state: Test feature
+--
+- [x] 2 Specify [hard] — unparsable: 2-specify-2.md: line 11 (Wrote)

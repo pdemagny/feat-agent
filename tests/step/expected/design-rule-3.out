@@ -1,0 +1,9 @@
+hard:
+- D1, D2 need you
+- paraphrase contradicts the brief
+paraphrase: contradicts (builds a daemon the brief ruled out)
+counts: 3 findings, 1 applied, 0 skipped
+finding: D1 [sec] — the token is stored in the repo — at: plan.md: Secrets — fix: keep it in the environment — severity: high — rec: user (reviewers disagree)
+finding: D2 [sec] — the token sits in the repo — at: plan.md: Secrets — fix: read it from the keychain — severity: high — rec: user (reviewers disagree)
+finding: D3 [cost] — a second cache nobody reads — at: plan.md: Approach — fix: drop it — severity: medium — rec: apply
+answer call:	4	@TOP@/specs/x/reports/4-4a.md	@TOP@/specs/x/reports/4-4b.md	@TOP@/specs/x/reports/4-4c.md	sum=4-4a.md:@SUM@	sum=4-4b.md:@SUM@	sum=4-4c.md:@SUM@

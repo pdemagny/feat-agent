@@ -1,0 +1,11 @@
+soft
+spawn: feat-implementer
+  row: 6
+  mode: rebase
+  model: sonnet
+  effort: medium
+  report: @TOP@/specs/x/reports/move.md
+  continue: fresh
+  action: repair
+  shipped: no
+boundary:	repair	@TOP@/specs/x/reports/move.md

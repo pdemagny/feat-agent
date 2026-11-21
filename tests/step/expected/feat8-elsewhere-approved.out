@@ -1,0 +1,12 @@
+answered
+base: same
+spawn: feat-shipper
+  row: 8
+  mode: ship
+  model: haiku
+  effort: medium
+  report: @TOP@/specs/x/reports/8-ship-2.md
+  continue: fresh
+  not verified items:
+  - T004 → manual run → no terminal
+boundary:	8	@TOP@/specs/x/reports/8-ship-2.md

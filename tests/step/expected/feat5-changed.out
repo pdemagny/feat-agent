@@ -1,0 +1,9 @@
+answered
+spawn: feat-tasker
+  row: 5
+  mode: amend
+  model: sonnet
+  effort: low
+  report: @TOP@/specs/x/reports/5-tasks-2.md
+  continue: fresh
+boundary:	5	@TOP@/specs/x/reports/5-tasks-2.md	agent=<id>

@@ -34,37 +34,63 @@ spec.md, and into plan.md where it changes the how.
 A `[design]` finding is a correction, not a requirement: apply it where it
 points (add the definition, fix the reference, write down the decision with
 the accepted option), and add a requirement only if it changes behaviour.
-Report what changed, one line per finding.
+Report what changed on `Approach:`, one `; `-separated part per finding.
+
+**Reformat mode**: when the prompt says `Mode: reformat`, with `From:
+<report>` and `Unparsable: <file>: line <n> (<Key>)` (or `<file>: no
+<Key>: line`): read that report, write it again in the format below to
+your new report path, fixing the named line and any other line that breaks
+the format, and change nothing else: no other file, no new finding, no
+check run again. Its `Wrote:` lists the new report path in place of the
+old one. Hand back the digest.
 
 Write files with Write or Edit, never through the shell (heredoc, `>`,
 `>>`, `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those
 commands. If a command is refused, split it into plain ones. Send your
 report alone, once every write has returned: never report a file you
-haven't seen written. The orchestrator checks every `Wrote:` path on disk
-before it accepts your report.
+haven't seen written. `step.sh` checks every `Wrote:` path on disk before
+the run goes on.
 
 Spec Kit hooks: you can't run them (`Skill` is denied; `/feat` setup told
 the user). Skip every hook and list each under `Skipped hooks:`.
 
 Report file: the orchestrator may give a report path with its request (the
 spawn, or a message asking for a new report). Then, once the work is done,
-write the full report below (its `Wrote:` line listing that path) to that
-path with Write, as your last write, and hand back the same report. Each
-request's report goes to the path given with it; never write an earlier
-path again. With no report path, write no report file and hand back the
-full report.
+write the full report below (its `Wrote:` field listing that path) to that
+path with Write, as your last write, and hand back the digest: `Approach`,
+`Touches`, `New dependencies or services`, `Constitution check`,
+`Assumptions`, `Blockers`, `Size trigger`, `Skipped hooks` when not
+`none`, each as its lines of the format. Each request's report goes to the
+path given with it; never write an earlier path again. With no report
+path, write no report file and hand back the full report.
 
-Report, and nothing else:
+Report, and nothing else. Each list item is one `- ` line at column 0,
+never wrapped; write `none` for an empty field or section. A list field
+reads `<Key>: none`, or `<Key>:` alone followed by its items. `Approach`
+stays on one line. `Constitution check: pass` has no items;
+`Constitution check: violations` has one item per principle broken.
+`Assumptions` lists each decision beyond the spec, ending `needs user:
+yes` or `needs user: no`; the items are numbered by position (the first is
+1), so write no number. `Size trigger` names one kind (`service`,
+`permissions`, `exposure` or `dependency`), the others in its `<what>`.
+`Wrote:` lists plan.md always, plus every other file you created or
+changed in this spawn (design docs, spec.md in amend mode), and the report
+path, when one was given, one `- ` item per line.
 
 ```
 Plan: <absolute path to plan.md> (+ other artifacts written)
-Approach: <two or three lines>
-Touches: <packages/files, one line each>
-New dependencies or services: <each with its reason, or "none">
-Constitution check: <pass | violations, one line each>
-Assumptions: <each decision beyond the spec: what, why, recommendation, needs user: yes|no; or "none">
-Blockers: <what stops the plan, or "none">
-Size trigger: <new service, permissions, exposure or dependency, or "none">
+Approach: <two or three sentences>
+Touches:
+- <package or file>
+New dependencies or services: none
+- <dependency or service> — <reason>
+Constitution check: pass | violations
+- <principle> — <why>
+Assumptions: none
+- <what> — why: <why> — recommendation: <rec> — needs user: yes | no
+Blockers: none | <what stops the plan>
+Size trigger: none | service | permissions | exposure | dependency — <what>
 Skipped hooks: <hook → why, or "none">
-Wrote: <absolute paths, one per line: plan.md always, plus every other file you created or changed in this spawn (design docs, spec.md in amend mode), and the report path, when one was given>
+Wrote:
+- <absolute path>
 ```

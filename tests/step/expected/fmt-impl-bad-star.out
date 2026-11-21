@@ -1,0 +1,12 @@
+reformat
+unparsable line: 6-US1.md: * bash tests/b.sh → fail (b: exit 1)
+spawn: feat-implementer
+  row: 6
+  mode: reformat
+  model: sonnet
+  effort: low
+  report: @TOP@/specs/x/reports/6-US1-2.md
+  continue: fresh
+  from: @TOP@/specs/x/reports/6-US1.md
+  unparsable: 6-US1.md: line 5 (Checks)
+boundary:	6	@TOP@/specs/x/reports/6-US1-2.md

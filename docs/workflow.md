@@ -6,9 +6,11 @@ weight: 30
 # The workflow in detail
 
 What runs at each phase, on which model, for which size, and where it stops
-for you. The size tables here and in both skills are generated from
+for you. The size tables here, and the `sizes.tsv` file `step.sh` reads
+each spawn's model and effort from, are generated from
 [`.apm/skills/feat/sizes.json`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/sizes.json)
-by `mise run diagrams`; this page adds the explanations.
+by `mise run diagrams`; this page adds the explanations. Neither skill
+holds a size table or a gate table: `step.sh` applies them.
 
 ## Roles
 
@@ -17,10 +19,14 @@ by `mise run diagrams`; this page adds the explanations.
   `feat-brief-reviewer` read it fresh before you confirm it.
 - **Coordinator**: the session running `/feat`, started from a clean
   context. It holds every gate and changes only `feat-state.md`, through
-  the `state.sh` script (never by hand); it never reads code, report files,
-  runs checks or edits artifacts, and it runs git only to compare bases and
-  find runs. Every call it makes re-reads
-  its whole context, so it stays thin on purpose.
+  the `state.sh` and `step.sh` scripts (never by hand); it never reads
+  code, report files, runs checks or edits artifacts. At each phase
+  boundary it makes one Bash call,
+  [`step.sh`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/scripts/step.sh),
+  which checks the agents' reports, decides the gate, logs it, runs the
+  base check and prints the next spawn with its model and effort; the
+  coordinator writes the gate message and makes the spawn. Every call it
+  makes re-reads its whole context, so it stays thin on purpose.
 - **Phase agents**: the `feat-*` subagents. Each does one job, can't talk to
   you, starts with no conversation history, and gets what it needs (paths,
   size, conventions, allowed hooks, rejected findings) in its prompt.
@@ -41,33 +47,39 @@ by `mise run diagrams`; this page adds the explanations.
 | 8 | Ship          | `feat-shipper`                                                                        | —                                                                  | docs updated, commits, push, PR               | none                                                                                                                       |
 
 **Hard gate**: Claude stops and waits for your answer. **Soft gate**: Claude
-reports and continues; anything surprising turns it into a hard gate.
-Every agent's report ends with a `Wrote:` line (its artifacts and the
-files it wrote, or `none`). Before it accepts the report, the coordinator
-refuses any path that is not absolute, is outside the worktree, or holds a
-quote, newline, `$` or backtick, then checks each path exists (`ls -d`,
-never reading the files) and that the report's artifact path is on the
-line. A failure fails the phase: a hard gate that shows the reason, with
-no automatic retry ("back to N" reruns it).
+reports and continues, its one-line summary in the same turn as the next
+spawn; anything surprising lets the coordinator turn it into a hard gate
+(an override, logged). `step.sh` decides each gate of the table from the
+agents' reports and the Log; the gates are the ones the column says.
+Every agent's report ends with a `Wrote:` list (its artifacts and the
+files it wrote, or `none`). `step.sh` refuses any path that is not
+absolute, is outside the worktree, or holds a quote, newline, tab, `$`,
+backtick or `..` segment, then checks each path exists and that the
+report's own path and artifact path are on the list. A failure fails the
+phase: a hard gate that shows the reason, with no automatic retry ("back to
+N" reruns it). A report that does not parse (a field outside its fixed
+values, a wrapped list item) gets one reformat turn: the same agent writes
+it again in its format, changing nothing else; a second slip is a hard
+gate naming the line.
 
-**Report files.** Before each spawn, `state.sh report-path` gives the agent
-a path, `<artifact dir>/reports/<key>.md` (`3-test-2.md` on a rerun; a
-report file is never overwritten). The agent writes its full report there,
-lists the path on `Wrote:`, and hands back a digest: the same format minus
-the lines no gate reads (the code reviewer's `Dismissed:`, the design
-reviewer's `Checked and fine:`, the implementer's list of notable files,
-the tasker's `Fixed:`; the others drop nothing). The coordinator never
-reads a report file. `reports/` holds a `.gitignore` with `*`, so it is
-never committed. The code and design reviewers may write their report file
-and nothing else: `state.sh snapshot` before each batch of reviewers and
-`state.sh unchanged` after it catch any other change to the worktree, a
-hard gate that lists the paths that changed. An agent given no report path
+**Report files.** Before each spawn, `step.sh` gets the agent a path from
+`state.sh report-path`, `<artifact dir>/reports/<key>.md` (`3-test-2.md` on
+a rerun; a report file is never overwritten). The agent writes its full
+report there, one field per line with fixed values where `step.sh` reads
+them, lists the path on `Wrote:`, and hands back a digest: what the gate
+message needs beside `step.sh`'s output (each agent file lists its
+fields). The coordinator never reads a report file. `reports/` holds a
+`.gitignore` with `*`, so it is never committed. The code and design
+reviewers may write their report file and nothing else: `step.sh` takes a
+`state.sh snapshot` before each batch of reviewers and runs `state.sh
+unchanged` after it, so any other change to the worktree is a hard gate
+that lists the paths that changed. An agent given no report path
 (`/tiny`'s reviewer, `/brief`'s) reports in full and writes nothing.
 
 After a soft phase 2, the next gate (3/4, or 3 on large) opens with the spec
 summary.
 
-From phase 3 on, each phase starts with the base check (see
+From phase 3 on, `step.sh` starts each phase with the base check (see
 [When main moves](#when-main-moves)): silent when main has not moved; a
 move is listed at the next gate, or stops there when it needs your call.
 
@@ -80,7 +92,8 @@ split cell is a phase whose reviewers run in parallel, one per group of
 lenses (O = Opus, S = Sonnet). The picture is drawn from
 `.apm/skills/feat/sizes.json` by `mise run diagrams`.
 
-Each cell: model · effort, passed by `/feat` on every spawn.
+Each cell: model · effort, printed by `step.sh` in every spawn block (from
+`sizes.tsv`) and passed by `/feat` on the spawn.
 
 <!-- sizes-start feat-matrix -->
 
@@ -112,6 +125,8 @@ large: one reviewer per lens, in parallel.
 **Phase 7 reviewers.** small: two reviewers, lenses 7a+7b and 7c+7d+7e. medium and large: one reviewer per lens, 7a–7d in parallel, then 7e
 with 7d's cuts. A group runs on the strongest model and effort among its lenses.
 Applying the review fixes and moving onto a new main use the phase 6 row.
+The groups are `sizes.json`'s `groups`, carried into `sizes.tsv` with
+their precomputed model and effort.
 
 A huge idea never reaches `/feat` as one unit: each capability of its map
 gets its own brief and size column.
@@ -234,10 +249,11 @@ recommended answers, assumptions and unchecked checklist items. Before
 spawning it, the coordinator copies the brief into `feat-state.md`
 (`state.sh init`); once it has reported, it deletes the brief file
 only when it is `specs/briefs/<short-name>.md` in the checkout `/feat`
-started in (any other stays, and the final message names it), and gates. The gate is hard
-only when the spec has an open marker or the specifier reports a blocker (or
-the report holds something surprising, such as a remark about size), at
-every size. Otherwise it is soft: one line, `Phase 2 Specify — soft`, and
+started in (any other stays, and the final message names it). `step.sh`
+decides the gate: hard only when the spec has an open marker or the
+specifier reports a blocker, at every size (the coordinator may still make
+it hard when the report holds something surprising, such as a remark about
+size). Otherwise it is soft: one line, `Phase 2 Specify — soft`, and
 the run goes on. The summary (stories, requirements, the specifier's
 assumptions, unchecked checklist items) is kept in the state file's Log and
 opens the next gate, so questions are asked at phase 2 or at the gate that
@@ -254,7 +270,7 @@ anything. It reports approach, what it touches, new dependencies or
 services with reasons, constitution check, a size trigger (new service,
 permissions, exposure or dependency), and the decisions the spec didn't
 call for as assumptions with a recommendation and whether they need your
-call. Only a blocker stops the run. Small and medium go straight to phase 4;
+call. `step.sh` decides what follows: only a blocker stops the run. Small and medium go straight to phase 4;
 large stops here, and after a soft phase 2 that gate opens with the spec
 summary; "ok" accepts its recommendations.
 
@@ -285,7 +301,8 @@ and implementation-readiness reviewers of the
 what you meant; one that contradicts the brief makes the gate hard.
 
 The reviewer recommends on each finding (`apply`, `skip` or `user`), and
-`/feat` never sets a recommendation itself. `user` marks a finding that
+`/feat` never sets a recommendation itself; `step.sh` merges the reports
+and decides the gate. `user` marks a finding that
 removes or changes a story, a requirement or an acceptance criterion the
 brief asked for, overturns a spec assumption, or weakens a control the spec
 or plan sets. Large: always hard; you accept or reject each, with `user`
@@ -312,11 +329,11 @@ unnumbered feature dir (`SPECIFY_FEATURE_DIRECTORY`), fixes MEDIUM/LOW
 findings that don't change meaning, and reports CRITICAL/HIGH with proposed
 fixes, task IDs per story, the MVP slice, whether analyze ran, and
 unchecked checklist items. When analyze can't run, the tasker cross-checks
-spec, plan and tasks by hand and says so (`Analyze: not run`). The gate is
-hard only on CRITICAL/HIGH findings, analyze not run, a size increase, or
-checklist items the checklist answer you already gave doesn't cover
-(`speckit-implement` would stop on them).
-The coordinator also runs `story.sh` on `tasks.md` and compares its task IDs
+spec, plan and tasks by hand and says so (`Analyze: not run`). `step.sh`
+decides the gate: hard only on CRITICAL/HIGH findings, analyze not run, a
+size increase, or checklist items the checklist answer you already gave
+doesn't cover (`speckit-implement` would stop on them).
+It also runs `story.sh` on `tasks.md` and compares its task IDs
 per group with the tasker's report: a difference, or a script error, is a
 hard gate showing both sides, and the task count for the size check comes
 from the script.
@@ -334,7 +351,8 @@ story (task IDs, checked state, paths), as data and refreshed on a retry or
 resume, and the implementer sends independent tool calls together in one
 turn. Each runs `speckit-implement` over its tasks,
 reads only what they need, runs build, tests and linters, never weakens a
-check, never commits. Failing checks go back once; a needed design change is
+check, never commits. `step.sh` decides each story's gate and prints the
+next story's spawn: failing checks go back once; a needed design change is
 a hard gate. **Large:** a gate after each story.
 
 A check that could not run (no credentials, a service down, a manual step,
@@ -345,10 +363,10 @@ instead of redoing the tasks.
 
 ### 7 Code review (`feat-code-reviewer`)
 With [board tracking](#board-tracking) the coordinator first moves the issue
-to In review. It then makes the uncommitted work reviewable (`git add -N` on new
+to In review. `step.sh` then makes the uncommitted work reviewable (`git add -N` on new
 files, `git diff` against `git merge-base origin/<default> HEAD`; a
-`...HEAD` diff would be empty) and spawns
-the reviewers with their lenses:
+`...HEAD` diff would be empty) and prints the reviewers' spawns with their
+lenses:
 - **7a Correctness, spec, standards**: three separate passes. Standards:
   the project's documented rules (hard) and a Fowler smell baseline
   (judgement calls). Spec: missing requirements, scope creep, wrong
@@ -373,8 +391,8 @@ Reviewers verify their findings and list what they dismissed, in their
 report file. You get one
 list (`B` bugs and spec mismatches, `S` security, `P` performance, `C` cuts,
 `R` readability and `[std]` standards), each ending with the reviewer's
-recommendation: `apply`, `skip (<why>)` or `user (<why>)`. The coordinator
-merges them by fixed rules (cut code drops its performance and readability
+recommendation: `apply`, `skip (<why>)` or `user (<why>)`. `step.sh`
+merges them by fixed rules and decides the gate (cut code drops its performance and readability
 findings; the same spot with different advice, a high-confidence bug the
 reviewer would skip, or a security finding the reviewer would skip, becomes
 `user`; a missing recommendation becomes `user`).
@@ -466,11 +484,34 @@ list (the latest one per implementer counts). Every agent reads it; `/feat resum
 starts from it; the PR links to it. It's updated at each gate, only
 through [`state.sh`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/scripts/state.sh):
 `init` creates it, `set` changes one header field, `log` appends Log
-lines, and fixed queries answer what the coordinator and the shipper
-used to read from the Log in prose (the test cycle and retry, the shipped
-verdict, phase 2's mode on resume, a refused base, the resume and rebase
-searches, the PR body's code review part). The agents' report files sit
-beside it, in `reports/`, never committed.
+lines, and fixed queries answer what `step.sh` and the shipper read from
+the Log (the test cycle and retry, the shipped verdict, phase 2's mode on
+resume, a refused base, the resume and rebase searches, the PR body's code
+review part). `step.sh` writes the gate lines, `Current phase`, `Size`
+and the moves; the coordinator writes only the setup line, an override,
+the tracker's and the issue's lines. The agents' report files sit beside
+it, in `reports/`, never committed.
+
+Each gate line carries its tag, `[soft]` or `[hard]`, after the phase
+name, and its sub-lines say what happened at it:
+
+```markdown
+- [x] 4 Design review [hard] — finding needs you: D2
+    - D2 <spot> — <a few words> — rec: user (<why>)
+    - answer: leave D2 (user: "behind the VPN")
+    - outcome: picked D1; rejected D2 (user: "behind the VPN")
+- [x] 5 Tasks [soft] — analyze ran, no CRITICAL/HIGH
+```
+
+- `answer:` is your answer, its kind first (`approved`, `changed`,
+  `picked`, `back to N`, `stop`, …) and your words quoted;
+- `outcome:` is what the answer led to, when it is more than the answer
+  says (the findings picked and rejected, a size change);
+- `override: hard — <reason>` is the coordinator turning a soft verdict
+  into a hard gate, written just before the boundary call.
+
+`resume` reads the tags and the `answer:` lines, so an answered gate is
+never asked again and an amend it led to is not redone.
 
 ## When main moves
 
@@ -478,13 +519,14 @@ Runs go in parallel, one worktree each; when one merges, the others fall
 behind `origin/<default>`, and the open PRs among them may conflict.
 Running runs keep up on their own; `/feat rebase [PR]` and `/fix rebase
 [PR]` (as a plugin, `/logistics:feat rebase` and `/logistics:fix rebase`)
-bring shipped runs back onto the current main. The rules are in the
-harness's "Moving onto a new main" and, for shipped runs, in
+bring shipped runs back onto the current main. The rules are in
+[`.apm/skills/feat/references/move.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/references/move.md),
+read only when `step.sh` reports that main moved, and, for shipped runs, in
 [`.apm/skills/feat/references/rebase.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/references/rebase.md),
 read only by a `rebase` run.
 
 - **Before each phase** (from phase 3 of `/feat`, phase 2 of `/fix`, and
-  any phase rerun by "back to N"): the coordinator runs `git fetch origin
+  any phase rerun by "back to N"): `step.sh` runs `git fetch origin
   <default>` and `git merge-base --is-ancestor origin/<default> HEAD`. When
   main has not moved, nothing happens: no agent, nothing shown or logged.
   When it has, the move below runs before the phase. A move that went
@@ -503,7 +545,7 @@ read only by a `rebase` run.
 - **The move**: `feat-implementer` in rebase mode, on the implement row
   at the run's size, rebases the branch onto `origin/<default>`, resolves
   alone the conflicts that keep both sides' intent and undoes the whole
-  move to ask you about the others (the harness has the rules); then the
+  move to ask you about the others (`move.md` has the rules); then the
   checks (the full ones on a PR).
 - **Uncommitted work**: set aside in a temporary `logistics-wip:` commit
   and a pre-move ref, never the stash and never pushed, both gone once the
@@ -517,8 +559,8 @@ read only by a `rebase` run.
   leftover `logistics-wip:` commit (found by its subject even when the ref
   was never set), then logs `move — repaired`.
 - **The log**: every move, kept or refused, gets a `move —` line in the
-  state file's Log (format in the harness), so `resume` and the PR body
-  show it.
+  state file's Log (format in `move.md`, written by `step.sh`), so
+  `resume` and the PR body show it.
 - **The push**: `feat-shipper` in rebase mode, on the ship row, commits
   the move's mechanical check fixes in a commit of their own, then the
   move's Log lines alone (`docs(specs): log rebase onto <short sha>`,
@@ -550,14 +592,17 @@ bug report to a reviewed PR with Spec Kit's bug extension (`specify
 extension add bug`): assess, fix and test, each in a subagent, then the
 code review and the ship of `/feat`. It reads the same harness as `/feat`
 ([`.apm/skills/feat/references/harness.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/references/harness.md):
-thin orchestrator, gate shape, review findings, state file, board moves, resume); its own
-values and size table are in [`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/fix/SKILL.md),
-which is what the coordinator reads for this section (generated from `sizes.json`).
+thin orchestrator, the step script, gate shape, review findings, state
+file, board moves, resume) and calls the same `step.sh`; its own values
+and gate messages are in [`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/fix/SKILL.md),
+which is what the coordinator reads for this section. Its sizes and
+reviewer groups are `sizes.json`'s `fix` part.
 
 ### Roles
 
 - **Coordinator**: the session running `/fix`. As in `/feat`, it holds the
-  gates, changes only the state file (through `state.sh`), never reads
+  gates `step.sh` decides, changes only the state file (through `state.sh`
+  and `step.sh`), never reads
   code, report files or runs checks; it
   quotes a line of assessment.md, fix.md or test.md only when you must
   decide on it.
@@ -594,6 +639,8 @@ with the base check of [When main moves](#when-main-moves).
 
 ### Gates
 
+`step.sh` decides each of them from the reports and the Log, as in `/feat`.
+
 - **Assess** stops the run when the report is not a bug (a missing
   feature points to `/brief #N`), invalid or unintelligible; the issue is
   left untouched. It is soft only for a small fix with high confidence, a
@@ -616,7 +663,7 @@ with the base check of [When main moves](#when-main-moves).
   log), a second one, or one after review fixes, is hard with "back to 1"
   offered. A verdict other than `verified` reaches ship only on your
   explicit words, logged and copied into the PR body.
-- **Code review**, first match wins: a security bug is hard (the go-ahead
+- **Code review**, in this order: a security bug is hard (the go-ahead
   to ship is asked here); `Size: large` is hard; a `user` or `S` finding is
   hard; otherwise soft, and the reviewers' `apply` findings are fixed
   unasked. Fixes go to the implementer in fix mode, then a fresh test
@@ -630,7 +677,8 @@ with the base check of [When main moves](#when-main-moves).
 
 ### Size matrix
 
-Each cell: model · effort, passed by `/fix` on every spawn. The size is set
+Each cell: model · effort, printed by `step.sh` in every spawn block and
+passed by `/fix` on the spawn. The size is set
 at the assess gate, so phase 1 is the same in every column.
 
 <!-- sizes-start fix-matrix -->
@@ -651,9 +699,11 @@ at the assess gate, so phase 1 is the same in every column.
 **Phase 4 reviewers.** small: one reviewer, lenses 7a+7b+7d. medium: one
 reviewer, 7a+7b (7a+7b+7c for a performance bug). large: 7a and 7b in
 parallel, plus 7c for a performance bug. A group runs on the strongest
-model and effort among its lenses. The spec pass reads assessment.md and
-fix.md, as a bug has no spec.md. Applying the review fixes and moving onto
-a new main use the phase 2 row.
+model and effort among its lenses. These groups are now in `sizes.json`'s
+`fix.groups` (the `performance` set for a performance bug), carried into
+`sizes.tsv`. The spec pass reads assessment.md and fix.md, as a bug has no
+spec.md. Applying the review fixes and moving onto a new main use the
+phase 2 row.
 
 ### Why these choices
 
@@ -755,7 +805,7 @@ spec. Its `apply` findings are applied, `skip` ones go in the PR body.
 
 `feat-code-reviewer` also runs `/fix`'s phase 4, unchanged, with lenses
 7a–7d only, and `/tiny`'s fresh review with lens 7a. Agent files carry no model or effort: `/feat` and `/fix` pass
-both on every spawn, from their size tables (`/brief` for
+both on every spawn, as `step.sh` prints them from `sizes.tsv` (`/brief` for
 `feat-brief-reviewer`). Tool limits are deny lists (`disallowedTools`) rather
 than allow lists, so a new tool is available to an agent unless denied. Every agent denies `Artifact` and `EnterWorktree` (`mise run lint` checks it), and the five that never invoke a skill by name also deny `Skill`. The saving from these denials depends on your setup (which tools and skills your Claude Code loads, and whether the run is interactive, background or headless). No agent but the shipper commits (the implementer's rebase mode makes
 one temporary WIP commit, undone before it reports and never pushed), and

@@ -1,0 +1,12 @@
+soft
+resume: 3 Plan
+phase2-mode: none
+base: same
+spawn: feat-planner
+  row: 3
+  mode: amend
+  model: opus
+  effort: high
+  report: @TOP@/specs/x/reports/3-plan.md
+  continue: fresh
+boundary:	3	@TOP@/specs/x/reports/3-plan.md	agent=<id>

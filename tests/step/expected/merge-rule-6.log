@@ -1,0 +1,7 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 7 Code review
+# /feat state: Test feature
+--
+- [x] 7 Code review [hard] — S1 need you; S1 security
+    - S1 src/auth.sh — a token reaches the log

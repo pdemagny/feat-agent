@@ -1,0 +1,8 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 2 Fix
+# /fix state: Off-by-one on the last page
+--
+- [x] 1 Assess [soft] — gate: valid, high confidence, reproduced, 1 remediation(s); size small; risk area none; performance bug no
+- [x] 1 Assess — approved: bash tests/page.sh
+- [x] 1 Assess — answer: which page? → the last

@@ -1,0 +1,7 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 5 Ship
+# /fix state: a run started before step.sh
+--
+- [x] 3 Test [soft] — verified
+- [x] 5 Ship [hard] — fact missing: risk area

@@ -1,0 +1,7 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 3 Plan
+# /feat state: Test feature
+--
+    - answer: stay (user: "not now")
+- [x] move — stayed on 1a2b3c4, refused 5d6e7f8 (user: "not now")

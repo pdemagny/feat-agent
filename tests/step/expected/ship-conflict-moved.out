@@ -1,0 +1,11 @@
+soft
+move: 1a2b3c4 → 5d6e7f8 (at ship); checks pass
+spawn: feat-shipper
+  row: 8
+  mode: ship
+  model: haiku
+  effort: medium
+  report: @TOP@/specs/012-x/reports/8-ship-2.md
+  continue: fresh
+  not verified items: none
+boundary:	8	@TOP@/specs/012-x/reports/8-ship-2.md

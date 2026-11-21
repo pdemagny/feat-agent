@@ -1,0 +1,9 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 7 Code review
+# /feat state: Test feature
+--
+- [x] 7 Code review [hard] — B1, B2 need you
+    - B1 src/a.sh:3 — off-by-one on the last page — rec: user (reviewers disagree)
+    - B2 src/a.sh:2-4 — the index runs past the end — rec: user (reviewers disagree)
+    - B3 src/b.sh:7 — the header repeats on every page — rec: apply

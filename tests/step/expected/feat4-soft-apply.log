@@ -1,0 +1,9 @@
+- Size: small
+- Agents: specifier s1, planner p1 (for SendMessage)
+- Current phase: 4 Design review
+# /feat state: Test feature
+--
+- [x] 4 Design review [soft] — auto-applied D1, D2
+    - D1 plan.md: Approach — the page size is fetched per item — rec: apply
+    - D2 plan.md: Secrets — the token file is world-readable
+    - spec assumptions: kept as recommended

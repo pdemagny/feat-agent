@@ -1,0 +1,3 @@
+hard:
+- move undone (1a2b3c4 → 5d6e7f8)
+answer call:	move	@TOP@/specs/x/reports/move.md	sum=move.md:@SUM@

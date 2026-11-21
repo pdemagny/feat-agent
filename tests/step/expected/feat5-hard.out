@@ -1,0 +1,11 @@
+hard:
+- 1 CRITICAL/HIGH findings
+- analyze: not said
+- story.sh: US1 — tasker: T003 — tasks.md: T003–T004
+- story.sh: US2 — tasker: T004–T005 — tasks.md: T005
+- story.sh: polish — tasker: none — tasks.md: T006
+- story.sh: total — tasker: 7 — tasks.md: 6
+- unanswered checklist items
+- fact missing: size trigger
+- fact missing: unchecked checklist items
+answer call:	5	@TOP@/specs/x/reports/5-tasks.md	sum=5-tasks.md:@SUM@

@@ -1,0 +1,11 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 7 Code review
+# /feat state: Test feature
+--
+- [x] 7 Code review [hard] — B2 need you; criterion not met: AC-1 the last page holds the last item
+    - B1 src/a.sh:3 — off-by-one on the last page — rec: apply
+    - B2 src/a.sh:40-44 — scope creep: a --verbose flag — rec: user (the user may want it)
+    - P1 src/a.sh:10-12 — the page count is recomputed per item — rec: apply
+    - C1 src/a.sh:8-14 — delete: the paging helper nobody calls — rec: apply
+    - R1 src/a.sh:11 — rename p to page — rec: apply

@@ -1,0 +1,8 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 7 Code review
+# /feat state: Test feature
+--
+- [x] 7 review fixes — B1 → applied; checks: bash tests/a.sh → fail (page 3 is empty); not verified:
+    - n/a → live run → no credentials
+- [x] 7 review fixes [hard] — checks fail after retry: bash tests/a.sh

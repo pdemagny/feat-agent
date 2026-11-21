@@ -1,0 +1,6 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 6 Implement
+# /feat state: Test feature
+--
+    - answer: approved (user: "known flake")

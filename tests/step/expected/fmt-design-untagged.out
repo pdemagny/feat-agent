@@ -1,0 +1,13 @@
+reformat
+unparsable line: 4-4a+4b+4c.md: - the page size is fetched per item — at: plan.md: Approach — fix: fetch it 
+spawn: feat-design-reviewer
+  row: 4a+4b+4c
+  mode: reformat
+  lenses: 4a+4b+4c
+  model: sonnet
+  effort: low
+  report: @TOP@/specs/x/reports/4-4a+4b+4c-2.md
+  continue: fresh
+  from: @TOP@/specs/x/reports/4-4a+4b+4c.md
+  unparsable: 4-4a+4b+4c.md: line 5 (Findings)
+boundary:	4	@TOP@/specs/x/reports/4-4a+4b+4c-2.md	snapshot=@SNAP@

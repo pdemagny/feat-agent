@@ -36,34 +36,57 @@ given, as one plain command with no `$(…)`:
    stops on them, so the user decides first.
 6. Never commit.
 
+**Reformat mode**: when the prompt says `Mode: reformat`, with `From:
+<report>` and `Unparsable: <file>: line <n> (<Key>)` (or `<file>: no
+<Key>: line`): read that report, write it again in the format below to
+your new report path, fixing the named line and any other line that breaks
+the format, and change nothing else: no other file, no new finding, no
+check run again. Its `Wrote:` lists the new report path in place of the
+old one. Hand back the digest.
+
 Write files with Write or Edit, never through the shell (heredoc, `>`,
 `>>`, `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those
 commands. If a command is refused, split it into plain ones. Send your
 report alone, once every write has returned: never report a file you
-haven't seen written. The orchestrator checks every `Wrote:` path on disk
-before it accepts your report.
+haven't seen written. `step.sh` checks every `Wrote:` path on disk before
+the run goes on.
 
 Spec Kit hooks: you can't run them (`Skill` is denied; `/feat` setup told
 the user). Skip every hook and list each under `Skipped hooks:`.
 
 Report file: the orchestrator may give a report path with its request (the
 spawn, or a message asking for a new report). Then, once the work is done,
-write the full report below (its `Wrote:` line listing that path) to that
-path with Write, as your last write, and hand back the digest: the same
-report without its `Fixed:` line. Each request's report goes to the path
-given with it; never write an earlier path again. With no report path,
-write no report file and hand back the full report.
+write the full report below (its `Wrote:` field listing that path) to that
+path with Write, as your last write, and hand back the digest: `MVP
+slice`, `Analyze` when not `ran`, `Open findings`, `Unchecked checklist
+items`, each as its lines of the format. Each request's report goes to the
+path given with it; never write an earlier path again. With no report
+path, write no report file and hand back the full report.
 
-Report, and nothing else:
+Report, and nothing else. Each list item is one `- ` line at column 0,
+never wrapped; write `none` for an empty field or section. `Tasks:` holds
+the path only. `Per story:` has one item per group of tasks.md, in its
+order: `setup/foundational`, each `US<n>`, `polish`, each with its task
+IDs and ranges (`T001–T012` or `T001-T012`), comma-separated, or `none`.
+`Analyze:` is for the last run. `Open findings:` lists each finding
+severity first. `Wrote:` lists tasks.md always, plus every other file you
+created or changed in this spawn (artifacts you fixed), and the report
+path, when one was given, one `- ` item per line.
 
 ```
-Tasks: <absolute path to tasks.md>, <total> tasks
-Per story: <US1: n tasks (T001–T012), US2: …; setup/foundational and polish task IDs>
+Tasks: <absolute path to tasks.md>
+Total tasks: <n>
+Per story:
+- setup/foundational: <IDs and ranges, comma-separated, or none>
+- US1: <…>
+- polish: <…>
 MVP slice: <task IDs>
-Analyze: <ran | not run (<error>; cross-checked by hand)>, for the last run
-Fixed: <MEDIUM/LOW findings you fixed, one line each>
-Open findings: <severity — finding → proposed fix (artifact)>
-Unchecked checklist items: <file: item, or "none">
+Analyze: ran | not run (<error>; cross-checked by hand)
+Fixed: <MEDIUM/LOW findings fixed, "; "-separated, or none>
+Open findings: none
+- CRITICAL | HIGH | MEDIUM | LOW — <finding> → <proposed fix> (<artifact>)
+Unchecked checklist items: none | open: <file>: <item>; …
 Skipped hooks: <hook → why, or "none">
-Wrote: <absolute paths, one per line: tasks.md always, plus every other file you created or changed in this spawn (artifacts you fixed), and the report path, when one was given>
+Wrote:
+- <absolute path>
 ```

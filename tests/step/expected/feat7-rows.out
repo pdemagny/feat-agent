@@ -1,0 +1,10 @@
+hard:
+- B2 need you
+- criterion not met: AC-1 the last page holds the last item
+counts: 5 findings, 4 to apply, 0 skipped; untested: AC-2 an empty list prints nothing
+finding: B1 Bugs — off-by-one on the last page — at: src/a.sh:3 — fix: use <= — confidence: high — rec: apply
+finding: B2 Spec — scope creep: a --verbose flag — spec: "FR-001 prints the page" — at: src/a.sh:40-44 — fix: drop the flag — rec: user (the user may want it)
+finding: P1 Performance — the page count is recomputed per item — at: src/a.sh:10-12 — fix: compute it once — measured: bash bench.sh, 120 ms — verify with: bash bench.sh — guard: none — rec: apply
+finding: C1 Cuts — delete: the paging helper nobody calls — at: src/a.sh:8-14 — fix: nothing — rec: apply
+finding: R1 Readability — rename p to page — at: src/a.sh:11 — fix: rename it — why: says what it holds — rec: apply
+answer call:	7	@TOP@/specs/x/reports/7-7a+7b.md	@TOP@/specs/x/reports/7-7c+7d+7e.md	sum=7-7a+7b.md:@SUM@	sum=7-7c+7d+7e.md:@SUM@

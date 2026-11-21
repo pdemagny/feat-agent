@@ -28,8 +28,8 @@ money on the easy phases or quality on the hard ones.
 | `model` / `effort` on the Agent tool call | that one spawn; overrides the file                                                 | **Yes**: lets one agent serve every size                               |
 
 So: the gated workflow stays in the main session, and every phase that
-doesn't need you is a subagent spawned with the model and effort from the
-size table.
+doesn't need you is a subagent spawned with the model and effort from
+`sizes.tsv`, printed by `step.sh` in its spawn block.
 
 ## Why the orchestrator model is the session model
 
@@ -170,17 +170,23 @@ installer read it:
   third-party skills come from the skills CLI.
 - **`install.sh`**: symlinks for working on the workflow itself.
 
-The rules `/feat` and `/fix` share (thin orchestrator, gates, review findings,
-state file, board moves, moving onto a new main, resume) live in one file, `.apm/skills/feat/references/harness.md`,
+The rules `/feat` and `/fix` share live once. The coordinators' part
+(thin orchestrator, the step script, gates, review findings, state file,
+board moves, resume) is in `.apm/skills/feat/references/harness.md`,
 which `/fix` reaches as `../feat/references/harness.md` from its own base
 dir, as `/brief` reaches the tracker script; all three installers keep it
-in place, and `mise run lint` greps it for `/feat`-only words. The
-`rebase` entry point of both skills, `.apm/skills/feat/references/rebase.md`,
-sits beside it under the same rule: only a `rebase` run reads it, and the
-lint greps it too.
+in place, and `mise run lint` greps it for `/feat`-only words. Two
+references sit beside it under the same rule, and the lint greps them
+too: `move.md`, read only when main moved under a run, and
+`rebase.md`, the `rebase` entry point of both skills, read only by a
+`rebase` run. The rules a script can apply (checking reports, deciding
+gates, merging review findings, the base check, model and effort) are in
+`.apm/skills/feat/scripts/step.sh`, which both coordinators call once at
+each phase boundary.
 
 Agent frontmatter has no `model` or `effort` (`/feat` passes both on every
-spawn from the size table) and limits tools with `disallowedTools`.
+spawn, as `step.sh` prints them from `sizes.tsv`) and limits tools with
+`disallowedTools`.
 
 Only Claude Code is supported: the skill relies on its Agent tool with
 per-call `model` and `effort`, and on `EnterWorktree`. Other harnesses

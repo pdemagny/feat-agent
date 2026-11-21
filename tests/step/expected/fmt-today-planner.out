@@ -1,0 +1,12 @@
+reformat
+unparsable line: 3-plan.md: @TOP@/specs/x/plan.md
+spawn: feat-planner
+  row: 3
+  mode: reformat
+  model: sonnet
+  effort: medium
+  report: @TOP@/specs/x/reports/3-plan-2.md
+  continue: fresh
+  from: @TOP@/specs/x/reports/3-plan.md
+  unparsable: 3-plan.md: line 12 (Wrote)
+boundary:	3	@TOP@/specs/x/reports/3-plan-2.md

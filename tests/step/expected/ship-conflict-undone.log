@@ -1,0 +1,6 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: done (shipping)
+# /feat state: Test feature
+--
+- [x] move [hard] — undone (1a2b3c4 → 5d6e7f8)

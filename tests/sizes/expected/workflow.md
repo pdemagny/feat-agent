@@ -22,12 +22,15 @@ Between.
 
 <!-- sizes-start fix-matrix -->
 
-| # | Phase  | Agent               | small          | medium         | large         |
-| - | ------ | ------------------- | -------------- | -------------- | ------------- |
-| 1 | Assess | `feat-bug-assessor` | opus · low     | opus · medium  | opus · high   |
-| 2 | Fix    | `feat-implementer`  | haiku · high   | sonnet · high  | opus · high   |
-| 3 | Test   | `feat-bug-assessor` | sonnet · high  | sonnet · high  | sonnet · high |
-| 4 | Ship   | `feat-shipper`      | haiku · medium | haiku · medium | haiku · high  |
+| #  | Phase                 | Agent                | small          | medium         | large         |
+| -- | --------------------- | -------------------- | -------------- | -------------- | ------------- |
+| 1  | Assess                | `feat-bug-assessor`  | opus · low     | opus · medium  | opus · high   |
+| 2  | Fix                   | `feat-implementer`   | haiku · high   | sonnet · high  | opus · high   |
+| 3  | Test                  | `feat-bug-assessor`  | sonnet · high  | sonnet · high  | sonnet · high |
+| 4a | Correctness (lens 7a) | `feat-code-reviewer` | sonnet · high  | sonnet · low   | opus · medium |
+| 4b | Security (lens 7b)    | `feat-code-reviewer` | opus · medium  | haiku · high   | sonnet · max  |
+| 4c | Performance (lens 7c) | `feat-code-reviewer` | sonnet · high  | opus · low     | haiku · low   |
+| 5  | Ship                  | `feat-shipper`       | haiku · medium | haiku · medium | haiku · high  |
 
 <!-- sizes-end fix-matrix -->
 

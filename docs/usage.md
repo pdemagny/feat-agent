@@ -305,12 +305,19 @@ Full matrix in [workflow.md](workflow.md#size--phase-matrix).
 
 ## Tuning
 
-The size tables in [`.apm/skills/feat/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/SKILL.md) and
-[`.apm/skills/fix/SKILL.md`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/fix/SKILL.md) are what the coordinator
-reads: it passes `model` and `effort` from them on every agent call. In a
-checkout, edit [`.apm/skills/feat/sizes.json`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/sizes.json)
-and run `mise run diagrams`, which regenerates those tables and
-[workflow.md](workflow.md). In an install, tune the SKILL.md tables.
+[`.apm/skills/feat/sizes.tsv`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/sizes.tsv)
+is what the runs read: `step.sh` prints the `model` and `effort` for each
+spawn from it, and the coordinator passes them on every agent call.
+
+- **In a checkout**, edit
+  [`.apm/skills/feat/sizes.json`](https://github.com/pdemagny/logistics/blob/main/.apm/skills/feat/sizes.json)
+  (models, efforts and the reviewer groups of `/feat` phases 4 and 7 and
+  `/fix` phase 4) and run `mise run diagrams`, which regenerates
+  `sizes.tsv` and the tables in [workflow.md](workflow.md).
+- **In an install**, edit the installed `sizes.tsv`: the `row` line for
+  the phase and size, and every `group` line that names that row. A group
+  line carries its own model and effort (the strongest of its rows), and
+  the groups are what `/feat` phases 4 and 7 and `/fix` phase 4 spawn.
 
 Agent files carry no model or effort; outside the workflow an agent runs
 on the session's model unless you name one.
@@ -319,8 +326,8 @@ on the session's model unless you name one.
 | --------------- | ------------------------------------------------------ | ------------------------------------------------------------ |
 | model           | `haiku`, `sonnet`, `opus`, `fable`, or a full model ID | capability vs. usage; Opus also has its own plan limit       |
 | effort          | `low`, `medium`, `high`, `xhigh`, `max`                | thinking per step and number of tool calls on the same model |
-| reviewer groups | phase 4 and 7 notes under the size tables              | fewer reviewers = fewer cold starts                          |
-| gates           | the Phases and gates table                             | more stops where mistakes cost more                          |
+| reviewer groups | `groups` in `sizes.json` (the `group` lines of `sizes.tsv`) | fewer reviewers = fewer cold starts                     |
+| gates           | decided by `step.sh` (a checkout change, with its tests) | more stops where mistakes cost more                        |
 
 Suggested approach: run two or three real features, note the phase where
 results were weakest, and raise that phase's effort before its model.
@@ -348,4 +355,4 @@ so on.
 | `rebase` ends with `! secret scan: …` or `! WIP commit …` | Nothing was pushed. Look at the file it names, or at the branch's last commits |
 | A `[!] move — git fetch failed` line at a gate | Check the network; the run went on, on the base it had |
 | The session closed, crashed or ran out of context mid-run | `/feat resume` (or `/fix resume`) continues from the state file |
-| Your plan has no Opus (or no Sonnet) | Change the model in the SKILL.md size tables ([Tuning](#tuning)) |
+| Your plan has no Opus (or no Sonnet) | Change the model in `sizes.tsv` ([Tuning](#tuning)) |

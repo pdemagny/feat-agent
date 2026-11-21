@@ -1,0 +1,4 @@
+hard:
+- story.sh: story: error: cannot read @TOP@/specs/x/tasks.md
+tasks: 1 done, 0 not verified; checks pass
+answer call:	6	@TOP@/specs/x/reports/6-US1.md	sum=6-US1.md:@SUM@

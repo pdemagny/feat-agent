@@ -1,0 +1,12 @@
+phase2-mode: none
+cycle: after review fixes
+retry-used: no
+shipped-verdict: partial — ship with partial (user: "partial is enough")
+refused-base: 
+review-summary 4:
+**Applied without asking (reviewer's recommendation)**
+- none
+**Picked by the user**
+- none
+**Not applied**
+- none

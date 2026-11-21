@@ -1,0 +1,48 @@
+soft
+resume: 7 Code review
+phase2-mode: none
+base: same
+untracked, not in the diff: junk/f01
+untracked, not in the diff: junk/f02
+untracked, not in the diff: junk/f03
+untracked, not in the diff: junk/f04
+untracked, not in the diff: junk/f05
+untracked, not in the diff: junk/f06
+untracked, not in the diff: junk/f07
+untracked, not in the diff: junk/f08
+untracked, not in the diff: junk/f09
+untracked, not in the diff: junk/f10
+untracked, not in the diff: junk/f11
+untracked, not in the diff: junk/f12
+untracked, not in the diff: junk/f13
+untracked, not in the diff: junk/f14
+untracked, not in the diff: junk/f15
+untracked, not in the diff: junk/f16
+untracked, not in the diff: junk/f17
+untracked, not in the diff: junk/f18
+untracked, not in the diff: junk/f19
+untracked, not in the diff: junk/f20
+untracked, not in the diff: … 7 more
+diff: git diff @SHA@
+spawn: feat-code-reviewer
+  row: 7a+7b
+  mode: review
+  lenses: 7a+7b
+  model: sonnet
+  effort: low
+  report: @TOP@/specs/x/reports/7-7a+7b.md
+  continue: fresh
+  diff: git diff @SHA@
+  rejected: none
+  accepted sec: none
+spawn: feat-code-reviewer
+  row: 7c+7d+7e
+  mode: review
+  lenses: 7c+7d+7e
+  model: sonnet
+  effort: low
+  report: @TOP@/specs/x/reports/7-7c+7d+7e.md
+  continue: fresh
+  diff: git diff @SHA@
+  rejected: none
+boundary:	7	@TOP@/specs/x/reports/7-7a+7b.md	@TOP@/specs/x/reports/7-7c+7d+7e.md	snapshot=@SNAP@

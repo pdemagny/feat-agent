@@ -1,0 +1,6 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 4 Design review
+# /feat state: Test feature
+--
+- [x] 4 Design review [hard] — fact missing: assumptions needing you; fact missing: constitution; fact missing: blockers; fact missing: size trigger; fact missing: unchecked checklist items

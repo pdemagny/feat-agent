@@ -1,0 +1,11 @@
+soft
+base: fetch-failed: fatal: '@TOP@/nope.git' does not appear to be a git repository
+spawn: feat-planner
+  row: 3
+  mode: first
+  model: sonnet
+  effort: medium
+  report: @TOP@/specs/x/reports/3-plan.md
+  continue: fresh
+boundary:	3	@TOP@/specs/x/reports/3-plan.md	agent=<id>
+answer call:	2	@TOP@/specs/x/reports/2-specify.md	sum=2-specify.md:@SUM@

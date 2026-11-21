@@ -1,0 +1,9 @@
+hard:
+- fact missing: assumptions needing you
+- fact missing: constitution
+- fact missing: blockers
+- fact missing: size trigger
+- fact missing: unchecked checklist items
+paraphrase: matches
+counts: 0 findings, 0 applied, 0 skipped
+answer call:	4	@TOP@/specs/x/reports/4-4a.md	@TOP@/specs/x/reports/4-4b.md	@TOP@/specs/x/reports/4-4c.md	sum=4-4a.md:@SUM@	sum=4-4b.md:@SUM@	sum=4-4c.md:@SUM@

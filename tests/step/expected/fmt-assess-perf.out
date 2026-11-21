@@ -1,0 +1,12 @@
+reformat
+unparsable line: 1-assess.md: Performance bug: maybe
+spawn: feat-bug-assessor
+  row: 1
+  mode: reformat
+  model: sonnet
+  effort: low
+  report: @TOP@/specs/x/reports/1-assess-2.md
+  continue: fresh
+  from: @TOP@/specs/x/reports/1-assess.md
+  unparsable: 1-assess.md: line 23 (Performance bug)
+boundary:	1	@TOP@/specs/x/reports/1-assess-2.md

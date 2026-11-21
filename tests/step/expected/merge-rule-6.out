@@ -1,0 +1,6 @@
+hard:
+- S1 need you
+- S1 security
+counts: 1 findings, 0 to apply, 0 skipped
+finding: S1 Security — a token reaches the log — at: src/auth.sh:12 — fix: drop the log line — severity: high — rec: user (debug builds only)
+answer call:	7	@TOP@/specs/x/reports/7-7a+7b.md	@TOP@/specs/x/reports/7-7c+7d+7e.md	sum=7-7a+7b.md:@SUM@	sum=7-7c+7d+7e.md:@SUM@

@@ -1,0 +1,11 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 4 Design review
+# /feat state: Test feature
+--
+- [x] 4 Design review [hard] — D5 need you
+    - D1 plan.md: Approach — the page size is fetched per item — rec: apply
+    - D2 plan.md: Secrets — the token file is world-readable
+    - D3 plan.md: Secrets — Secrets names no owner — rec: apply
+    - D4 plan.md: Logging — the log may hold a path
+    - D5 spec.md: FR-001 — "page" is never defined — rec: user (no valid recommendation)
