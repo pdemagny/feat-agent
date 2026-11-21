@@ -1,0 +1,8 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 7 Code review
+# /feat state: Test feature
+--
+    - answer: approved (user: "drop the flag too")
+    - answer: fix B2 (user: "drop the flag too")
+    - outcome: picked B1, B2, S1; untested: AC-2 an empty list prints nothing

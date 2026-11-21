@@ -1,0 +1,6 @@
+- Size: large
+- Agents: none (every spawn is fresh)
+- Current phase: 2 Specify
+# /feat state: Test feature
+--
+- [x] size large — was medium (user)

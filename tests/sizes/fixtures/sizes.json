@@ -35,8 +35,18 @@
        "small": {"model": "haiku", "effort": "high"}, "medium": {"model": "sonnet", "effort": "high"}, "large": {"model": "opus", "effort": "high"}},
       {"id": "3", "label": "Test", "agent": "feat-bug-assessor", "loads": ["speckit-bug-test"],
        "small": {"model": "sonnet", "effort": "high"}, "medium": {"model": "sonnet", "effort": "high"}, "large": {"model": "sonnet", "effort": "high"}},
-      {"id": "4", "label": "Ship", "agent": "feat-shipper", "loads": [],
+      {"id": "4a", "label": "Correctness (lens 7a)", "agent": "feat-code-reviewer", "lens": "7a", "loads": [],
+       "small": {"model": "sonnet", "effort": "high"}, "medium": {"model": "sonnet", "effort": "low"}, "large": {"model": "opus", "effort": "medium"}},
+      {"id": "4b", "label": "Security (lens 7b)", "agent": "feat-code-reviewer", "lens": "7b", "loads": ["security-and-hardening"],
+       "small": {"model": "opus", "effort": "medium"}, "medium": {"model": "haiku", "effort": "high"}, "large": {"model": "sonnet", "effort": "max"}},
+      {"id": "4c", "label": "Performance (lens 7c)", "agent": "feat-code-reviewer", "lens": "7c", "loads": [],
+       "small": {"model": "sonnet", "effort": "high"}, "medium": {"model": "opus", "effort": "low"}, "large": {"model": "haiku", "effort": "low"}},
+      {"id": "5", "label": "Ship", "agent": "feat-shipper", "loads": [],
        "small": {"model": "haiku", "effort": "medium"}, "medium": {"model": "haiku", "effort": "medium"}, "large": {"model": "haiku", "effort": "high"}}
-    ]
+    ],
+    "groups": {
+      "4": {"small": [["4a", "4b", "4c"]], "medium": [["4a", "4b"]], "large": [["4a"], ["4b"]],
+            "performance": {"medium": [["4a", "4b", "4c"]], "large": [["4a"], ["4b"], ["4c"]]}}
+    }
   }
 }

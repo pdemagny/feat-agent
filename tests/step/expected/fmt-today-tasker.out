@@ -1,0 +1,12 @@
+reformat
+unparsable line: 5-tasks.md: @TOP@/specs/x/tasks.md
+spawn: feat-tasker
+  row: 5
+  mode: reformat
+  model: sonnet
+  effort: medium
+  report: @TOP@/specs/x/reports/5-tasks-2.md
+  continue: fresh
+  from: @TOP@/specs/x/reports/5-tasks.md
+  unparsable: 5-tasks.md: line 15 (Wrote)
+boundary:	5	@TOP@/specs/x/reports/5-tasks-2.md

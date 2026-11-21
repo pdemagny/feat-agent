@@ -1,0 +1,7 @@
+hard:
+- B1, B2 need you
+counts: 3 findings, 0 to apply, 1 skipped
+finding: B1 Bugs — the cursor never resets — at: src/a.sh:12 — fix: reset it per page — confidence: high — rec: user (rare in practice)
+finding: B2 Bugs — an empty list crashes — at: src/a.sh:20 — fix: return early — confidence: high — rec: user (no valid recommendation)
+finding: B3 Bugs — a slow path on huge lists — at: src/a.sh:30 — fix: cache the length — confidence: medium — rec: skip (no such lists)
+answer call:	7	@TOP@/specs/x/reports/7-7a+7b.md	@TOP@/specs/x/reports/7-7c+7d+7e.md	sum=7-7a+7b.md:@SUM@	sum=7-7c+7d+7e.md:@SUM@

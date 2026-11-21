@@ -1,0 +1,7 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 3 Plan
+# /feat state: Test feature
+--
+- [!] move — report missing: move.md
+- [x] move [hard] — report missing: move.md

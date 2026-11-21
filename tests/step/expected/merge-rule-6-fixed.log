@@ -1,0 +1,8 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 7 Code review
+# /feat state: Test feature
+--
+    - answer: approved (user: "fix it")
+    - answer: fix S1 (user: "fix it")
+    - outcome: picked S1

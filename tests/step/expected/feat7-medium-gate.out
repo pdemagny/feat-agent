@@ -1,0 +1,8 @@
+hard:
+- B2 need you
+- S1 security
+counts: 3 findings, 2 to apply, 0 skipped; untested: AC-2 an empty list prints nothing
+finding: B1 Bugs — off-by-one on the last page — at: src/a.sh:3 — fix: use <= — confidence: high — rec: apply
+finding: B2 Spec — scope creep: a --verbose flag — spec: "FR-001 prints the page" — at: src/a.sh:40-44 — fix: drop the flag — rec: user (the user may want it)
+finding: S1 Security — a token reaches the log — at: src/auth.sh:12 — fix: drop the log line — severity: high — rec: apply
+answer call:	7e	@TOP@/specs/x/reports/7-7e.md	@TOP@/specs/x/reports/7-7a.md	@TOP@/specs/x/reports/7-7b.md	@TOP@/specs/x/reports/7-7c.md	@TOP@/specs/x/reports/7-7d.md	sum=7-7e.md:@SUM@	sum=7-7a.md:@SUM@	sum=7-7b.md:@SUM@	sum=7-7c.md:@SUM@	sum=7-7d.md:@SUM@

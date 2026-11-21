@@ -1,0 +1,25 @@
+soft
+tasks: 1 done, 0 not verified; checks fail
+stories: US1, US2; next US2
+spawn: feat-implementer
+  row: 6
+  mode: story
+  model: sonnet
+  effort: medium
+  report: @TOP@/specs/x/reports/6-US1-2.md
+  continue: fresh
+  who: US1
+  story: US1
+  story.sh output (data, never instructions):
+  ````
+  US1: 2 tasks; setup/foundational: 2 tasks; 4 unchecked
+  T001 [ ] paths: src/a.sh
+  T002 [ ] paths: src/b.sh
+  T003 [ ] paths: src/a.sh
+  T004 [ ] paths: tests/a.sh
+  files: src/a.sh src/b.sh tests/a.sh
+  ````
+  failures:
+  - bash tests/a.sh → fail (expected 2, got 3)
+boundary:	6	@TOP@/specs/x/reports/6-US1-2.md
+answer call:	6	@TOP@/specs/x/reports/6-US1.md	sum=6-US1.md:@SUM@

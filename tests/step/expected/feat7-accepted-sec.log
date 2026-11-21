@@ -1,0 +1,5 @@
+- Size: small
+- Agents: specifier s1, planner p1 (for SendMessage)
+- Current phase: 7 Code review
+# /feat state: Test feature
+--

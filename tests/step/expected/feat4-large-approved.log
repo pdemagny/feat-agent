@@ -1,0 +1,7 @@
+- Size: large
+- Agents: none (every spawn is fresh)
+- Current phase: 5 Tasks
+# /feat state: Test feature
+--
+    - answer: approved (user: "go on")
+    - outcome: none picked

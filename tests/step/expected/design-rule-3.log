@@ -1,0 +1,9 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 4 Design review
+# /feat state: Test feature
+--
+- [x] 4 Design review [hard] — D1, D2 need you; paraphrase contradicts the brief
+    - D1 plan.md: Secrets — the token is stored in the repo
+    - D2 plan.md: Secrets — the token sits in the repo
+    - D3 plan.md: Approach — a second cache nobody reads — rec: apply

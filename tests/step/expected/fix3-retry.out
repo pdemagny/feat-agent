@@ -1,0 +1,15 @@
+soft
+base: same
+spawn: feat-implementer
+  row: 2
+  mode: bug
+  model: sonnet
+  effort: low
+  report: @TOP@/specs/x/reports/2-fix.md
+  continue: fresh
+  test report: @TOP@/specs/x/test.md
+  still failing: the last item is still missing
+  approved commands: none
+  answers: none
+boundary:	2	@TOP@/specs/x/reports/2-fix.md
+answer call:	3	@TOP@/specs/x/reports/3-test.md	sum=3-test.md:@SUM@

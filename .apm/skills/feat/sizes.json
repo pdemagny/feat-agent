@@ -44,16 +44,20 @@
        "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "opus", "effort": "medium"}, "large": {"model": "opus", "effort": "high"}},
       {"id": "3", "label": "Test", "agent": "feat-bug-assessor", "loads": ["speckit-bug-test"],
        "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "high"}, "large": {"model": "opus", "effort": "medium"}},
-      {"id": "4a", "label": "Correctness, spec, standards (lens 7a)", "agent": "feat-code-reviewer", "loads": [],
+      {"id": "4a", "label": "Correctness, spec, standards (lens 7a)", "agent": "feat-code-reviewer", "lens": "7a", "loads": [],
        "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "opus", "effort": "medium"}, "large": {"model": "opus", "effort": "medium"}},
-      {"id": "4b", "label": "Security (lens 7b)", "agent": "feat-code-reviewer", "loads": ["security-and-hardening"],
+      {"id": "4b", "label": "Security (lens 7b)", "agent": "feat-code-reviewer", "lens": "7b", "loads": ["security-and-hardening"],
        "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "opus", "effort": "medium"}, "large": {"model": "opus", "effort": "high"}},
-      {"id": "4c", "label": "Performance (lens 7c)", "agent": "feat-code-reviewer", "loads": ["performance-optimization"],
+      {"id": "4c", "label": "Performance (lens 7c)", "agent": "feat-code-reviewer", "lens": "7c", "loads": ["performance-optimization"],
        "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "medium"}, "large": {"model": "opus", "effort": "medium"}},
-      {"id": "4d", "label": "Over-engineering (lens 7d)", "agent": "feat-code-reviewer", "loads": [],
+      {"id": "4d", "label": "Over-engineering (lens 7d)", "agent": "feat-code-reviewer", "lens": "7d", "loads": [],
        "small": {"model": "sonnet", "effort": "medium"}, "medium": {"model": "sonnet", "effort": "medium"}, "large": {"model": "sonnet", "effort": "medium"}},
       {"id": "5", "label": "Ship", "agent": "feat-shipper", "loads": [],
        "small": {"model": "haiku", "effort": "medium"}, "medium": {"model": "haiku", "effort": "medium"}, "large": {"model": "haiku", "effort": "medium"}}
-    ]
+    ],
+    "groups": {
+      "4": {"small": [["4a", "4b", "4d"]], "medium": [["4a", "4b"]], "large": [["4a"], ["4b"]],
+            "performance": {"small": [["4a", "4b", "4d"]], "medium": [["4a", "4b", "4c"]], "large": [["4a"], ["4b"], ["4c"]]}}
+    }
   }
 }

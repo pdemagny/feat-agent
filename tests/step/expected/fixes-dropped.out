@@ -1,0 +1,13 @@
+soft
+spawn: feat-implementer
+  row: 6
+  mode: fix
+  model: sonnet
+  effort: low
+  report: @TOP@/specs/x/reports/7-fixes.md
+  continue: fresh
+  who: review fixes
+  apply:
+  - B1 src/a.sh:3 — off-by-one on the last page
+  - C1 src/a.sh:8-14 — delete: the paging helper nobody calls
+boundary:	7-fixes	@TOP@/specs/x/reports/7-fixes.md

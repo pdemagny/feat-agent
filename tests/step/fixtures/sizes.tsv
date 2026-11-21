@@ -1,0 +1,99 @@
+# Test fixture for tests/step: hand-written, so spawn goldens never change with sizes.json.
+# Models and efforts differ per size: small is sonnet low, medium sonnet medium, large opus high
+# (fix row 3 large and the shipper rows break the pattern on purpose).
+# row	skill	row	agent	lens	size	model	effort
+# group	skill	phase	size	variant	rows	lenses	model	effort
+row	feat	1	feat-brief-reviewer	-	small	sonnet	low
+row	feat	1	feat-brief-reviewer	-	medium	sonnet	medium
+row	feat	1	feat-brief-reviewer	-	large	opus	high
+row	feat	2	feat-specifier	-	small	sonnet	low
+row	feat	2	feat-specifier	-	medium	sonnet	medium
+row	feat	2	feat-specifier	-	large	opus	high
+row	feat	3	feat-planner	-	small	sonnet	low
+row	feat	3	feat-planner	-	medium	sonnet	medium
+row	feat	3	feat-planner	-	large	opus	high
+row	feat	4a	feat-design-reviewer	4a	small	sonnet	low
+row	feat	4a	feat-design-reviewer	4a	medium	sonnet	medium
+row	feat	4a	feat-design-reviewer	4a	large	opus	high
+row	feat	4b	feat-design-reviewer	4b	small	sonnet	low
+row	feat	4b	feat-design-reviewer	4b	medium	sonnet	medium
+row	feat	4b	feat-design-reviewer	4b	large	opus	high
+row	feat	4c	feat-design-reviewer	4c	small	sonnet	low
+row	feat	4c	feat-design-reviewer	4c	medium	sonnet	medium
+row	feat	4c	feat-design-reviewer	4c	large	opus	high
+row	feat	5	feat-tasker	-	small	sonnet	low
+row	feat	5	feat-tasker	-	medium	sonnet	medium
+row	feat	5	feat-tasker	-	large	opus	high
+row	feat	6	feat-implementer	-	small	sonnet	low
+row	feat	6	feat-implementer	-	medium	sonnet	medium
+row	feat	6	feat-implementer	-	large	opus	high
+row	feat	7a	feat-code-reviewer	7a	small	sonnet	low
+row	feat	7a	feat-code-reviewer	7a	medium	sonnet	medium
+row	feat	7a	feat-code-reviewer	7a	large	opus	high
+row	feat	7b	feat-code-reviewer	7b	small	sonnet	low
+row	feat	7b	feat-code-reviewer	7b	medium	sonnet	medium
+row	feat	7b	feat-code-reviewer	7b	large	opus	high
+row	feat	7c	feat-code-reviewer	7c	small	sonnet	low
+row	feat	7c	feat-code-reviewer	7c	medium	sonnet	medium
+row	feat	7c	feat-code-reviewer	7c	large	opus	high
+row	feat	7d	feat-code-reviewer	7d	small	sonnet	low
+row	feat	7d	feat-code-reviewer	7d	medium	sonnet	medium
+row	feat	7d	feat-code-reviewer	7d	large	opus	high
+row	feat	7e	feat-code-reviewer	7e	small	sonnet	low
+row	feat	7e	feat-code-reviewer	7e	medium	sonnet	medium
+row	feat	7e	feat-code-reviewer	7e	large	opus	high
+row	feat	8	feat-shipper	-	small	haiku	low
+row	feat	8	feat-shipper	-	medium	haiku	medium
+row	feat	8	feat-shipper	-	large	haiku	high
+row	fix	1	feat-bug-assessor	-	small	sonnet	low
+row	fix	1	feat-bug-assessor	-	medium	sonnet	medium
+row	fix	1	feat-bug-assessor	-	large	opus	high
+row	fix	2	feat-implementer	-	small	sonnet	low
+row	fix	2	feat-implementer	-	medium	sonnet	medium
+row	fix	2	feat-implementer	-	large	opus	high
+row	fix	3	feat-bug-assessor	-	small	sonnet	low
+row	fix	3	feat-bug-assessor	-	medium	sonnet	medium
+row	fix	3	feat-bug-assessor	-	large	opus	xhigh
+row	fix	4a	feat-code-reviewer	7a	small	sonnet	low
+row	fix	4a	feat-code-reviewer	7a	medium	sonnet	medium
+row	fix	4a	feat-code-reviewer	7a	large	opus	high
+row	fix	4b	feat-code-reviewer	7b	small	sonnet	low
+row	fix	4b	feat-code-reviewer	7b	medium	sonnet	medium
+row	fix	4b	feat-code-reviewer	7b	large	opus	high
+row	fix	4c	feat-code-reviewer	7c	small	sonnet	low
+row	fix	4c	feat-code-reviewer	7c	medium	sonnet	medium
+row	fix	4c	feat-code-reviewer	7c	large	opus	high
+row	fix	4d	feat-code-reviewer	7d	small	sonnet	low
+row	fix	4d	feat-code-reviewer	7d	medium	sonnet	medium
+row	fix	4d	feat-code-reviewer	7d	large	opus	high
+row	fix	5	feat-shipper	-	small	haiku	low
+row	fix	5	feat-shipper	-	medium	haiku	medium
+row	fix	5	feat-shipper	-	large	haiku	high
+group	feat	4	small	default	4a+4b+4c	4a+4b+4c	sonnet	low
+group	feat	4	medium	default	4a	4a	sonnet	medium
+group	feat	4	medium	default	4b	4b	sonnet	medium
+group	feat	4	medium	default	4c	4c	sonnet	medium
+group	feat	4	large	default	4a	4a	opus	high
+group	feat	4	large	default	4b	4b	opus	high
+group	feat	4	large	default	4c	4c	opus	high
+group	feat	7	small	default	7a+7b	7a+7b	sonnet	low
+group	feat	7	small	default	7c+7d+7e	7c+7d+7e	sonnet	low
+group	feat	7	medium	default	7a	7a	sonnet	medium
+group	feat	7	medium	default	7b	7b	sonnet	medium
+group	feat	7	medium	default	7c	7c	sonnet	medium
+group	feat	7	medium	default	7d	7d	sonnet	medium
+group	feat	7	medium	default	7e	7e	sonnet	medium
+group	feat	7	large	default	7a	7a	opus	high
+group	feat	7	large	default	7b	7b	opus	high
+group	feat	7	large	default	7c	7c	opus	high
+group	feat	7	large	default	7d	7d	opus	high
+group	feat	7	large	default	7e	7e	opus	high
+group	fix	4	small	default	4a+4b+4d	7a+7b+7d	sonnet	low
+group	fix	4	small	performance	4a+4b+4d	7a+7b+7d	sonnet	low
+group	fix	4	medium	default	4a+4b	7a+7b	sonnet	medium
+group	fix	4	medium	performance	4a+4b+4c	7a+7b+7c	sonnet	medium
+group	fix	4	large	default	4a	7a	opus	high
+group	fix	4	large	default	4b	7b	opus	high
+group	fix	4	large	performance	4a	7a	opus	high
+group	fix	4	large	performance	4b	7b	opus	high
+group	fix	4	large	performance	4c	7c	opus	high

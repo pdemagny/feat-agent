@@ -1,0 +1,9 @@
+soft
+spawn: feat-specifier
+  row: 2
+  mode: first
+  model: sonnet
+  effort: medium
+  report: @TOP@/specs/x/reports/2-specify.md
+  continue: fresh
+boundary:	2	@TOP@/specs/x/reports/2-specify.md	agent=<id>

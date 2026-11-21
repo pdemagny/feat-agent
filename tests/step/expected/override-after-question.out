@@ -1,0 +1,13 @@
+answered
+base: same
+spawn: feat-implementer
+  row: 2
+  mode: bug
+  model: sonnet
+  effort: low
+  report: @TOP@/specs/x/reports/2-fix.md
+  continue: fresh
+  approved commands: none
+  answers:
+  - which page? → the last
+boundary:	2	@TOP@/specs/x/reports/2-fix.md

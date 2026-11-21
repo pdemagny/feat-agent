@@ -1,0 +1,7 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 2 Specify
+# /feat state: Test feature
+--
+- [!] 2 Specify — 2-specify.md: the report path is not on Wrote
+- [x] 2 Specify [hard] — 2-specify.md: the report path is not on Wrote; unparsable: 2-specify.md: no Blocker: line

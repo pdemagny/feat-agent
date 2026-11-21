@@ -1,0 +1,7 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: done (shipping)
+# /fix state: a run started before step.sh
+--
+    - answer: approved (user: "ship as a security bug")
+- [x] 5 Ship

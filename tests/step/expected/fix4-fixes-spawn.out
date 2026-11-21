@@ -1,0 +1,15 @@
+soft
+counts: 1 findings, 1 to apply, 0 skipped
+finding: B1 Bugs — off-by-one on the last page — at: src/a.sh:3 — fix: use <= — confidence: high — rec: apply
+spawn: feat-implementer
+  row: 2
+  mode: fix
+  model: sonnet
+  effort: medium
+  report: @TOP@/specs/x/reports/4-fixes.md
+  continue: fresh
+  who: implementer
+  apply:
+  - B1 Bugs — off-by-one on the last page — at: src/a.sh:3 — fix: use <= — confidence: high — rec: apply
+boundary:	4-fixes	@TOP@/specs/x/reports/4-fixes.md
+answer call:	4	@TOP@/specs/x/reports/4-7a+7b.md	sum=4-7a+7b.md:@SUM@

@@ -1,0 +1,8 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 4 Code review
+# /fix state: a reported bug
+--
+    - answer: approved (user: "ship it after the fix")
+    - outcome: picked B1
+- [x] 4 Code review — ship go-ahead (user: "ship it after the fix")

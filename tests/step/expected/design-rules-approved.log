@@ -1,0 +1,8 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 4 Design review
+# /feat state: Test feature
+--
+    - answer: approved (user: "fine, but leave D5")
+    - answer: leave D5 (user: "defined in the glossary")
+    - outcome: picked D1, D2, D3; rejected D4 (as recommended), D5 (user: "defined in the glossary")

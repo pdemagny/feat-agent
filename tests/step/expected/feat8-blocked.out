@@ -1,0 +1,3 @@
+stop: ship blocked on a command for you
+command: ! cd @TOP@ && git push -u origin feat-x
+done: stopped (ship blocked on a command for you)

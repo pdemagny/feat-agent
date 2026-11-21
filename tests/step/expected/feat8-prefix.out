@@ -1,0 +1,4 @@
+hard:
+- ship blocked
+command: ! cd @TOP@-evil && git push
+answer call:	8	@TOP@/specs/x/reports/8-ship.md	sum=8-ship.md:@SUM@

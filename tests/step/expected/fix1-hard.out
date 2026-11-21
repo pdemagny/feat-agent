@@ -1,0 +1,8 @@
+hard:
+- security risk area
+- open questions: 1
+- proposed size medium
+- confidence medium
+- not reproduced
+- remediations: 2
+answer call:	1	@TOP@/specs/x/reports/1-assess.md	sum=1-assess.md:@SUM@

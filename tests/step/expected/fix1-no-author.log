@@ -1,0 +1,6 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 1 Assess
+# /fix state: a run started before step.sh
+--
+- [x] 1 Assess [hard] — fact missing: report author

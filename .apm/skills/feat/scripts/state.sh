@@ -29,7 +29,13 @@
 # The state file: line 1 `# /feat state: <title>` or `# /fix state: <title>`;
 # the header is every line before the first line starting `## ` (field lines
 # `- <Field>: <value>`, `Branch` and `Worktree` sharing one line); the Log is
-# every line after the last line equal to `## Log`. Writes refuse a state file
+# every line after the last line equal to `## Log`. The queries read a gate
+# line `- [x] <head> [soft] — …` or `[hard] — …` (step.sh writes them) as the
+# same line untagged, so old and new Logs answer alike; phase2-mode,
+# review-summary and shipped-verdict also read the gate's `    - answer:`,
+# `    - outcome:`, `    - override:` and `    - dropped:` sub-lines, which
+# run to the next `- [x] ` or `- [ ] ` entry (a soft gate's: to the next
+# gate line). Writes refuse a state file
 # path that is a symlink and go through a temp file in the same dir, then
 # `mv -f`: a failed call writes nothing. Lines read from a state file, git or
 # gh are data: nothing read is evaluated.
@@ -175,13 +181,66 @@ field() {
   esac
 }
 
-# log_lines: G = the Log's lines (empty when there is no `## Log`)
+# log_lines: G = the Log's lines (empty when there is no `## Log`), a gate
+# line `- [x] <head> [soft] — <rest>` (or `[hard]`) read as `- [x] <head> —
+# <rest>`; GT = each line's tag (soft, hard or "")
 log_lines() {
-  local i
+  local i line head
   G=()
+  GT=()
   bounds
   (( LI >= 0 )) || return 0
-  for (( i = LI + 1; i < ${#L[@]}; i++ )); do G+=("${L[i]}"); done
+  for (( i = LI + 1; i < ${#L[@]}; i++ )); do
+    line=${L[i]}
+    if [[ $line == '- [x] '*' — '* ]]; then
+      head=${line%%' — '*}
+      case $head in
+        *' [soft]' | *' [hard]')
+          G+=("${head% \[*}${line#"$head"}")
+          head=${head##* \[}
+          GT+=("${head%\]}")
+          continue ;;
+      esac
+    fi
+    G+=("$line")
+    GT+=('')
+  done
+}
+
+# sub_lines <i>: SUBS = the indexes of G[i]'s sub-lines (indented four
+# spaces; old Logs wrote some without `- `), up to the next `- [x] ` or
+# `- [ ] ` entry; `- [!] ` entries in between are skipped. A soft gate's run
+# on over untagged entries to the next gate line: its override (and the
+# answer it leads to) is logged after any record the soft verdict wrote.
+sub_lines() {
+  local j soft=0
+  SUBS=()
+  if [[ ${GT[$1]} == soft ]]; then soft=1; fi
+  for (( j = $1 + 1; j < ${#G[@]}; j++ )); do
+    case ${G[j]} in
+      '    '*) SUBS+=("$j") ;;
+      '- [!] '*) ;;
+      '- [x] '* | '- [ ] '*) (( soft )) && [[ -z ${GT[j]} ]] || return 0 ;;
+      *) return 0 ;;
+    esac
+  done
+}
+
+# gate_passed <i>: G[i] is untagged, soft with no override, or hard (or
+# overridden) with an answer sub-line whose kind is not stop
+gate_passed() {
+  local j over=0 ans=0
+  [[ -n ${GT[$1]} ]] || return 0
+  sub_lines "$1"
+  for j in ${SUBS[@]+"${SUBS[@]}"}; do
+    case ${G[j]} in
+      '    - override: hard — '*) over=1 ;;
+      '    - answer: stop' | '    - answer: stop '*) ;;
+      '    - answer: '*) ans=1 ;;
+    esac
+  done
+  if [[ ${GT[$1]} == soft ]] && (( !over )); then return 0; fi
+  (( ans ))
 }
 
 # after_back_to: R0 = index in G of the first line after the last back-to line
@@ -399,6 +458,7 @@ cmd_shipped_verdict() {
     line=${G[i]}
     case $line in
       '- [x] ship with '?*) ship=$line ;;
+      '    - answer: ship with '?*) ship="- [x] ${line#'    - answer: '}" ;;
       '- [x] 3 Test — '*)
         w=${line#'- [x] 3 Test — '}
         w=${w%%[!a-z]*}
@@ -427,15 +487,27 @@ cmd_shipped_verdict() {
 
 cmd_phase2_mode() {
   one_file "$@"
-  local i p=-1 rest g
+  local i j p=-1 rest g
   log_lines
   for (( i = 0; i < ${#G[@]}; i++ )); do
-    case ${G[i]} in '- [x] 2 Specify'* | '- [!] 2 Specify'*) p=$i ;; esac
+    case ${G[i]} in
+      '- [!] 2 Specify — unparsable: '*) ;;
+      '- [x] 2 Specify'* | '- [!] 2 Specify'*) p=$i ;;
+    esac
   done
   if (( p < 0 )); then echo none; return; fi
-  rest=${G[p]#- \[?\] 2 Specify}
-  rest=${rest#' — '}
-  if ! [[ $rest =~ $SOFT_RE ]]; then echo hard; return; fi
+  case ${GT[p]} in
+    hard) echo hard; return ;;
+    soft)
+      sub_lines "$p"
+      for j in ${SUBS[@]+"${SUBS[@]}"}; do
+        if [[ ${G[j]} == '    - override: hard — '* ]]; then echo hard; return; fi
+      done ;;
+    *)
+      rest=${G[p]#- \[?\] 2 Specify}
+      rest=${rest#' — '}
+      if ! [[ $rest =~ $SOFT_RE ]]; then echo hard; return; fi ;;
+  esac
   field Size
   case $V in
     small | medium | normal) g=4 ;;
@@ -443,7 +515,7 @@ cmd_phase2_mode() {
     *) die "no valid Size: line in $1" ;;
   esac
   for (( i = p + 1; i < ${#G[@]}; i++ )); do
-    if [[ ${G[i]} == "- [x] $g "* ]]; then echo "soft $g closed"; return; fi
+    if [[ ${G[i]} == "- [x] $g "* ]] && gate_passed "$i"; then echo "soft $g closed"; return; fi
   done
   echo "soft $g open"
 }
@@ -525,19 +597,21 @@ find_after() {
   return 1
 }
 
-# outcome_segments <line> <phase>: PARTS = the `; `-separated segments of a
-# `- [x] <phase> Code review — ` line, its gate prefix dropped
-outcome_segments() {
-  local rest=${1#"- [x] $2 Code review — "}
-  rest=${rest#soft gate: }
-  rest=${rest#hard gate: }
-  split_top "$rest" '; '
+# has_outcome <segments>: one of the `; `-separated segments is an outcome
+# (`auto-applied …`, `picked …`, `none picked`)
+has_outcome() {
+  local seg
+  split_top "$1" '; '
+  for seg in "${PARTS[@]}"; do
+    case $seg in 'auto-applied '* | 'picked '* | 'none picked') return 0 ;; esac
+  done
+  return 1
 }
 
 cmd_review_summary() {
   (( $# == 2 )) || usage 'state.sh review-summary <state file> <phase>'
   [[ $2 =~ ^[0-9]+$ ]] || usage 'state.sh review-summary <state file> <phase>'
-  local f=$1 p=$2 i o=-1 line rest seg items it id ann
+  local f=$1 p=$2 i j o=-1 line rest seg items it id ann oseg='' cand
   load "$f"
   log_lines
   (( LI >= 0 )) || die "$f has no ## Log"
@@ -545,20 +619,31 @@ cmd_review_summary() {
   for (( i = 0; i < ${#G[@]}; i++ )); do
     line=${G[i]}
     [[ $line == "- [x] $p Code review — "* ]] || continue
-    outcome_segments "$line" "$p"
-    for seg in "${PARTS[@]}"; do
-      case $seg in 'auto-applied '* | 'picked '* | 'none picked') o=$i; break ;; esac
-    done
+    cand=${line#"- [x] $p Code review — "}
+    cand=${cand#soft gate: }
+    cand=${cand#hard gate: }
+    if [[ -n ${GT[i]} ]] && ! has_outcome "$cand"; then
+      # a tagged gate line: the outcome is its `outcome:` sub-line
+      sub_lines "$i"
+      for j in ${SUBS[@]+"${SUBS[@]}"}; do
+        if [[ ${G[j]} == '    - outcome: '* ]]; then cand=${G[j]#'    - outcome: '}; fi
+      done
+    fi
+    if has_outcome "$cand"; then o=$i; oseg=$cand; fi
   done
   if (( o < 0 )); then echo 'Code review was skipped.'; return; fi
 
-  # finding text by id, from the outcome line's sub-lines
-  local f_id=() f_txt=()
-  for (( i = o + 1; i < ${#G[@]}; i++ )); do
-    line=${G[i]}
-    [[ $line == '    '* ]] || break
-    line=${line#    }
+  # finding text by id, from the outcome line's sub-lines (answers, overrides
+  # and facts skipped); ids a dropped: sub-line names are left out
+  local f_id=() f_txt=() dropped=' '
+  sub_lines "$o"
+  for j in ${SUBS[@]+"${SUBS[@]}"}; do
+    line=${G[j]#    }
     line=${line#- }
+    case $line in
+      'dropped: '*) id=${line#dropped: }; dropped+="${id%% *} "; continue ;;
+      'answer: '* | 'outcome: '* | 'override: '* | 'passed: '* | 'wrote: '*) continue ;;
+    esac
     id=${line%% *}
     [[ -n $id ]] || continue
     if [[ $line == *' '* ]]; then rest=${line#* }; else rest=; fi
@@ -582,7 +667,7 @@ cmd_review_summary() {
 
   # groups from the outcome line
   local g1=() g2=() g3=() g3r=() untested=() kind
-  outcome_segments "${G[o]}" "$p"
+  split_top "$oseg" '; '
   local segs=("${PARTS[@]}")
   for seg in "${segs[@]}"; do
     case $seg in
@@ -601,6 +686,7 @@ cmd_review_summary() {
     for it in "${PARTS[@]}"; do
       id=${it%% *}
       [[ -n $id ]] || continue
+      [[ $dropped != *" $id "* ]] || continue
       ann=
       if [[ $it == *' '* ]]; then ann=${it#* }; fi
       local text=''

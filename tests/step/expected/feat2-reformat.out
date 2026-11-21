@@ -1,0 +1,12 @@
+reformat
+unparsable line: 2-specify.md: @TOP@/specs/x/spec.md
+spawn: feat-specifier
+  row: 2
+  mode: reformat
+  model: sonnet
+  effort: medium
+  report: @TOP@/specs/x/reports/2-specify-2.md
+  continue: a1
+  from: @TOP@/specs/x/reports/2-specify.md
+  unparsable: 2-specify.md: line 11 (Wrote)
+boundary:	2	@TOP@/specs/x/reports/2-specify-2.md

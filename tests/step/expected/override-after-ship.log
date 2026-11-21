@@ -1,0 +1,8 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: done (shipping)
+# /fix state: a reported bug
+--
+    - answer: approved (user: "ship it")
+- [x] 3 Test [soft] — verified
+- [x] 5 Ship

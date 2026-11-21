@@ -1,0 +1,9 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: done (shipping)
+# /feat state: Test feature
+--
+- [x] move — 1a2b3c4 → 5d6e7f8 (before 8 Ship): checks pass; not verified: n/a → live run → no credentials
+    - resolved: README.md — kept both entries of the list
+    - asked: src/a.sh — keep main's rename (user: "take main's")
+- [x] 8 Ship

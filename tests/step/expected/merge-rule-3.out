@@ -1,0 +1,7 @@
+hard:
+- B1, B2 need you
+counts: 3 findings, 1 to apply, 0 skipped
+finding: B1 Bugs — off-by-one on the last page — at: src/a.sh:3 — fix: use <= — confidence: medium — rec: user (reviewers disagree)
+finding: B2 Bugs — the index runs past the end — at: src/a.sh:2-4 — fix: clamp the index — confidence: medium — rec: user (reviewers disagree)
+finding: B3 Bugs — the header repeats on every page — at: src/b.sh:7 — fix: print it once — confidence: medium — rec: apply
+answer call:	7	@TOP@/specs/x/reports/7-7a+7b.md	@TOP@/specs/x/reports/7-7a.md	@TOP@/specs/x/reports/7-7c+7d+7e.md	sum=7-7a+7b.md:@SUM@	sum=7-7a.md:@SUM@	sum=7-7c+7d+7e.md:@SUM@

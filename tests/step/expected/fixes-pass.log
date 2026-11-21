@@ -1,0 +1,8 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: done (shipping)
+# /feat state: Test feature
+--
+- [x] 7 review fixes — B1 → applied; C1 → applied; R1 → applied; performance: P1: 120 ms → 40 ms (bash bench.sh); checks: bash tests/a.sh → pass; not verified: none
+    - wrote: src/new.sh
+- [x] 8 Ship

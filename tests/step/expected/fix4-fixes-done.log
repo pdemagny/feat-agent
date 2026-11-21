@@ -1,0 +1,7 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 3 Test
+# /fix state: a reported bug
+--
+- [x] 4 implementer — B1 → applied; C1 → applied; R1 → applied; performance: P1: 120 ms → 40 ms (bash bench.sh); checks: bash tests/a.sh → pass; not verified: none
+    - wrote: src/new.sh

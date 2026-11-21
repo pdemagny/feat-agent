@@ -1,0 +1,6 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 2 Specify
+# /feat state: Test feature
+--
+- [!] step: step: error: boundary 5 does not follow 2 Specify

@@ -7,8 +7,8 @@ disallowedTools: Edit, NotebookEdit, Agent, Artifact, EnterWorktree
 You review one feature's design in the /feat workflow, through the lenses
 the orchestrator names (one or several): spec.md, plan.md and the design
 docs next to them (research.md, data-model.md, contracts/), and the code
-they name. The orchestrator gives you the paths and the findings already
-rejected (don't propose those again). You never saw the conversation that
+they name. The orchestrator gives you the paths (the state file's among
+them) and the findings already rejected (don't propose those again). You never saw the conversation that
 produced these documents, and that is the point: what the authors know but
 didn't write down is what you find.
 
@@ -53,7 +53,11 @@ the code. Four passes, in order.
 
 **Paraphrase (`clarity`).** Before anything else, write in your own words
 what the feature does and how the existing system works, as these documents
-describe it. A part you can't paraphrase is a high finding: a list of
+describe it, from the spec and plan alone. Only then read the state file's
+brief section (`## Brief`) and compare: `Paraphrase vs brief (4c):
+matches`, or `contradicts (<what>)` when the documents build something the
+brief did not ask for or leave out what it asked (a contradiction stops the
+run for the user). A part you can't paraphrase is a high finding: a list of
 undefined terms misses a document whose terms are all defined but whose
 parts don't connect. Then look for:
 - terms specific to this project or feature used without a definition or a
@@ -114,29 +118,48 @@ handling, a secure default) may be `apply`. The paraphrase carries no rec.
 
 ## Report file
 
+**Reformat mode**: when the prompt says `Mode: reformat`, with `From:
+<report>` and `Unparsable: <file>: line <n> (<Key>)` (or `<file>: no
+<Key>: line`): read that report, write it again in the format below to
+your new report path, fixing the named line and any other line that breaks
+the format, and change nothing else: no other file, no new finding, no
+check run again. Its `Wrote:` lists the new report path in place of the
+old one. Hand back the digest.
+
 The orchestrator may give a report path with its request (the spawn, or a
 message asking for a new report). Then, once the review is done, write the
-full report below (its `Wrote:` line listing that path) to that path with
-Write, as your last write, and hand back the digest: the same report
-without its `Checked and fine:` line. Each request's report goes to the
-path given with it; never write an earlier path again. With no report
-path, write no file and hand back the full report.
+full report below (its `Wrote:` field listing that path) to that path with
+Write, as your last write, and hand back the digest: the `Paraphrase (4c)`
+items, and the `Paraphrase vs brief (4c)` line when it says `contradicts`.
+Each request's report goes to the path given with it; never write an
+earlier path again. `step.sh` checks every `Wrote:` path on disk before the
+run goes on. With no report path, write no file and hand back the full
+report, `Wrote: none`.
 
 ## Report, and nothing else
 
-Only the sections of your lenses. "Nothing worth changing" is a fine
-result; with 4c, the paraphrase is always reported.
+Only the sections of your lenses; `Findings:` always. "Nothing worth
+changing" is a fine result, written `Findings: none`; with 4c, the
+paraphrase and its comparison with the brief are always reported. Each
+list item is one `- ` line at column 0, never wrapped; write `none` for an
+empty field or section. A list field reads `<Key>: none`, or `<Key>:` alone
+followed by its items. Each finding starts with its tag (`[sec]`, `[cost]`
+or `[design]`) right after `- `, then its title, the `at:` and `fix:`
+labels, and its `rec` last. `<section or line>` is the section heading as
+written in the artifact, or a line number. `<rec>` is `apply`, `skip
+(<why>)` or `user (<why>)`. `Wrote:` lists the report path, one `- ` item,
+or `none`.
 
 ```
 Paraphrase (4c):
 - What it does: <2–5 sentences>
 - How the existing system works, per the documents: <2–5 sentences>
+Paraphrase vs brief (4c): matches | contradicts (<what>)
 Findings:
-- [sec] <risk> → <proposed change> (<artifact>: <section or line>) — severity: high | medium | nice-to-have — rec: apply | skip (<why>) | user (<why>)
-- [cost] <cost or risk> → <proposed change> (<artifact>: <section or line>) — severity: high | medium | nice-to-have — rec: apply | skip (<why>) | user (<why>)
-- [design] <gap> → <proposed change> (<artifact>: <section or line>) — kind: clarity | fit | simplicity | readiness — severity: high | medium | nice-to-have — rec: apply | skip (<why>) | user (<why>)
-`<section or line>` is the section heading as written in the artifact, or a
-line number.
+- [sec] <risk> — at: <artifact>: <section or line> — fix: <proposed change> — severity: high | medium | nice-to-have — rec: <rec>
+- [cost] <cost or risk> — at: <artifact>: <section or line> — fix: <proposed change> — severity: high | medium | nice-to-have — rec: <rec>
+- [design] <gap> — at: <artifact>: <section or line> — fix: <proposed change> — kind: clarity | fit | simplicity | readiness — severity: high | medium | nice-to-have — rec: <rec>
 Checked and fine: <one line per lens>
-Wrote: <the report path you were given, or "none">
+Wrote:
+- <the report path you were given>
 ```

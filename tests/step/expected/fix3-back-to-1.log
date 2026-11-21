@@ -1,0 +1,7 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 1 Assess
+# /fix state: a reported bug
+--
+    - answer: back to 1 (user: "re-assess")
+- [x] back to 1 — re-assess

@@ -1,0 +1,7 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 4 Code review
+# /fix state: a reported bug
+--
+- [x] 4 Code review [hard] — security risk area
+    - B1 src/a.sh:3 — off-by-one on the last page — rec: apply

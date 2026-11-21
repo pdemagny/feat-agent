@@ -32,10 +32,10 @@ removes the links. `mise tasks` lists the rest.
 Where things are:
 
 ```
-.apm/skills/feat/             the orchestrator: phases, gates, size table; sizes.json (the source of models, efforts, loads)
-.apm/skills/feat/scripts/     tracker.sh (board moves), spec-number.sh (numbers the spec dir), story.sh (a story's tasks), state.sh (writes and queries the state file, report paths), secret-scan.sh, measure.py (run cost)
-.apm/skills/feat/references/  harness.md: the rules /feat and /fix share (gates, state file, board, resume)
-.apm/skills/fix/              the bugfix orchestrator: assess, fix, test, review, ship; its own size table
+.apm/skills/feat/             the orchestrator: phases and gate messages (no size table); sizes.json (the source of models, efforts, loads, reviewer groups), sizes.tsv (generated from it, read by step.sh)
+.apm/skills/feat/scripts/     step.sh (the one call at each phase boundary: checks reports, decides gates, logs, prints the next spawn), tracker.sh (board moves), spec-number.sh (numbers the spec dir), story.sh (a story's tasks), state.sh (writes and queries the state file, report paths), secret-scan.sh, measure.py (run cost)
+.apm/skills/feat/references/  harness.md: the coordinators' share of the rules /feat and /fix share (step script, gates, state file, board, resume); move.md (when main moved); rebase.md (the rebase entry point)
+.apm/skills/fix/              the bugfix orchestrator: assess, fix, test, review, ship (no size table)
 .apm/skills/brief/            phase 1: interview, size, brief or capability map
 .apm/skills/tiny/             a trivial change in one session: tiny brief, edit, checks, PR
 .apm/agents/*.agent.md        one subagent per phase role
@@ -53,25 +53,27 @@ The rules for changing the skills and agents are in
 [`.claude/CLAUDE.md`](.claude/CLAUDE.md), which Claude Code loads when you
 work in this repo. The ones that bite most:
 
-- `.apm/skills/feat/sizes.json` is the source of models and efforts: edit
-  it and run `mise run diagrams`, which regenerates the size tables in both
-  skills and [docs/workflow.md](docs/workflow.md). Lint fails on drift.
+- `.apm/skills/feat/sizes.json` is the source of models, efforts and both
+  skills' reviewer groups: edit it and run `mise run diagrams`, which
+  regenerates `.apm/skills/feat/sizes.tsv` (what `step.sh` reads) and the
+  tables in [docs/workflow.md](docs/workflow.md). Lint fails on drift.
 - The diagrams in the README and docs are drawn from `docs/diagrams/` by
   `mise run diagrams` (the model grid from `sizes.json`): re-render and
   commit `docs/img` when you change the sizes, the phases or the gates.
-- Every agent prompt ends with a fixed report format that `/feat` or `/fix`
-  parses (and `/tiny`, for `feat-code-reviewer`): change both sides
-  together.
-- `/feat` and `/fix` only coordinate. New work goes into an agent, not the
-  coordinator. `/tiny` is the exception: one session doing the work itself,
+- Every agent prompt ends with a fixed report format that `step.sh`
+  parses and `/feat` or `/fix` reads as a digest (and `/tiny`, for
+  `feat-code-reviewer`): change the agent, `step.sh` with its
+  `tests/step` cases, and the skills together.
+- `/feat` and `/fix` only coordinate. New work goes into an agent or
+  `step.sh`, not the coordinator. `/tiny` is the exception: one session doing the work itself,
   kept under 200 lines by `mise run lint`.
 
 ## Before you open a pull request
 
 - `mise run lint`, `mise run test:apm`, `mise run test:tracker`,
   `mise run test:spec-number`, `mise run test:story`,
-  `mise run test:state`, `mise run test:sizes` and `mise run
-  test:measure` pass. The `check`
+  `mise run test:state`, `mise run test:sizes`, `mise run test:step`
+  and `mise run test:measure` pass. The `check`
   workflow runs the same on every pull request.
 - For a change to a skill or agent prompt, run it on a scratch project and
   say in the PR what you ran and what happened. There is no automated test

@@ -1,0 +1,4 @@
+hard:
+- 2-specify.md: Wrote item 2 holds a .. segment
+- 2-specify.md: Spec path not on Wrote
+answer call:	2	@TOP@/specs/x/reports/2-specify.md	sum=2-specify.md:@SUM@

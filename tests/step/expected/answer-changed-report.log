@@ -1,0 +1,6 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 2 Specify
+# /feat state: Test feature
+--
+- [!] 2 Specify — report changed since checked: 2-specify.md

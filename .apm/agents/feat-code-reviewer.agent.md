@@ -109,9 +109,9 @@ finding:
   layer with one caller.
 - `shrink`: same logic, fewer lines. Show the shorter form.
 
-One concrete line per finding, e.g. `repo.go:88 — yagni: Store interface
-with one implementation → use the struct until a second one exists`, never
-"this might be more complex than necessary". Over-engineering only: bugs,
+One concrete line per finding, e.g. `yagni: Store interface with one
+implementation — at: repo.go:88 — fix: use the struct until a second one
+exists`, never "this might be more complex than necessary". Over-engineering only: bugs,
 security and performance belong to the other lenses. Don't cut anything the
 spec's requirements or acceptance criteria need, and never flag a smoke test
 or a self-check as bloat. End the section with `net: -<N> lines possible`,
@@ -171,36 +171,59 @@ not built is reported as a Security line.
 
 ## Report file
 
+**Reformat mode**: when the prompt says `Mode: reformat`, with `From:
+<report>` and `Unparsable: <file>: line <n> (<Key>)` (or `<file>: no
+<Key>: line`): read that report, write it again in the format below to
+your new report path, fixing the named line and any other line that breaks
+the format, and change nothing else: no other file, no new finding, no
+check run again. Its `Wrote:` lists the new report path in place of the
+old one. Hand back the digest.
+
 The orchestrator may give a report path with its request (the spawn, or a
 message asking for a new report). Then, once the review is done, write the
-full report below (its `Wrote:` line listing that path) to that path with
-Write, as your last write, and hand back the digest: the same report
-without its `Dismissed:` line. Each request's report goes to the path given
-with it; never write an earlier path again. With no report path, write no
-file and hand back the full report.
+full report below (its `Wrote:` field listing that path) to that path with
+Write, as your last write, and hand back the digest: `Findings: <count>`
+(every finding line of the report), the `net:` line (7d), and the
+`Accepted design findings built` items marked `no`. Each request's report
+goes to the path given with it; never write an earlier path again.
+`step.sh` checks every `Wrote:` path on disk before the run goes on. With
+no report path, write no file and hand back the full report, `Wrote:
+none`.
 
 ## Report, and nothing else
 
-Only the sections of your lenses:
+Only the sections of your lenses, each present, written `<Key>: none` when
+empty (`Accepted design findings built (7b): none` when no accepted `[sec]`
+finding was given). Each list item is one `- ` line at column 0, never
+wrapped; write `none` for an empty field or section. A list field reads
+`<Key>: none`, or `<Key>:` alone followed by its items. Each finding puts
+its title first, then the `at:` and `fix:` labels, and its `rec` last.
+`at:` is `<file>:<line>` or `<file>:<first>-<last>` (the file alone when
+the finding is about the whole file). `<rec>` is `apply`, `skip (<why>)`
+or `user (<why>)`. `Wrote:` lists the report path, one `- ` item, or
+`none`.
 
 ```
 Bugs (7a):
-- <bug or missed edge case> — <file:line> → <fix> — confidence: high | medium — rec: apply | skip (<why>) | user (<why>)
+- <bug or missed edge case> — at: <file>:<line or a-b> — fix: <fix> — confidence: high | medium — rec: <rec>
 Spec (7a):
-- missing | scope creep | wrong — <finding> — <spec line quoted> — <file:line> — rec: apply | skip (<why>) | user (<why>)
+- missing | scope creep | wrong: <finding> — spec: "<line quoted>" — at: <file>:<lines> — fix: <fix> — rec: <rec>
 Standards (7a):
-- hard | judgement — <finding> — <standard cited, or smell name> — <file:line> — rec: apply | skip (<why>) | user (<why>)
-Acceptance criteria (7a): <each: met | not met (why) | untested>
+- hard | judgement: <finding> — standard: <cited, or smell name> — at: <file>:<lines> — fix: <fix> — rec: <rec>
+Acceptance criteria (7a):
+- <criterion> — met | not met (<why>) | untested
 Security (7b):
-- <risk> — <file:line> → <fix> — severity: high | medium | nice-to-have — rec: apply | skip (<why>) | user (<why>)
-Accepted design findings built (7b): <D-id: yes | no>
+- <short title, no exploit detail> — at: <file>:<lines> — fix: <fix> — severity: high | medium | nice-to-have — rec: <rec>
+Accepted design findings built (7b):
+- <D-id> — yes | no
 Performance (7c):
-- <bottleneck> — <file:line> → <fix> — measured: <command, baseline> | unmeasured (why) — verify with: <command> — guard: <test/benchmark or "none"> — rec: apply | skip (<why>) | user (<why>)
+- <bottleneck> — at: <file>:<lines> — fix: <fix> — measured: <command, baseline> | unmeasured (<why>) — verify with: <command> — guard: <test or "none"> — rec: <rec>
 Cuts (7d):
-- <file:line> — <tag>: <what to cut> → <what replaces it, or "nothing"> — rec: apply | skip (<why>) | user (<why>)
+- <tag>: <what to cut> — at: <file>:<lines> — fix: <what replaces it, or "nothing"> — rec: <rec>
 net: -<N> lines possible | lean already
 Readability (7e):
-- <file:line> — <change> — <why it reads better> — rec: apply | skip (<why>) | user (<why>)
+- <change> — at: <file>:<lines> — fix: <the change> — why: <why it reads better> — rec: <rec>
 Dismissed: <things a skill raised that are not real, with why>
-Wrote: <the report path you were given, or "none">
+Wrote:
+- <the report path you were given>
 ```

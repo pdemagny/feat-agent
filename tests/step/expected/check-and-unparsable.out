@@ -1,0 +1,4 @@
+hard:
+- 2-specify.md: the report path is not on Wrote
+- unparsable: 2-specify.md: no Blocker: line
+answer call:	2	@TOP@/specs/x/reports/2-specify.md	sum=2-specify.md:@SUM@

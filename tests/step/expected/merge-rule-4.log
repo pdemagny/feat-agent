@@ -1,0 +1,9 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 7 Code review
+# /feat state: Test feature
+--
+- [x] 7 Code review [hard] — B1, B2 need you
+    - B1 src/a.sh:12 — the cursor never resets — rec: user (rare in practice)
+    - B2 src/a.sh:20 — an empty list crashes — rec: user (no valid recommendation)
+    - B3 src/a.sh:30 — a slow path on huge lists — rec: skip (no such lists)

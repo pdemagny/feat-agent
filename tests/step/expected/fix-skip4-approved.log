@@ -1,0 +1,8 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: done (shipping)
+# /fix state: a reported bug
+--
+    - answer: approved (user: "ship it unreviewed")
+- [x] 4 Code review — ship go-ahead (user: "ship it unreviewed")
+- [x] 5 Ship

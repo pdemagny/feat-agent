@@ -1,0 +1,9 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: 7 Code review
+# /feat state: Test feature
+--
+- [x] 7 Code review [soft] — auto-applied B1, B2; skipped [std]1 (reviewer: "one-letter loop names are the house style")
+    - B1 src/a.sh:3-5 — off-by-one on the last page — rec: apply
+    - B2 src/a.sh:9 — off-by-one in the count — rec: apply
+    - [std]1 src/a.sh:1 — judgement: Mysterious name — rec: skip (one-letter loop names are the house style)

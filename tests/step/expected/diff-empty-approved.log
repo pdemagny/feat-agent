@@ -1,0 +1,7 @@
+- Size: small
+- Agents: none (every spawn is fresh)
+- Current phase: done (shipping)
+# /feat state: Test feature
+--
+    - answer: approved (user: "nothing to review")
+- [x] 8 Ship

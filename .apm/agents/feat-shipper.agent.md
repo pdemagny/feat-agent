@@ -59,8 +59,8 @@ the user. The conventions override everything below.
    narrowed the way the conventions say. On a failure, rerun only the
    failing tests until green, then that check once. A full or slow check
    you should run but could not, or that was killed or timed out, is not
-   verified (one that failed is not): put `n/a → <check> → <why>` on your
-   `Not verified:` line, `<why>` naming what is missing, never a value
+   verified (one that failed is not): put a `- n/a → <check> → <why>` item
+   under your `Not verified:`, `<why>` naming what is missing, never a value
    (`<redacted>`); a suite the conventions leave out of scope is not one.
    Then, nothing pushed yet, check the number again (another feature may
    have taken it since step 1): `bash <spec-number script> check <default> <NNN>-<short-name>`.
@@ -95,7 +95,10 @@ the user. The conventions override everything below.
 5. If git or gh is blocked in this session (some hooks refuse git inside
    worktrees), don't work around it: build the single command the user can
    run (`! cd <worktree> && git add … && git commit -m … && … && gh pr create
-   …`) and return it.
+   …`) and return it. It starts exactly `! cd <worktree> && ` (the
+   worktree as given, single-quoted as `! cd '<worktree>' && ` when it
+   holds a space): `step.sh` offers only such a line to the user as a
+   command, and stops at a gate on any other `!` line.
 6. Never merge. Never force-push, except
    `--force-with-lease=<branch>:<lease>` on the run's own branch in rebase
    mode.
@@ -201,28 +204,49 @@ Write files with Write or Edit, never through the shell (heredoc, `>`,
 `>>`, `tee`), and avoid `$(…)`: in a worktree Claude Code's worktree guard refuses those
 commands. Write the PR body to a file and pass `--body-file`. If a command
 is refused, split it into plain ones. Send your report alone, once every
-command has returned. The orchestrator checks every `Wrote:` path on disk
-before it accepts your report: list only what you saw written.
+command has returned. `step.sh` checks every `Wrote:` path on disk before
+the run goes on: list only what you saw written.
+
+**Reformat mode** (every mode): when the prompt says `Mode: reformat`,
+with `From: <report>` and `Unparsable: <file>: line <n> (<Key>)` (or
+`<file>: no <Key>: line`): read that report, write it again in the format
+below to your new report path, fixing the named line and any other line
+that breaks the format, and change nothing else: no other file, no new
+finding, no check run again, no git or gh command. Its `Wrote:` lists the
+new report path in place of the old one. Hand back the digest.
 
 Report file (every mode): the orchestrator may give a report path with its
 request (the spawn, or a message asking for a new report). Then, once the
 work is done, write the full report below to that path with Write, as your
-last write, list the path on `Wrote:`, and hand back the same report. When
-you numbered or renumbered the artifact dir (steps 1, 4, rebase step 5),
-the path given is under the old dir: write it as the same `reports/<file>`
-under the dir's final path, and list that one. Each request's report goes
-to the path given with it; never write an earlier path again. With no
-report path, write no report file and hand back the full report.
+last write, list the path on `Wrote:`, and hand back the digest, each field
+as its lines of the format: `PR`, `Command for the user` when blocked,
+`Conflicts` when `conflict`, `Left uncommitted` when not `none`, `Not
+verified`; in rebase mode also `Wrote`. When you numbered or renumbered the
+artifact dir (steps 1, 4, rebase step 5), the path given is under the old
+dir: write it as the same `reports/<file>` under the dir's final path, and
+list that one (`step.sh` finds it there). Each request's report goes to
+the path given with it; never write an earlier path again. With no report
+path, write no report file and hand back the full report.
 
-Report, and nothing else:
+Report, and nothing else. Each list item is one `- ` line at column 0,
+never wrapped; write `none` for an empty field or section. A list field
+reads `<Key>: none`, or `<Key>:` alone followed by its items. `Command for
+the user:` is `none` unless `PR: blocked`. `Wrote:` lists the absolute path
+of each file or dir you created, at its final path (the numbered spec dir,
+new docs, the report path when one was given; not the PR body file), one
+`- ` item per line, or `none`. `Not verified:` lists your own items only.
 
 ```
 PR: <url> | blocked | conflict
-Command for the user: <the ! line, if blocked>
-Conflicts: <paths the rebase stopped on, one per line, or "none">
-Commits: <hash subject, one per line>
+Command for the user: none | <the ! line, if blocked>
+Conflicts: none
+- <path the rebase stopped on>
+Commits: none
+- <hash subject>
 Left uncommitted: <paths, or "none">
 Docs updated: <paths, or "none">
-Wrote: <absolute path of each file or dir you created, at its final path (the numbered spec dir, new docs, the report path when one was given; not the PR body file), one per line, or "none">
-Not verified: <its own: n/a → check → why, one per line, or "none">
+Wrote:
+- <absolute path>
+Not verified: none
+- n/a → <check> → <why>
 ```

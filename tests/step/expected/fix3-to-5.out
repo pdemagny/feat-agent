@@ -1,0 +1,13 @@
+soft
+base: same
+spawn: feat-shipper
+  row: 5
+  mode: ship
+  model: haiku
+  effort: low
+  report: @TOP@/specs/x/reports/5-ship.md
+  continue: fresh
+  not verified items: none
+  security bug: no
+boundary:	5	@TOP@/specs/x/reports/5-ship.md
+answer call:	3	@TOP@/specs/x/reports/3-test.md	sum=3-test.md:@SUM@

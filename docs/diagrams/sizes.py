@@ -3,8 +3,9 @@
 
     python3 -I docs/diagrams/sizes.py [--root DIR] [--check | --d2]
 
-With no mode it rewrites the marked regions (<!-- sizes-start NAME --> ... <!-- sizes-end NAME -->)
-of the skills' size tables, /brief's row 1 sentence and docs/workflow.md's matrices and agents
+With no mode it rewrites .apm/skills/feat/sizes.tsv (the whole file step.sh reads: one line per
+row and size, one per review group) and the marked regions (<!-- sizes-start NAME --> ...
+<!-- sizes-end NAME -->) of /brief's row 1 sentence and docs/workflow.md's matrices and agents
 table. With --d2 it prints the D2 source of docs/img/models.svg: one cell per phase and size,
 coloured by model; a split cell is a phase that runs several reviewers in parallel, each group
 of lenses on the strongest model and effort among its rows. With --check it writes nothing and
@@ -21,6 +22,7 @@ JSON_PATH = ".apm/skills/feat/sizes.json"
 SIZES = ("small", "medium", "large")
 MODELS = ("haiku", "sonnet", "opus")
 EFFORTS = ("low", "medium", "high", "xhigh", "max")
+LENSES = ("7a", "7b", "7c", "7d", "7e")
 # The diagram's columns: (phase, title). Fixed text: the titles are not row labels.
 COLUMNS = [(1, "Brief review"), (2, "Specify"), (3, "Plan"), (4, "Design review"), (5, "Tasks"),
            (6, "Implement"), (7, "Code review"), (8, "Ship")]
@@ -34,12 +36,12 @@ LABEL_RE = re.compile(r"[A-Za-z0-9 ,()`/-]+")
 MARKER_RE = re.compile(r"<!-- sizes-(start|end) (\S+) -->")
 # Marker name -> (kind, file); the regions each target file must hold.
 TARGETS = {
-    ".apm/skills/feat/SKILL.md": {"feat-table": "block"},
-    ".apm/skills/fix/SKILL.md": {"fix-table": "block"},
     ".apm/skills/brief/SKILL.md": {"brief-review": "inline"},
     "docs/workflow.md": {"feat-matrix": "block", "fix-matrix": "block", "agents-table": "block"},
 }
 WORKFLOW = "docs/workflow.md"
+# The whole-file target step.sh reads.
+TSV_PATH = ".apm/skills/feat/sizes.tsv"
 
 
 class Fail(Exception):
@@ -63,8 +65,14 @@ def only_keys(obj, where, allowed, required=None):
             bad(f"{where}.{key}" if where else key, "missing")
 
 
-def check_row(row, where):
-    only_keys(row, where, ("id", "label", "agent", "loads") + SIZES)
+def check_row(row, where, skill):
+    keys = ("id", "label", "agent", "loads") + SIZES
+    only_keys(row, where, keys + (("lens",) if skill == "fix" else ()), keys)
+    if skill == "fix":
+        if row["agent"] == "feat-code-reviewer" and "lens" not in row:
+            bad(f"{where}.lens", "missing")
+        if "lens" in row and row["lens"] not in LENSES:
+            bad(f"{where}.lens", f"must be one of {', '.join(LENSES)}")
     if not isinstance(row["id"], str) or not ID_RE.fullmatch(row["id"]):
         bad(f"{where}.id", "must match ^[0-9]+[a-z]?$")
     label = row["label"]
@@ -88,29 +96,55 @@ def check_row(row, where):
             bad(f"{where}.{size}.effort", f"must be one of {', '.join(EFFORTS)}")
 
 
-def check_groups(groups, rows):
-    """feat.groups: every phase with two or more rows has groups; each size lists its rows once."""
+def phase_of(row_id):
+    return int(re.match(r"\d+", row_id).group())
+
+
+def check_groups(groups, rows, skill, strict):
+    """<skill>.groups. Strict (feat): every phase with two or more rows has groups and each size
+    lists its rows once. Loose (fix): each listed id is a row of that phase, no id twice in one
+    size, every size present; an optional `performance` object may leave a size out."""
     phases = {}
     for row in rows:
-        phases.setdefault(int(re.match(r"\d+", row["id"]).group()), []).append(row["id"])
+        phases.setdefault(phase_of(row["id"]), []).append(row["id"])
     multi = {str(p): ids for p, ids in phases.items() if len(ids) > 1}
     if not isinstance(groups, dict):
-        bad("feat.groups", "must be an object")
+        bad(f"{skill}.groups", "must be an object")
     for phase in groups:
         if phase not in multi:
-            bad(f"feat.groups.{phase}", "not a phase with two or more rows")
+            bad(f"{skill}.groups.{phase}", "not a phase with two or more rows")
     for phase, ids in multi.items():
         if phase not in groups:
-            bad(f"feat.groups.{phase}", "missing")
-        only_keys(groups[phase], f"feat.groups.{phase}", SIZES)
-        for size in SIZES:
-            listed = groups[phase][size]
-            where = f"feat.groups.{phase}.{size}"
-            if not isinstance(listed, list):
-                bad(where, f"must list each of {', '.join(ids)} exactly once")
-            flat = [i for g in listed if isinstance(g, list) for i in g]
-            if not all(isinstance(g, list) and g for g in listed) or sorted(flat) != sorted(ids):
-                bad(where, f"must list each of {', '.join(ids)} exactly once")
+            if strict:
+                bad(f"{skill}.groups.{phase}", "missing")
+            continue
+        where = f"{skill}.groups.{phase}"
+        if strict:
+            only_keys(groups[phase], where, SIZES)
+        else:
+            only_keys(groups[phase], where, SIZES + ("performance",), SIZES)
+        variants = [(groups[phase], where, SIZES)]
+        if not strict and "performance" in groups[phase]:
+            perf = groups[phase]["performance"]
+            only_keys(perf, f"{where}.performance", SIZES, ())
+            variants.append((perf, f"{where}.performance", tuple(s for s in SIZES if s in perf)))
+        for by_size, base, sizes in variants:
+            for size in sizes:
+                check_group_list(by_size[size], f"{base}.{size}", ids, strict)
+
+
+def check_group_list(listed, where, ids, strict):
+    if strict:
+        rule = f"must list each of {', '.join(ids)} exactly once"
+    else:
+        rule = f"must list rows of {', '.join(ids)}, each at most once"
+    if not isinstance(listed, list) or not all(isinstance(g, list) and g for g in listed):
+        bad(where, rule)
+    flat = [i for g in listed for i in g]
+    if strict and sorted(flat) != sorted(ids):
+        bad(where, rule)
+    if not strict and (any(i not in ids for i in flat) or len(set(flat)) != len(flat)):
+        bad(where, rule)
 
 
 def load(root):
@@ -121,18 +155,19 @@ def load(root):
         raise Fail(f"sizes.py: {JSON_PATH}: {e}")
     only_keys(data, "", ("feat", "fix"))
     only_keys(data["feat"], "feat", ("rows", "groups"))
-    only_keys(data["fix"], "fix", ("rows",))
+    only_keys(data["fix"], "fix", ("rows", "groups"), ("rows",))
     for skill in ("feat", "fix"):
         rows = data[skill]["rows"]
         if not isinstance(rows, list) or not rows:
             bad(f"{skill}.rows", "must be a non-empty list")
         seen = set()
         for k, row in enumerate(rows):
-            check_row(row, f"{skill}.rows[{k}]")
+            check_row(row, f"{skill}.rows[{k}]", skill)
             if row["id"] in seen:
                 bad(f"{skill}.rows[{k}].id", f"duplicate id {row['id']}")
             seen.add(row["id"])
-    check_groups(data["feat"]["groups"], data["feat"]["rows"])
+    check_groups(data["feat"]["groups"], data["feat"]["rows"], "feat", True)
+    check_groups(data["fix"].get("groups", {}), data["fix"]["rows"], "fix", False)
     have = {int(re.match(r"\d+", r["id"]).group()) for r in data["feat"]["rows"]}
     if have != {p for p, _ in COLUMNS}:
         bad("feat.rows", f"phases {sorted(have)} differ from the diagram's {[p for p, _ in COLUMNS]}")
@@ -199,12 +234,6 @@ def table(header, rows):
 
 def spawn(row, size):
     return f"{row[size]['model']} · {row[size]['effort']}"
-
-
-def skill_table(rows):
-    return table(["Phase", "Agent", "Loads", *SIZES],
-                 [[f"{r['id']} {r['label']}", f"`{r['agent']}`", ", ".join(r["loads"]) or "—",
-                   *[spawn(r, s) for s in SIZES]] for r in rows])
 
 
 def feat_matrix(rows):
@@ -276,10 +305,6 @@ def agents_table(region, data):
 # ---- the marked regions -----------------------------------------------------------------------
 
 def render(name, region, data):
-    if name == "feat-table":
-        return skill_table(data["feat"]["rows"])
-    if name == "fix-table":
-        return skill_table(data["fix"]["rows"])
     if name == "feat-matrix":
         return feat_matrix(data["feat"]["rows"])
     if name == "fix-matrix":
@@ -313,9 +338,61 @@ def markers(path, text, names):
     return spans
 
 
+TSV_HEADER = [
+    "# Generated by docs/diagrams/sizes.py from sizes.json; edit that and run `mise run diagrams`.",
+    "# In an install (no sizes.py), tune a row by editing its `row` line and every `group` line"
+    " that names it:",
+    "# each group line carries its own model and effort (the strongest of its rows), and groups"
+    " are what review phases spawn.",
+    "# row\tskill\trow\tagent\tlens\tsize\tmodel\teffort",
+    "# group\tskill\tphase\tsize\tvariant\trows\tlenses\tmodel\teffort",
+]
+
+
+def row_lens(skill, row):
+    if skill == "fix":
+        return row.get("lens", "-")
+    return row["id"] if re.fullmatch(r"[47][a-z]", row["id"]) else "-"
+
+
+def tsv(data):
+    """The text of sizes.tsv: one `row` line per row and size, then one `group` line per phase,
+    size, variant and group, each group on the strongest model and effort among its rows."""
+    out = list(TSV_HEADER)
+    for skill in ("feat", "fix"):
+        for row in data[skill]["rows"]:
+            for size in SIZES:
+                out.append("\t".join(["row", skill, row["id"], row["agent"], row_lens(skill, row),
+                                      size, row[size]["model"], row[size]["effort"]]))
+    for skill in ("feat", "fix"):
+        rows = {r["id"]: r for r in data[skill]["rows"]}
+        for phase, by_size in data[skill].get("groups", {}).items():
+            perf = by_size.get("performance", {})
+            for size in SIZES:
+                for variant, listed in (("default", by_size[size]), ("performance", perf.get(size))):
+                    for group in listed or []:
+                        (model, _), (_, effort) = strongest(
+                            [(rows[i][size]["model"], rows[i][size]["effort"]) for i in group])
+                        lenses = [row_lens(skill, rows[i]) for i in group]
+                        out.append("\t".join(["group", skill, phase, size, variant, "+".join(group),
+                                              "+".join(lenses), model, effort]))
+    return "\n".join(out) + "\n"
+
+
 def regenerate(root, data):
     """Return {path: new text} for every target whose text changes; nothing is written here."""
     changed, errors = {}, []
+    try:
+        with open(root / TSV_PATH, encoding="utf-8", newline="") as f:
+            old = f.read()
+    except FileNotFoundError:
+        old = None
+    except OSError as e:
+        errors.append(f"sizes.py: {TSV_PATH}: {e.strerror}")
+        old = ""
+    new_tsv = tsv(data)
+    if old != new_tsv:
+        changed[TSV_PATH] = new_tsv
     for path, names in TARGETS.items():
         try:
             with open(root / path, encoding="utf-8", newline="") as f:
@@ -358,7 +435,10 @@ def main(argv):
         return 2
     if mode_check:
         for path in changed:
-            print(f"{path}: differs from {JSON_PATH}; run mise run diagrams", file=sys.stderr)
+            if path == TSV_PATH:
+                print("sizes.tsv is stale: run mise run diagrams", file=sys.stderr)
+            else:
+                print(f"{path}: differs from {JSON_PATH}; run mise run diagrams", file=sys.stderr)
         return 1 if changed else 0
     for path, text in changed.items():
         with open(root / path, "w", encoding="utf-8", newline="") as f:

@@ -28,7 +28,7 @@ and the bug extension (plus the linters) at the versions the release was
 tested with; see [`mise.toml`](https://github.com/pdemagny/logistics/blob/main/mise.toml).
 
 The workflow uses Opus and Sonnet, and Haiku to ship. Your plan must give
-access to them; if one isn't available, change the size table (see [usage.md](usage.md#tuning)).
+access to them; if one isn't available, change it in `sizes.tsv` (see [usage.md](usage.md#tuning)).
 
 ## 1. Install the skills and agents
 

@@ -1,0 +1,4 @@
+soft
+state: @TOP@/specs/012-x/feat-state.md
+pr: https://github.com/o/r/pull/42
+done: PR #42

@@ -1,0 +1,8 @@
+- Size: medium
+- Agents: none (every spawn is fresh)
+- Current phase: 2 Fix
+# /fix state: Token logged
+--
+    - answer: size medium (user: "go, medium")
+    - passed: gate: valid, medium confidence, not reproduced, 2 remediation(s); size medium; risk area security, data; performance bug yes
+- [x] 1 Assess — security: advisory (user: "advisory, it's $(rm) `x`; ok")
