@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.15.0](https://github.com/pdemagny/logistics/compare/v0.14.0...v0.15.0) (2026-11-21)
+
+
+### Features
+
+* **agents:** deny the feat agents the tools they never use ([3b3d0e4](https://github.com/pdemagny/logistics/commit/3b3d0e4523d342044d8d94e1ec1050831bf4f03f))
+* **feat:** give the implementer its story's tasks and files up front ([28f5e3e](https://github.com/pdemagny/logistics/commit/28f5e3ed18f362a1a7f8666d5156f814ba4fed4f))
+* **feat:** stop the design review gate only on findings that need you ([7e30abc](https://github.com/pdemagny/logistics/commit/7e30abc26ccf1bba7f9f5e9feaa7c6aaf934620b))
+* **harness:** ask the user before leaving a security finding unfixed ([6482b6e](https://github.com/pdemagny/logistics/commit/6482b6e8f169dc989324e5d4933a84f655c88349))
+* **measure:** report what /feat and /fix runs cost ([2e9a682](https://github.com/pdemagny/logistics/commit/2e9a682ee9ff7db371da25b478b005d78aee0756))
+* **sizes:** set each agent's model and effort per size from one data file ([6fc28c9](https://github.com/pdemagny/logistics/commit/6fc28c9cc7c3bb1fc6b95e351c8a9a5db7d99732))
+* **state:** agent reports go to files, state file edited by state.sh ([78389e5](https://github.com/pdemagny/logistics/commit/78389e5597454210b5aab928ed9fc7e5dcd117c9))
+* **step:** one step.sh call per /feat and /fix phase boundary ([a9e5817](https://github.com/pdemagny/logistics/commit/a9e58177a7923476837059b2d998d415deba84d7))
+
+
+### Bug Fixes
+
+* **agents:** have the implementer list tasks.md and fix.md on Wrote: even when only modified ([f226155](https://github.com/pdemagny/logistics/commit/f2261554f00226bf9fc9df6028733982ca382b5f))
+* **measure:** count agent reports and end notices as agents working ([71cbf4e](https://github.com/pdemagny/logistics/commit/71cbf4e560231b2f909efce8b3d9433e40649991))
+
 ## [0.14.0](https://github.com/pdemagny/logistics/compare/v0.13.0...v0.14.0) (2026-11-18)
 
 
