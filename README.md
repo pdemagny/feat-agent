@@ -123,7 +123,7 @@ Also on the website: [pdemagny.github.io/logistics](https://pdemagny.github.io/l
 
 ## Status
 
-Version 0.14.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli) <!-- x-release-please-version -->
+Version 0.15.0. Tested with Claude Code 2.1.308 and Spec Kit (specify-cli) <!-- x-release-please-version -->
 1.2.x. See [CHANGELOG.md](https://github.com/pdemagny/logistics/blob/main/CHANGELOG.md).
 
 ## License
